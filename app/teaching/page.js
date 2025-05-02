@@ -214,8 +214,7 @@ export default function Teaching() {
                 setError('');
               }}
             >
-              <i className="bi bi-arrow-left me-2"></i>
-              {language === 'pt' ? 'Voltar aos Cursos' : 'Back to Courses'}
+            <strong> <i className="bi bi-arrow-left me-2"></i></strong> 
             </button>
           </div>
           
@@ -276,8 +275,7 @@ export default function Teaching() {
                 setPasscode('');
               }}
             >
-              <i className="bi bi-arrow-left me-2"></i>
-              {language === 'pt' ? 'Voltar aos Cursos' : 'Back to Courses'}
+             <strong> <i className="bi bi-arrow-left me-2"></i> </strong>
             </button>
           </div>
           
