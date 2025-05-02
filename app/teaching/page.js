@@ -281,64 +281,104 @@ export default function Teaching() {
             </button>
           </div>
           
-          <p className="lead mb-4">
-            {language === 'pt' ? 'Bem-vindo aos materiais do curso!' : 'Welcome to the course materials!'}
-          </p>
-          
-          <div className="list-group">
-            <a 
-              className="list-group-item list-group-item-action" 
-              href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf" 
-              download
-            >
-              <div className="d-flex w-100 justify-content-between">
-                <h5 className="mb-1">
-                  <i className="bi bi-file-earmark-text me-2"></i>
-                  {language === 'pt' ? 'Plano ou Programa de Aula' : 'Course Plan'}
-                </h5>
-                <small>PDF</small>
-              </div>
-            </a>
-            <a 
-              className="list-group-item list-group-item-action" 
-              href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf" 
-              download
-            >
-              <div className="d-flex w-100 justify-content-between">
-                <h5 className="mb-1">
-                  <i className="bi bi-file-earmark-text me-2"></i>
-                  {language === 'pt' ? 'Aula 1' : 'Lesson 1'}
-                </h5>
-                <small>PDF</small>
-              </div>
-            </a>
-            <a 
-              className="list-group-item list-group-item-action" 
-              href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf" 
-              download
-            >
-              <div className="d-flex w-100 justify-content-between">
-                <h5 className="mb-1">
-                  <i className="bi bi-file-earmark-text me-2"></i>
-                  {language === 'pt' ? 'Aula 2' : 'Lesson 2'}
-                </h5>
-                <small>PDF</small>
-              </div>
-            </a>
-            <a 
-              className="list-group-item list-group-item-action" 
-              href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf" 
-              download
-            >
-              <div className="d-flex w-100 justify-content-between">
-                <h5 className="mb-1">
-                  <i className="bi bi-file-earmark-text me-2"></i>
-                  {language === 'pt' ? 'Aula 3' : 'Lesson 3'}
-                </h5>
-                <small>PDF</small>
-              </div>
-            </a>
+          <div className="text-center mb-4">
+            <h2 className="fw-bold">
+              {language === 'pt' ? '📚 Materiais do Curso' : '📚 Course Materials'}
+            </h2>
+            <p className="lead text-muted">
+              {language === 'pt' 
+                ? 'Explore os recursos abaixo para sua aprendizagem' 
+                : 'Explore the resources below for your learning'}
+            </p>
           </div>
+          
+          {selectedCourse === 'financas' ? (
+            <div className="alert alert-info d-flex align-items-center">
+              <i className="bi bi-hourglass-split fs-3 me-3"></i>
+              <div>
+                <h5 className="alert-heading">
+                  {language === 'pt' ? '⏳ Materiais em breve!' : '⏳ Coming soon!'}
+                </h5>
+                <p className="mb-0">
+                  {language === 'pt' 
+                    ? 'Estamos preparando materiais incríveis para você. Volte em breve!'
+                    : 'We are preparing amazing materials for you. Check back soon!'}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div className="row g-3">
+              <div className="col-md-6">
+                <div className="card h-100 border-primary">
+                  <div className="card-body">
+                    <h3 className="card-title text-primary">
+                      <i className="bi bi-journal-bookmark-fill me-2"></i>
+                      {language === 'pt' ? '📝 Plano de Aula' : '📝 Course Plan'}
+                    </h3>
+                    <p className="card-text text-muted">
+                      {language === 'pt' 
+                        ? 'Estrutura completa do curso e objetivos de aprendizagem'
+                        : 'Complete course structure and learning objectives'}
+                    </p>
+                    <a 
+                      href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf" 
+                      className="btn btn-primary"
+                      download
+                    >
+                      <i className="bi bi-download me-2"></i>
+                      {language === 'pt' ? 'Baixar PDF' : 'Download PDF'}
+                    </a>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="col-md-6">
+                <div className="card h-100 border-success">
+                  <div className="card-body">
+                    <h3 className="card-title text-success">
+                      <i className="bi bi-collection-play-fill me-2"></i>
+                      {language === 'pt' ? '🎬 Aulas' : '🎬 Lessons'}
+                    </h3>
+                    <div className="list-group list-group-flush">
+                      <a 
+                        href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? 'Aula 1: Introdução' : 'Lesson 1: Introduction'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? 'Aula 2: Conceitos Básicos' : 'Lesson 2: Basic Concepts'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? 'Aula 3: Aplicações Práticas' : 'Lesson 3: Practical Applications'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
