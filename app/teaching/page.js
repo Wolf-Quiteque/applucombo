@@ -110,7 +110,8 @@ export default function Teaching() {
         {language === 'pt' ? 'Materiais de Ensino' : 'Teaching Materials'}
       </h1>
       
-      {!isAuthenticated ? (
+      {!selectedCourse ? (
+        // Course Selection View
         <div className={`${styles.selectionArea} ${styles.bgLightBlue}`}>
           <div className="row g-3">
             <div className="col-md-6">
@@ -175,7 +176,7 @@ export default function Teaching() {
               {availableCourses.map(course => (
                 <div className="col-md-6" key={course.id}>
                   <div 
-                    className={`card h-100 ${styles.courseCard} ${selectedCourse === course.id ? styles.selected : ''}`}
+                    className={`card h-100 ${styles.courseCard}`}
                     onClick={() => handleSelectCourse(course.id)}
                     style={{ cursor: 'pointer' }}
                   >
@@ -192,38 +193,62 @@ export default function Teaching() {
               ))}
             </div>
           )}
-
-          {selectedCourse && (
-            <div className="row g-3 mt-4">
-              <div className="col-12">
-                <h5>
-                  {language === 'pt' ? 'Acesso ao Material' : 'Material Access'}
-                </h5>
-              </div>
-              <div className="col-md-6">
-                <label htmlFor="passcode" className="form-label">
-                  {language === 'pt' ? 'Código de Acesso' : 'Passcode'}
-                </label>
-                <input 
-                  type="password" 
-                  id="passcode" 
-                  className="form-control" 
-                  value={passcode} 
-                  onChange={(e) => setPasscode(e.target.value)}
-                  placeholder={language === 'pt' ? 'Digite o código' : 'Enter passcode'}
-                  onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
-                />
-              </div>
-              <div className="col-md-6 align-self-end">
-                <button 
-                  className="btn btn-primary w-100" 
-                  onClick={handleLogin}
-                >
-                  {language === 'pt' ? 'Acessar Materiais' : 'Access Materials'}
-                </button>
-              </div>
+        </div>
+      ) : !isAuthenticated ? (
+        // Authentication View - Only shows when a course is selected
+        <div className={`${styles.selectionArea} ${styles.bgLightBlue} ${styles.fadeIn}`}>
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h3>
+              {language === 'pt' ? 'Curso Selecionado: ' : 'Selected Course: '}
+              <span className="fw-bold">
+                {language === 'pt' 
+                  ? availableCourses.find(c => c.id === selectedCourse)?.name_pt 
+                  : availableCourses.find(c => c.id === selectedCourse)?.name_en}
+              </span>
+            </h3>
+            <button 
+              className="btn btn-outline-secondary" 
+              onClick={() => {
+                setSelectedCourse('');
+                setPasscode('');
+                setError('');
+              }}
+            >
+              <i className="bi bi-arrow-left me-2"></i>
+              {language === 'pt' ? 'Voltar aos Cursos' : 'Back to Courses'}
+            </button>
+          </div>
+          
+          <p>
+            {language === 'pt' 
+              ? 'Para acessar os materiais deste curso, por favor insira o código de acesso abaixo:'
+              : 'To access materials for this course, please enter the access code below:'}
+          </p>
+          
+          <div className="row mt-4">
+            <div className="col-md-6">
+              <label htmlFor="passcode" className="form-label">
+                {language === 'pt' ? 'Código de Acesso' : 'Passcode'}
+              </label>
+              <input 
+                type="password" 
+                id="passcode" 
+                className="form-control" 
+                value={passcode} 
+                onChange={(e) => setPasscode(e.target.value)}
+                placeholder={language === 'pt' ? 'Digite o código' : 'Enter passcode'}
+                onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
+              />
             </div>
-          )}
+            <div className="col-md-6 align-self-end">
+              <button 
+                className="btn btn-primary w-100" 
+                onClick={handleLogin}
+              >
+                {language === 'pt' ? 'Acessar Materiais' : 'Access Materials'}
+              </button>
+            </div>
+          </div>
 
           {error && (
             <div className="alert alert-danger mt-3" role="alert">
@@ -236,15 +261,23 @@ export default function Teaching() {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <h2>
               {language === 'pt' ? 'Materiais: ' : 'Materials: '}
-              {availableCourses.find(c => c.id === selectedCourse)?.name_pt || ''}
-              ({selectedYear})
+              <span className="fw-bold">
+                {language === 'pt' 
+                  ? availableCourses.find(c => c.id === selectedCourse)?.name_pt 
+                  : availableCourses.find(c => c.id === selectedCourse)?.name_en}
+              </span>
+              <span className="fs-6 ms-2 text-muted">({selectedYear})</span>
             </h2>
             <button 
               className="btn btn-outline-secondary" 
-              onClick={handleBack}
+              onClick={() => {
+                setSelectedCourse('');
+                setIsAuthenticated(false);
+                setPasscode('');
+              }}
             >
               <i className="bi bi-arrow-left me-2"></i>
-              {language === 'pt' ? 'Voltar' : 'Back'}
+              {language === 'pt' ? 'Voltar aos Cursos' : 'Back to Courses'}
             </button>
           </div>
           
