@@ -1,0 +1,77 @@
+/* Base Styles */
+.container {
+  padding: 3rem 0;
+}
+
+/* Page Content */
+.pageContent {
+  flex-grow: 1;
+}
+
+.pageTitle {
+  font-weight: 700;
+  margin-bottom: 2rem;
+  color: var(--primary, #212529);
+  text-align: center;
+  font-size: 2.5rem;
+}
+
+/* Selection Area */
+.selectionArea {
+  background-color: var(--light-bg, #f8f9fa);
+  border-radius: 12px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border, #dee2e6);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.bgLightBlue {
+  background-color: #e6f3ff !important;
+  border-color: #b8daff;
+}
+
+/* Materials Area */
+.materialsArea {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 2rem;
+  border: 1px solid var(--border, #dee2e6);
+  margin-top: 2rem;
+}
+
+/* Course Cards */
+.courseCard {
+  border: 1px solid var(--border, #dee2e6);
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.courseCard:hover {
+  border-color: var(--accent, #0d6efd);
+  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1);
+  transform: translateY(-3px);
+}
+
+.courseCard.selected {
+  border-color: var(--accent, #0d6efd);
+  background-color: rgba(13, 110, 253, 0.05);
+}
+
+/* Animations */
+.fadeIn {
+  animation: fadeIn 0.8s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 992px) {
+  .selectionArea, .materialsArea {
+    padding: 1.5rem;
+  }
+}
