@@ -17,7 +17,7 @@ export default function Teaching() {
       name_pt: 'ACADEMIA DE CIÊNCIAS SOCIAIS E TECNOLOGIA - ACITE',
       name_en: 'ACADEMY OF SOCIAL SCIENCES AND TECHNOLOGY - ACITE',
       years: [
-        {
+        { 
           year: '2025',
           courses: [
             {
@@ -26,7 +26,7 @@ export default function Teaching() {
               name_en: 'ECONOMIC GROWTH AND DEVELOPMENT',
               description_pt: 'Curso sobre os fundamentos do crescimento e desenvolvimento econômico.',
               description_en: 'Course on the fundamentals of economic growth and development.',
-              passcode: '228899'
+              passcode: '040450'
             },
             {
               id: 'financas',
@@ -288,37 +288,52 @@ export default function Teaching() {
           <div className="list-group">
             <a 
               className="list-group-item list-group-item-action" 
-              href="/assets/pdf/Financas_Corporativas_ACITE.pdf" 
+              href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf" 
               download
             >
               <div className="d-flex w-100 justify-content-between">
                 <h5 className="mb-1">
                   <i className="bi bi-file-earmark-text me-2"></i>
-                  {language === 'pt' ? 'Plano de Aulas' : 'Syllabus'}
+                  {language === 'pt' ? 'Plano ou Programa de Aula' : 'Course Plan'}
                 </h5>
                 <small>PDF</small>
               </div>
             </a>
             <a 
-              href="#" 
-              className="list-group-item list-group-item-action"
+              className="list-group-item list-group-item-action" 
+              href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf" 
+              download
             >
               <div className="d-flex w-100 justify-content-between">
                 <h5 className="mb-1">
-                  <i className="bi bi-file-earmark-slides me-2"></i>
-                  {language === 'pt' ? 'Apresentação Semana 1' : 'Week 1 Presentation'}
+                  <i className="bi bi-file-earmark-text me-2"></i>
+                  {language === 'pt' ? 'Aula 1' : 'Lesson 1'}
                 </h5>
-                <small>PPT</small>
+                <small>PDF</small>
               </div>
             </a>
             <a 
-              href="#" 
-              className="list-group-item list-group-item-action"
+              className="list-group-item list-group-item-action" 
+              href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf" 
+              download
             >
               <div className="d-flex w-100 justify-content-between">
                 <h5 className="mb-1">
-                  <i className="bi bi-journal-text me-2"></i>
-                  {language === 'pt' ? 'Leituras Recomendadas' : 'Recommended Readings'}
+                  <i className="bi bi-file-earmark-text me-2"></i>
+                  {language === 'pt' ? 'Aula 2' : 'Lesson 2'}
+                </h5>
+                <small>PDF</small>
+              </div>
+            </a>
+            <a 
+              className="list-group-item list-group-item-action" 
+              href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf" 
+              download
+            >
+              <div className="d-flex w-100 justify-content-between">
+                <h5 className="mb-1">
+                  <i className="bi bi-file-earmark-text me-2"></i>
+                  {language === 'pt' ? 'Aula 3' : 'Lesson 3'}
                 </h5>
                 <small>PDF</small>
               </div>
