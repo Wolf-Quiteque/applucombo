@@ -40,9 +40,9 @@ export default function Teaching() {
               id: 'cbc',
               name_pt: 'Curso Básico sobre CBC/FT/FP',
               name_en: 'Basic Course on CBC/FT/FP',
-              description_pt: 'Fundamentos sobre Combate à Base de Crimes, Financiamento ao Terrorismo e Proliferação.',
-              description_en: 'Fundamentals on Combating Crime Base, Terrorism Financing and Proliferation.',
-              passcode: '334455'
+              description_pt: 'Material em preparação - disponível em breve',
+              description_en: 'Material in preparation - coming soon',
+              passcode: '000000'
             }
           ]
         }
@@ -298,7 +298,7 @@ export default function Teaching() {
             </p>
           </div>
           
-          {selectedCourse === 'financas' ? (
+          {selectedCourse === 'financas' || selectedCourse === 'cbc' ? (
             <div className="alert alert-info d-flex align-items-center">
               <i className="bi bi-hourglass-split fs-3 me-3"></i>
               <div>
