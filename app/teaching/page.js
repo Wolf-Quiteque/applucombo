@@ -42,7 +42,7 @@ export default function Teaching() {
               name_en: 'Basic Course on CBC/FT/FP',
               description_pt: 'Material em preparação - disponível em breve',
               description_en: 'Material in preparation - coming soon',
-              passcode: '000000'
+              passcode: '096432'
             }
           ]
         }
