@@ -5,8 +5,8 @@ export default function Footer({ language }) {
       <div className="container text-center">
         <p className="text-muted mb-0">
           {language === 'pt' 
-            ? '© 2025 Joaquim Luveia, Phd. Todos os direitos reservados.'
-            : '© 2025 Joaquim Luveia, Phd. All rights reserved.'}
+            ? '© 2025 Lucombo Joaquim Luveia, Phd. Todos os direitos reservados.'
+            : '© 2025 Lucombo Joaquim Luveia, Phd. All rights reserved.'}
         </p>
       </div>
     </footer>
