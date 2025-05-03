@@ -40,9 +40,9 @@ export default function Teaching() {
               id: 'cbc',
               name_pt: 'Curso Básico sobre CBC/FT/FP',
               name_en: 'Basic Course on CBC/FT/FP',
-              description_pt: 'Material em preparação - disponível em breve',
-              description_en: 'Material in preparation - coming soon',
-              passcode: '096432'
+              description_pt: 'Sistema internacional de combate ao branqueamento de capitais e financiamento do terrorismo',
+              description_en: 'International system for combating money laundering and terrorism financing',
+              passcode: '334455'
             }
           ]
         }
@@ -298,7 +298,7 @@ export default function Teaching() {
             </p>
           </div>
           
-          {selectedCourse === 'financas' || selectedCourse === 'cbc' ? (
+          {selectedCourse === 'financas' ? (
             <div className="alert alert-info d-flex align-items-center">
               <i className="bi bi-hourglass-split fs-3 me-3"></i>
               <div>
@@ -310,6 +310,30 @@ export default function Teaching() {
                     ? 'Estamos preparando materiais incríveis para você. Volte em breve!'
                     : 'We are preparing amazing materials for you. Check back soon!'}
                 </p>
+              </div>
+            </div>
+          ) : selectedCourse === 'cbc' ? (
+            <div className="row g-3">
+              <div className="col-12">
+                <div className="card border-info">
+                  <div className="card-body">
+                    <h3 className="card-title text-info">
+                      <i className="bi bi-collection-play-fill me-2"></i>
+                      {language === 'pt' ? '🎓 CBC/FT/FP' : '🎓 CBC/FT/FP'}
+                    </h3>
+                    <div className="list-group list-group-flush">
+                      <a href="/assets/material/CBC-FT-FP/SISTEMA INTERNACIONAL DE COMBATE E PREVENÇÃO DO BRANQUEAMENTO DE CAPITAIS, FINANCIAMENTO DO TERRORISMO.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '1. Sistema Internacional de Combate e Prevenção do Branqueamento de Capitais, Financiamento do Terrorismo' : '1. International System for Combating Money Laundering and Terrorism Financing'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE BRANQUEAMENTO DE CAPITAIS.doc II.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '2. Enquadramento Teórico sobre Branqueamento de Capitais' : '2. Theoretical Framework on Money Laundering'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DO TERRORISMO.doc II.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '3. Enquadramento Teórico sobre Financiamento do Terrorismo' : '3. Theoretical Framework on Terrorism Financing'}
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           ) : (
