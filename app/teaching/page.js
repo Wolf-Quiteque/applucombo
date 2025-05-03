@@ -35,6 +35,14 @@ export default function Teaching() {
               description_pt: 'Estudo das decisões financeiras dentro das empresas.',
               description_en: 'Study of financial decisions within corporations.',
               passcode: '228899'
+            },
+            {
+              id: 'cbc',
+              name_pt: 'Curso Básico sobre CBC/FT/FP',
+              name_en: 'Basic Course on CBC/FT/FP',
+              description_pt: 'Fundamentos sobre Combate à Base de Crimes, Financiamento ao Terrorismo e Proliferação.',
+              description_en: 'Fundamentals on Combating Crime Base, Terrorism Financing and Proliferation.',
+              passcode: '334455'
             }
           ]
         }
@@ -345,7 +353,7 @@ export default function Teaching() {
                       >
                         <span>
                           <i className="bi bi-file-earmark-play me-2"></i>
-                          {language === 'pt' ? 'Aula 1: Introdução' : 'Lesson 1: Introduction'}
+                          {language === 'pt' ? '1. Crescimento econômico versus Desenvolvimento econômico' : '1. Economic Growth vs. Economic Development'}
                         </span>
                         <span className="badge bg-primary rounded-pill">PDF</span>
                       </a>
@@ -356,7 +364,7 @@ export default function Teaching() {
                       >
                         <span>
                           <i className="bi bi-file-earmark-play me-2"></i>
-                          {language === 'pt' ? 'Aula 2: Conceitos Básicos' : 'Lesson 2: Basic Concepts'}
+                          {language === 'pt' ? '2. Modelos Teóricos do Crescimento Econômico' : '2. Theoretical Models of Economic Growth'}
                         </span>
                         <span className="badge bg-primary rounded-pill">PDF</span>
                       </a>
@@ -367,7 +375,7 @@ export default function Teaching() {
                       >
                         <span>
                           <i className="bi bi-file-earmark-play me-2"></i>
-                          {language === 'pt' ? 'Aula 3: Aplicações Práticas' : 'Lesson 3: Practical Applications'}
+                    {language === 'pt' ? '3. Modelo de Solow' : '3. Solow Model'}
                         </span>
                         <span className="badge bg-primary rounded-pill">PDF</span>
                       </a>
