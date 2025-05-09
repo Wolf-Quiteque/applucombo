@@ -299,17 +299,132 @@ export default function Teaching() {
           </div>
           
           {selectedCourse === 'financas' ? (
-            <div className="alert alert-info d-flex align-items-center">
-              <i className="bi bi-hourglass-split fs-3 me-3"></i>
-              <div>
-                <h5 className="alert-heading">
-                  {language === 'pt' ? '⏳ Materiais em breve!' : '⏳ Coming soon!'}
-                </h5>
-                <p className="mb-0">
-                  {language === 'pt' 
-                    ? 'Estamos preparando materiais incríveis para você. Volte em breve!'
-                    : 'We are preparing amazing materials for you. Check back soon!'}
-                </p>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <div className="card h-100 border-primary">
+                  <div className="card-body">
+                    <h3 className="card-title text-primary">
+                      <i className="bi bi-journal-bookmark-fill me-2"></i>
+                      {language === 'pt' ? '📝 Programa' : '📝 Program'}
+                    </h3>
+                    <p className="card-text text-muted">
+                      {language === 'pt' 
+                        ? 'Conteúdo programático e estrutura do curso'
+                        : 'Course syllabus and structure'}
+                    </p>
+                    <a 
+                      href="/assets/material/financas/Conteudo pragmatico - Financas Corporativas.pdf" 
+                      className="btn btn-primary"
+                      download
+                    >
+                      <i className="bi bi-filetype-pdf me-2"></i>
+                      {language === 'pt' ? 'Baixar PDF' : 'Download PDF'}
+                    </a>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="col-md-6">
+                <div className="card h-100 border-success">
+                  <div className="card-body">
+                    <h3 className="card-title text-success">
+                      <i className="bi bi-collection-play-fill me-2"></i>
+                      {language === 'pt' ? '🎬 Aulas' : '🎬 Lessons'}
+                    </h3>
+                    <div className="list-group list-group-flush">
+                      <a 
+                        href="/assets/material/financas/Finanças corporativas - Introdução.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '1. Introdução' : '1. Introduction'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/financas/Emissão de títulos, valores presentes.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '2. Emissão de Títulos, Valores Presentes' : '2. Bond Issuance, Present Values'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/financas/Retorno e Risco.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '3. Retorno e Risco em Mercados de Acções' : '3. Return and Risk in Stock Markets'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/financas/TEORIA DE AGÊNCIA E GOVERNANÇA CORPORATIVA.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '4. Teoria de Agência e Governança Corporativa' : '4. Agency Theory and Corporate Governance'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/financas/Controlo_Interno_-_ Apresentação.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '4.1 Controlo Interno' : '4.1 Internal Control'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/financas/risk-and-return-empirical-class exercise.xlsx" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-excel me-2"></i>
+                          {language === 'pt' ? 'Exercício Empírico: Retorno e Risco' : 'Empirical Exercise: Return and Risk'}
+                        </span>
+                        <span className="badge bg-success rounded-pill">Excel</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="col-12 mt-3">
+                <div className="card border-info">
+                  <div className="card-body">
+                    <h3 className="card-title text-info">
+                      <i className="bi bi-book me-2"></i>
+                      {language === 'pt' ? '📖 Leitura Adicional' : '📖 Additional Reading'}
+                    </h3>
+                    <div className="list-group list-group-flush">
+                      <a 
+                        href="/assets/material/financas/Ética.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-text me-2"></i>
+                          {language === 'pt' ? 'Ética em Finanças Corporativas' : 'Ethics in Corporate Finance'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           ) : selectedCourse === 'cbc' ? (
