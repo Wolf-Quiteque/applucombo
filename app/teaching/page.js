@@ -518,6 +518,28 @@ export default function Teaching() {
                         </span>
                         <span className="badge bg-primary rounded-pill">PDF</span>
                       </a>
+                      <a
+                        href="/assets/material/economia/aula/Revisao dos modelos de crescimento economico.11.5.25.pdf"
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          Revisao do Modelo Classico de Crescimento economico I
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a
+                        href="/assets/material/economia/aula/Revisao do Modelo Classico de Crescimento economico 12.5.25.pdf"
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          Revisao do Modelo Classico de Crescimento economico II
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
                     </div>
                   </div>
                 </div>
@@ -529,3 +551,7 @@ export default function Teaching() {
     </div>
   )
 }
+
+
+
+
