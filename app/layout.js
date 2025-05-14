@@ -4,7 +4,7 @@ import Navbar from './components/Navbar'
 import { LanguageProvider } from './context/LanguageContext'
 import './globals.css'
 import { Inter } from 'next/font/google'
-
+import { Analytics } from "@vercel/analytics/next"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -43,6 +43,7 @@ export default function RootLayout({ children }) {
 
       </head>
       <body className={inter.className}>
+        <Analytics/>
         <LanguageProvider>
           <Navbar />
           {children}
