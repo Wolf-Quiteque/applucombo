@@ -35,7 +35,7 @@ export default function Navbar() {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" href="/cv">CV</Link>
+              <Link className="nav-link" href="/assets/pdf/CV_Lucombo_Luveia_.pdf" download>CV</Link>
             </li>
             <li className="nav-item">
               <Link className="nav-link" href="/research">
