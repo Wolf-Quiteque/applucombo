@@ -446,6 +446,12 @@ export default function Teaching() {
                       <a href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DO TERRORISMO.doc II.pdf" className="list-group-item list-group-item-action" download>
                         {language === 'pt' ? '3. Enquadramento Teórico sobre Financiamento do Terrorismo' : '3. Theoretical Framework on Terrorism Financing'}
                       </a>
+                      <a href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '4. Enquadramento Teórico sobre os Activos Virtuais' : '4. Theoretical Framework on Virtual Assets'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '5. Enquadramento Teórico sobre Financiamento da Proliferação de Armas de Destruição em Massa' : '5. Theoretical Framework on the Financing of Proliferation of Weapons of Mass Destruction'}
+                      </a>
                     </div>
                   </div>
                 </div>
