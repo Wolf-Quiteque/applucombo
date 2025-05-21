@@ -452,6 +452,42 @@ export default function Teaching() {
                       <a href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" className="list-group-item list-group-item-action" download>
                         {language === 'pt' ? '5. Enquadramento Teórico sobre Financiamento da Proliferação de Armas de Destruição em Massa' : '5. Theoretical Framework on the Financing of Proliferation of Weapons of Mass Destruction'}
                       </a>
+                      <a href="/assets/material/CBC-FT-FP/COMITÉ DE COORDENAÇÃO.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '6. COMITÉ DE COORDENAÇÃO' : '6. COORDINATION COMMITTEE'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '7. ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA' : '7. ADOPTION OF ANGOLA\'S MUTUAL EVALUATION REPORT'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/UNIDADE DE INFORMAÇÃO FINANCEIRA.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '8. UNIDADE DE INFORMAÇÃO FINANCEIRA' : '8. FINANCIAL INTELLIGENCE UNIT'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '9. ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS' : '9. THEORETICAL FRAMEWORK ON VIRTUAL ASSETS'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '10. ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA' : '10. THEORETICAL FRAMEWORK ON THE FINANCING OF PROLIFERATION OF WEAPONS OF MASS DESTRUCTION'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '11. ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI' : '11. LAW ENFORCEMENT STRATEGY FOR COMPLIANCE WITH FATF ACTION PLAN'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '12. MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS' : '12. MANUAL FOR IDENTIFYING AND INVESTIGATING MONEY LAUNDERING CASES'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '13. PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI' : '13. COUNTRIES ON THE WAY TO INCLUSION IN THE FATF GREY LIST'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '14. QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS' : '14. TECHNICAL ASSESSMENT QUESTIONNAIRE ON UNDERSTANDING THE PHENOMENON OF MONEY LAUNDERING'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '15. QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO' : '15. TECHNICAL ASSESSMENT QUESTIONNAIRE ON UNDERSTANDING THE PHENOMENON OF TERRORISM FINANCING'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/QUESTIONÁRIO PARA A REALIZAÇÃO DE AVALIAÇÃO DE RISCOS EXTERNO DE BRANQUEAMENTO DE CAPITAIS.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '16. QUESTIONÁRIO PARA A REALIZAÇÃO DE AVALIAÇÃO DE RISCOS EXTERNO DE BRANQUEAMENTO DE CAPITAIS' : '16. QUESTIONNAIRE FOR EXTERNAL MONEY LAUNDERING RISK ASSESSMENT'}
+                      </a>
+                      <a href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '17. RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI' : '17. RELATIONSHIP BETWEEN THE ELEVEN IMMEDIATE OUTCOMES AND THE FORTY FATF RECOMMENDATIONS'}
+                      </a>
                     </div>
                   </div>
                 </div>
