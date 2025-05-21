@@ -476,13 +476,13 @@ export default function Teaching() {
                       <a href="/assets/material/CBC-FT-FP/PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI.pdf" className="list-group-item list-group-item-action" download>
                         {language === 'pt' ? '13. PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI' : '13. COUNTRIES ON THE WAY TO INCLUSION IN THE FATF GREY LIST'}
                       </a>
-                      <a href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS.pdf" className="list-group-item list-group-item-action" download>
+                      <a href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_BRANQUEAMENTO_DE_CAPITAIS.pdf" className="list-group-item list-group-item-action" download>
                         {language === 'pt' ? '14. QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS' : '14. TECHNICAL ASSESSMENT QUESTIONNAIRE ON UNDERSTANDING THE PHENOMENON OF MONEY LAUNDERING'}
                       </a>
-                      <a href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO.pdf" className="list-group-item list-group-item-action" download>
+                      <a href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_FINANCIAMENTO_AO_TERRORISMO.pdf" className="list-group-item list-group-item-action" download>
                         {language === 'pt' ? '15. QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO' : '15. TECHNICAL ASSESSMENT QUESTIONNAIRE ON UNDERSTANDING THE PHENOMENON OF TERRORISM FINANCING'}
                       </a>
-                      <a href="/assets/material/CBC-FT-FP/QUESTIONÁRIO PARA A REALIZAÇÃO DE AVALIAÇÃO DE RISCOS EXTERNO DE BRANQUEAMENTO DE CAPITAIS.pdf" className="list-group-item list-group-item-action" download>
+                      <a href="/assets/material/CBC-FT-FP/QUESTIONARIO_PARA_A_REALIZACAO_DE_AVALIACAO_DE_RISCOS_EXTERNO_DE_BRANQUEAMENTO_DE_CAPITAIS.pdf" className="list-group-item list-group-item-action" download>
                         {language === 'pt' ? '16. QUESTIONÁRIO PARA A REALIZAÇÃO DE AVALIAÇÃO DE RISCOS EXTERNO DE BRANQUEAMENTO DE CAPITAIS' : '16. QUESTIONNAIRE FOR EXTERNAL MONEY LAUNDERING RISK ASSESSMENT'}
                       </a>
                       <a href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf" className="list-group-item list-group-item-action" download>
@@ -601,6 +601,28 @@ export default function Teaching() {
                         <span>
                           <i className="bi bi-file-earmark-play me-2"></i>
                           Rostow
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a
+                        href="/assets/material/economia/aula/O modelo de fluxo circular e a teoria da destruição criativa.pdf"
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '5. Schumpeter : O modelo de fluxo circular e a teoria da destruição criativa' : '5. The Circular Flow Model and the Theory of Creative Destruction'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a
+                        href="/assets/material/economia/aula/O Modelo de Crescimento de Schumpeter II.pdf"
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '6. O Modelo de Crescimento de Schumpeter II' : '6. Schumpeter\'s Growth Model II'}
                         </span>
                         <span className="badge bg-primary rounded-pill">PDF</span>
                       </a>
