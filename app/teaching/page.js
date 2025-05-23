@@ -488,6 +488,9 @@ export default function Teaching() {
                       <a href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf" className="list-group-item list-group-item-action" download>
                         {language === 'pt' ? '17. RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI' : '17. RELATIONSHIP BETWEEN THE ELEVEN IMMEDIATE OUTCOMES AND THE FORTY FATF RECOMMENDATIONS'}
                       </a>
+                      <a href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT.pdf" className="list-group-item list-group-item-action" download>
+                        {language === 'pt' ? '18. MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT' : '18. MANUAL FOR IDENTIFYING AND INVESTIGATING TF CASES'}
+                      </a>
                     </div>
                   </div>
                 </div>
