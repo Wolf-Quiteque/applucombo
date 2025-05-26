@@ -10,6 +10,7 @@ export default function Teaching() {
   const [passcode, setPasscode] = useState('')
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [error, setError] = useState('')
+  const [showAllQuizzes, setShowAllQuizzes] = useState(false)
 
   const schools = [
     {
@@ -286,6 +287,61 @@ export default function Teaching() {
              <strong> <i className="bi bi-arrow-left me-2"></i> </strong>
             </button>
           </div>
+          
+          {selectedCourse === 'cbc' && (
+            <div className="row g-3 mb-4">
+              <div className="col-12">
+                <div className="card border-warning">
+                  <div className="card-body">
+                    <h3 className="card-title text-warning">
+                      <i className="bi bi-question-circle-fill me-2"></i>
+                      {language === 'pt' ? '📝 Questionários' : '📝 Quizzes'}
+                    </h3>
+                    <p className="card-text text-muted">
+                      {language === 'pt' 
+                        ? 'Baixe os questionários para testar seus conhecimentos.'
+                        : 'Download quizzes to test your knowledge.'}
+                    </p>
+                    <div className="list-group list-group-flush">
+                      <a 
+                        href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-text me-2"></i>
+                          {language === 'pt' ? 'Questionário sobre Branqueamento de Capitais' : 'Quiz on Money Laundering'}
+                        </span>
+                        <span className="badge bg-warning rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-text me-2"></i>
+                          {language === 'pt' ? 'Questionário sobre Financiamento ao Terrorismo' : 'Quiz on Terrorism Financing'}
+                        </span>
+                        <span className="badge bg-warning rounded-pill">PDF</span>
+                      </a>
+                    </div>
+                    {/* For future expansion with more quizzes and show more/less functionality */}
+                    {/*
+                    <button 
+                      className="btn btn-link mt-2" 
+                      onClick={() => setShowAllQuizzes(!showAllQuizzes)}
+                    >
+                      {showAllQuizzes ? 
+                        (language === 'pt' ? 'Mostrar Menos' : 'Show Less') : 
+                        (language === 'pt' ? 'Mostrar Mais' : 'Show More')}
+                    </button>
+                    */}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           
           <div className="text-center mb-4">
             <h2 className="fw-bold">
