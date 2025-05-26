@@ -691,6 +691,39 @@ export default function Teaching() {
                         </span>
                         <span className="badge bg-primary rounded-pill">PDF</span>
                       </a>
+                      <a 
+                        href="/assets/material/CBC-FT-FP/GAFI.FP.ACTIVOS.VIRTUAISII.26.5.25.Acite.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '19. ACTIVOS VIRTUAIS' : '19. VIRTUAL ASSETS'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/CBC-FT-FP/GAFI.FP.aspectosJuridicosBDFT26.5.25.Acite.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '20. ASPECTOS JURIDICOS DE BC/FT' : '20. LEGAL ASPECTS OF ML/TF'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
+                      <a 
+                        href="/assets/material/CBC-FT-FP/GAFI.FP.IdentificacaoFTs26.5.25.Acite.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '21. MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FINANCIAMENTO DO TERRORISMO' : '21. MANUAL FOR IDENTIFYING AND INVESTIGATING TERRORISM FINANCING CASES'}
+                        </span>
+                        <span className="badge bg-primary rounded-pill">PDF</span>
+                      </a>
                     </div>
                   </div>
                 </div>
