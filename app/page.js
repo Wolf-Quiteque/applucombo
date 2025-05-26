@@ -66,6 +66,14 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <div className={styles.gdpSection}>
+        <h2 className={styles.gdpTitle}>GDP per capita</h2>
+        <iframe 
+          src="//www.gapminder.org/tools/?embedded=true#$chart-type=bubbles&url=v2" 
+          style={{ width: '100%', height: '500px', margin: '0', border: '1px solid grey' }} 
+          allowFullScreen
+        ></iframe>
+      </div>
     </div>
   )
 }

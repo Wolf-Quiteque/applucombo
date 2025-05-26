@@ -106,3 +106,30 @@
     text-align: left;
   }
 }
+
+.gdpSection {
+  margin-top: 3rem;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  text-align: center; /* Center content for mobile */
+}
+
+.gdpTitle {
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+  color: #212529;
+  font-size: 2rem;
+}
+
+@media (max-width: 767px) {
+  .gdpSection {
+    padding: 1rem;
+    margin-top: 2rem;
+  }
+
+  .gdpTitle {
+    font-size: 1.5rem;
+  }
+}
