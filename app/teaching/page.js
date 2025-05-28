@@ -768,6 +768,34 @@ export default function Teaching() {
             </div>
           ) : (
             <div className="row g-3">
+              <div className="col-12 mb-4"> {/* Added mb-4 for spacing */}
+                <div className="card border-success"> {/* Green outline */}
+                  <div className="card-body">
+                    <h3 className="card-title text-success">
+                      <i className="bi bi-pencil-square me-2"></i> {/* Icon for exercise */}
+                      {language === 'pt' ? '📝 Exercícios' : '📝 Exercises'}
+                    </h3>
+                    <p className="card-text text-muted">
+                      {language === 'pt' 
+                        ? 'Baixe os exercícios para praticar seus conhecimentos.'
+                        : 'Download exercises to practice your knowledge.'}
+                    </p>
+                    <div className="list-group list-group-flush">
+                      <a 
+                        href="/assets/material/economia/aula/Modelo de Solow-exercicio.pdf" 
+                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+                        download
+                      >
+                        <span>
+                          <i className="bi bi-file-earmark-text me-2"></i>
+                          {language === 'pt' ? 'Exercício: Modelo de Solow' : 'Exercise: Solow Model'}
+                        </span>
+                        <span className="badge bg-success rounded-pill">PDF</span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+              </div>
               <div className="col-md-6">
                 <div className="card h-100 border-primary">
                   <div className="card-body">
