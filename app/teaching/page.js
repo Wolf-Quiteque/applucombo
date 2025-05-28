@@ -44,6 +44,22 @@ export default function Teaching() {
               description_pt: 'Sistema internacional de combate ao branqueamento de capitais e financiamento do terrorismo',
               description_en: 'International system for combating money laundering and terrorism financing',
               passcode: '334455'
+            },
+            {
+              id: 'teoria-do-jogo',
+              name_pt: 'Teoria do Jogo',
+              name_en: 'Game Theory',
+              description_pt: 'Introdução aos princípios e aplicações da teoria dos jogos.',
+              description_en: 'Introduction to the principles and applications of game theory.',
+              passcode: '963852'
+            },
+            {
+              id: 'investimento-estrangeiro-directo',
+              name_pt: 'Investimento estrangeiro directo',
+              name_en: 'Foreign Direct Investment',
+              description_pt: 'Análise do investimento estrangeiro direto e seus impactos.',
+              description_en: 'Analysis of foreign direct investment and its impacts.',
+              passcode: '114477'
             }
           ]
         }
@@ -725,6 +741,27 @@ export default function Teaching() {
                         <span className="badge bg-primary rounded-pill">PDF</span>
                       </a>
                     </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : selectedCourse === 'teoria-do-jogo' || selectedCourse === 'investimento-estrangeiro-directo' ? (
+            <div className="row g-3">
+              <div className="col-12">
+                <div className="card h-100 border-info text-center py-5">
+                  <div className="card-body">
+                    <h3 className="card-title text-info mb-4">
+                      <i className="bi bi-hourglass-split me-2"></i>
+                      {language === 'pt' ? 'Conteúdos em breve! 🚀📚✨' : 'Content coming soon! 🚀📚✨'}
+                    </h3>
+                    <p className="card-text lead text-muted">
+                      {language === 'pt' 
+                        ? 'Estamos a preparar materiais incríveis para este curso. Volte em breve para novidades!'
+                        : 'We are preparing amazing materials for this course. Check back soon for updates!'}
+                    </p>
+                    <p className="card-text text-muted">
+                      {language === 'pt' ? 'Agradecemos a sua paciência e entusiasmo! 😊💡' : 'Thank you for your patience and enthusiasm! 😊💡'}
+                    </p>
                   </div>
                 </div>
               </div>
