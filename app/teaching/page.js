@@ -745,14 +745,51 @@ export default function Teaching() {
                 </div>
               </div>
             </div>
-          ) : selectedCourse === 'teoria-do-jogo' || selectedCourse === 'investimento-estrangeiro-directo' ? (
+          ) : selectedCourse === 'teoria-do-jogo' ? (
+            <div className="row g-3">
+              <div className="col-12 mb-4">
+                <div className="card border-info">
+                  <div className="card-body">
+                    <h3 className="card-title text-info mb-4 text-center">
+                      <i className="bi bi-play-circle-fill me-2"></i>
+                      {language === 'pt' ? 'Vídeo de Introdução: Teoria do Jogo' : 'Introduction Video: Game Theory'}
+                    </h3>
+                    <div className="ratio ratio-16x9">
+                      <video controls muted playsInline className="w-100 h-100">
+                        <source src="/assets/material/teoria-do-jogo/jogo-de-teoria-introducao.mp4" type="video/mp4" />
+                        {language === 'pt' ? 'Seu navegador não suporta o elemento de vídeo.' : 'Your browser does not support the video tag.'}
+                      </video>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="col-12">
+                <div className="card h-100 border-info text-center py-5">
+                  <div className="card-body">
+                    <h3 className="card-title text-info mb-4">
+                      <i className="bi bi-hourglass-split me-2"></i>
+                      {language === 'pt' ? 'Materiais do Curso em breve! 🚀📚✨' : 'Course materials coming soon! 🚀📚✨'}
+                    </h3>
+                    <p className="card-text lead text-muted">
+                      {language === 'pt' 
+                        ? 'Estamos a preparar materiais incríveis para este curso. Volte em breve para novidades!'
+                        : 'We are preparing amazing materials for this course. Check back soon for updates!'}
+                    </p>
+                    <p className="card-text text-muted">
+                      {language === 'pt' ? 'Agradecemos a sua paciência e entusiasmo! 😊💡' : 'Thank you for your patience and enthusiasm! 😊💡'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : selectedCourse === 'investimento-estrangeiro-directo' ? (
             <div className="row g-3">
               <div className="col-12">
                 <div className="card h-100 border-info text-center py-5">
                   <div className="card-body">
                     <h3 className="card-title text-info mb-4">
                       <i className="bi bi-hourglass-split me-2"></i>
-                      {language === 'pt' ? 'Conteúdos em breve! 🚀📚✨' : 'Content coming soon! 🚀📚✨'}
+                      {language === 'pt' ? 'Conteúdos de Investimento Estrangeiro Directo em breve! 🚀📚✨' : 'Foreign Direct Investment content coming soon! 🚀📚✨'}
                     </h3>
                     <p className="card-text lead text-muted">
                       {language === 'pt' 
