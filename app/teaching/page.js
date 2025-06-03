@@ -319,28 +319,52 @@ export default function Teaching() {
                         : 'Download quizzes to test your knowledge.'}
                     </p>
                     <div className="list-group list-group-flush">
-                      <a 
-                        href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-text me-2"></i>
                           {language === 'pt' ? 'Questionário sobre Branqueamento de Capitais' : 'Quiz on Money Laundering'}
                         </span>
-                        <span className="badge bg-warning rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS.pdf" 
+                            className="btn btn-sm btn-warning me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS.pdf" 
+                            className="btn btn-sm btn-outline-warning"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-text me-2"></i>
                           {language === 'pt' ? 'Questionário sobre Financiamento ao Terrorismo' : 'Quiz on Terrorism Financing'}
                         </span>
-                        <span className="badge bg-warning rounded-pill">PDF</span>
-                      </a>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO.pdf" 
+                            className="btn btn-sm btn-warning me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO.pdf" 
+                            className="btn btn-sm btn-outline-warning"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
                     </div>
                     {/* For future expansion with more quizzes and show more/less functionality */}
                     {/*
@@ -384,14 +408,23 @@ export default function Teaching() {
                         ? 'Conteúdo programático e estrutura do curso'
                         : 'Course syllabus and structure'}
                     </p>
-                    <a 
-                      href="/assets/material/financas/Conteudo pragmatico - Financas Corporativas.pdf" 
-                      className="btn btn-primary"
-                      download
-                    >
-                      <i className="bi bi-filetype-pdf me-2"></i>
-                      {language === 'pt' ? 'Baixar PDF' : 'Download PDF'}
-                    </a>
+                    <div className="d-flex justify-content-center">
+                      <a 
+                        href="/assets/material/financas/Conteudo pragmatico - Financas Corporativas.pdf" 
+                        className="btn btn-primary me-2"
+                        download
+                      >
+                        <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                      </a>
+                      <a 
+                        href="/assets/material/financas/Conteudo pragmatico - Financas Corporativas.pdf" 
+                        className="btn btn-outline-primary"
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -404,61 +437,121 @@ export default function Teaching() {
                       {language === 'pt' ? '🎬 Aulas' : '🎬 Lessons'}
                     </h3>
                     <div className="list-group list-group-flush">
-                      <a 
-                        href="/assets/material/financas/Finanças corporativas - Introdução.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '1. Introdução' : '1. Introduction'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/financas/Emissão de títulos, valores presentes.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/financas/Finanças corporativas - Introdução.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/financas/Finanças corporativas - Introdução.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '2. Emissão de Títulos, Valores Presentes' : '2. Bond Issuance, Present Values'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/financas/Retorno e Risco.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/financas/Emissão de títulos, valores presentes.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/financas/Emissão de títulos, valores presentes.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '3. Retorno e Risco em Mercados de Acções' : '3. Return and Risk in Stock Markets'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/financas/TEORIA DE AGÊNCIA E GOVERNANÇA CORPORATIVA.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/financas/Retorno e Risco.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/financas/Retorno e Risco.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '4. Teoria de Agência e Governança Corporativa' : '4. Agency Theory and Corporate Governance'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/financas/Controlo_Interno_-_ Apresentação.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/financas/TEORIA DE AGÊNCIA E GOVERNANÇA CORPORATIVA.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/financas/TEORIA DE AGÊNCIA E GOVERNANÇA CORPORATIVA.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '4.1 Controlo Interno' : '4.1 Internal Control'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/financas/Controlo_Interno_-_ Apresentação.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/financas/Controlo_Interno_-_ Apresentação.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
                       <a 
                         href="/assets/material/financas/risk-and-return-empirical-class exercise.xlsx" 
                         className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
@@ -483,17 +576,29 @@ export default function Teaching() {
                       {language === 'pt' ? '📖 Leitura Adicional' : '📖 Additional Reading'}
                     </h3>
                     <div className="list-group list-group-flush">
-                      <a 
-                        href="/assets/material/financas/Ética.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-text me-2"></i>
                           {language === 'pt' ? 'Ética em Finanças Corporativas' : 'Ethics in Corporate Finance'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/financas/Ética.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/financas/Ética.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -509,237 +614,489 @@ export default function Teaching() {
                       {language === 'pt' ? '🎓 CBC/FT/FP' : '🎓 CBC/FT/FP'}
                     </h3>
                     <div className="list-group list-group-flush">
-                      <a 
-                        href="/assets/material/CBC-FT-FP/SISTEMA INTERNACIONAL DE COMBATE E PREVENÇÃO DO BRANQUEAMENTO DE CAPITAIS, FINANCIAMENTO DO TERRORISMO.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '1. Sistema Internacional de Combate e Prevenção do Branqueamento de Capitais, Financiamento do Terrorismo' : '1. International System for Combating Money Laundering and Terrorism Financing'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE BRANQUEAMENTO DE CAPITAIS.doc II.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/SISTEMA INTERNACIONAL DE COMBATE E PREVENÇÃO DO BRANQUEAMENTO DE CAPITAIS, FINANCIAMENTO DO TERRORISMO.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/SISTEMA INTERNACIONAL DE COMBATE E PREVENÇÃO DO BRANQUEAMENTO DE CAPITAIS, FINANCIAMENTO DO TERRORISMO.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '2. Enquadramento Teórico sobre Branqueamento de Capitais' : '2. Theoretical Framework on Money Laundering'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DO TERRORISMO.doc II.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE BRANQUEAMENTO DE CAPITAIS.doc II.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE BRANQUEAMENTO DE CAPITAIS.doc II.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '3. Enquadramento Teórico sobre Financiamento do Terrorismo' : '3. Theoretical Framework on Terrorism Financing'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DO TERRORISMO.doc II.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DO TERRORISMO.doc II.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '4. Enquadramento Teórico sobre os Activos Virtuais' : '4. Theoretical Framework on Virtual Assets'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '5. Enquadramento Teórico sobre Financiamento da Proliferação de Armas de Destruição em Massa' : '5. Theoretical Framework on the Financing of Proliferation of Weapons of Mass Destruction'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/COMITÉ DE COORDENAÇÃO.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '6. COMITÉ DE COORDENAÇÃO' : '6. COORDINATION COMMITTEE'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/COMITÉ DE COORDENAÇÃO.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/COMITÉ DE COORDENAÇÃO.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '7. ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA' : '7. ADOPTION OF ANGOLA\'S MUTUAL EVALUATION REPORT'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/UNIDADE DE INFORMAÇÃO FINANCEIRA.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '8. UNIDADE DE INFORMAÇÃO FINANCEIRA' : '8. FINANCIAL INTELLIGENCE UNIT'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/UNIDADE DE INFORMAÇÃO FINANCEIRA.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/UNIDADE DE INFORMAÇÃO FINANCEIRA.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '9. ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS' : '9. THEORETICAL FRAMEWORK ON VIRTUAL ASSETS'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '10. ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA' : '10. THEORETICAL FRAMEWORK ON THE FINANCING OF PROLIFERATION OF WEAPONS OF MASS DESTRUCTION'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '11. ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI' : '11. LAW ENFORCEMENT STRATEGY FOR COMPLIANCE WITH FATF ACTION PLAN'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '12. MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS' : '12. MANUAL FOR IDENTIFYING AND INVESTIGATING MONEY LAUNDERING CASES'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '13. PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI' : '13. COUNTRIES ON THE WAY TO INCLUSION IN THE FATF GREY LIST'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '14. QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS' : '14. TECHNICAL ASSESSMENT QUESTIONNAIRE ON UNDERSTANDING THE PHENOMENON OF MONEY LAUNDERING'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_FINANCIAMENTO_AO_TERRORISMO.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '15. QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO' : '15. TECHNICAL ASSESSMENT QUESTIONNAIRE ON UNDERSTANDING THE PHENOMENON OF TERRORISM FINANCING'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/QUESTIONARIO_PARA_A_REALIZACAO_DE_AVALIACAO_DE_RISCOS_EXTERNO_DE_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_FINANCIAMENTO_AO_TERRORISMO.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_FINANCIAMENTO_AO_TERRORISMO.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '16. QUESTIONÁRIO PARA A REALIZAÇÃO DE AVALIAÇÃO DE RISCOS EXTERNO DE BRANQUEAMENTO DE CAPITAIS' : '16. QUESTIONNAIRE FOR EXTERNAL MONEY LAUNDERING RISK ASSESSMENT'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_PARA_A_REALIZACAO_DE_AVALIACAO_DE_RISCOS_EXTERNO_DE_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_PARA_A_REALIZACAO_DE_AVALIACAO_DE_RISCOS_EXTERNO_DE_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '17. RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI' : '17. RELATIONSHIP BETWEEN THE ELEVEN IMMEDIATE OUTCOMES AND THE FORTY FATF RECOMMENDATIONS'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '18. MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT' : '18. MANUAL FOR IDENTIFYING AND INVESTIGATING TF CASES'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/GAFI.FP.ACTIVOS.VIRTUAISII.26.5.25.Acite.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '19. ACTIVOS VIRTUAIS' : '19. VIRTUAL ASSETS'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/GAFI.FP.aspectosJuridicosBDFT26.5.25.Acite.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.ACTIVOS.VIRTUAISII.26.5.25.Acite.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.ACTIVOS.VIRTUAISII.26.5.25.Acite.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '20. ASPECTOS JURIDICOS DE BC/FT' : '20. LEGAL ASPECTS OF ML/TF'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/CBC-FT-FP/GAFI.FP.IdentificacaoFTs26.5.25.Acite.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.aspectosJuridicosBDFT26.5.25.Acite.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.aspectosJuridicosBDFT26.5.25.Acite.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '21. MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FINANCIAMENTO DO TERRORISMO' : '21. MANUAL FOR IDENTIFYING AND INVESTIGATING TERRORISM FINANCING CASES'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.IdentificacaoFTs26.5.25.Acite.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.IdentificacaoFTs26.5.25.Acite.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -818,17 +1175,29 @@ export default function Teaching() {
                         : 'Download exercises to practice your knowledge.'}
                     </p>
                     <div className="list-group list-group-flush">
-                      <a 
-                        href="/assets/material/economia/aula/Modelo de Solow-exercicio.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-text me-2"></i>
                           {language === 'pt' ? 'Exercício: Modelo de Solow' : 'Exercise: Solow Model'}
                         </span>
-                        <span className="badge bg-success rounded-pill">PDF</span>
-                      </a>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/Modelo de Solow-exercicio.pdf" 
+                            className="btn btn-sm btn-success me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/Modelo de Solow-exercicio.pdf" 
+                            className="btn btn-sm btn-outline-success"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -845,14 +1214,23 @@ export default function Teaching() {
                         ? 'Estrutura completa do curso e objetivos de aprendizagem'
                         : 'Complete course structure and learning objectives'}
                     </p>
-                    <a 
-                      href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf" 
-                      className="btn btn-primary"
-                      download
-                    >
-                      <i className="bi bi-download me-2"></i>
-                      {language === 'pt' ? 'Baixar PDF' : 'Download PDF'}
-                    </a>
+                    <div className="d-flex justify-content-center">
+                      <a 
+                        href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf" 
+                        className="btn btn-primary me-2"
+                        download
+                      >
+                        <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                      </a>
+                      <a 
+                        href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf" 
+                        className="btn btn-outline-primary"
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                      >
+                        <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -865,105 +1243,213 @@ export default function Teaching() {
                       {language === 'pt' ? '🎬 Aulas' : '🎬 Lessons'}
                     </h3>
                     <div className="list-group list-group-flush">
-                      <a 
-                        href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '1. Crescimento econômico versus Desenvolvimento econômico' : '1. Economic Growth vs. Economic Development'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '2. Modelos Teóricos do Crescimento Econômico' : '2. Theoretical Models of Economic Growth'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a 
-                        href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf" 
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
-                    {language === 'pt' ? '3. Modelo de Solow' : '3. Solow Model'}
+                          {language === 'pt' ? '3. Modelo de Solow' : '3. Solow Model'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a
-                        href="/assets/material/economia/aula/Revisao dos modelos de crescimento economico.11.5.25.pdf"
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           Revisao do Modelo Classico de Crescimento economico I
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a
-                        href="/assets/material/economia/aula/Revisao do Modelo Classico de Crescimento economico 12.5.25.pdf"
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/Revisao dos modelos de crescimento economico.11.5.25.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/Revisao dos modelos de crescimento economico.11.5.25.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           Revisao do Modelo Classico de Crescimento economico II
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a
-                        href="/assets/material/economia/aula/Modelo AK.13.5.25.pdf"
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/Revisao do Modelo Classico de Crescimento economico 12.5.25.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/Revisao do Modelo Classico de Crescimento economico 12.5.25.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           Modelo AK
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a
-                        href="/assets/material/economia/aula/Rostow.14.5.25.pdf"
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/Modelo AK.13.5.25.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/Modelo AK.13.5.25.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           Rostow
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a
-                        href="/assets/material/economia/aula/O modelo de fluxo circular e a teoria da destruição criativa.pdf"
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/Rostow.14.5.25.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/Rostow.14.5.25.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '5. Schumpeter : O modelo de fluxo circular e a teoria da destruição criativa' : '5. The Circular Flow Model and the Theory of Creative Destruction'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
-                      <a
-                        href="/assets/material/economia/aula/O Modelo de Crescimento de Schumpeter II.pdf"
-                        className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
-                        download
-                      >
-                        <span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/O modelo de fluxo circular e a teoria da destruição criativa.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/O modelo de fluxo circular e a teoria da destruição criativa.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? '6. O Modelo de Crescimento de Schumpeter II' : '6. Schumpeter\'s Growth Model II'}
                         </span>
-                        <span className="badge bg-primary rounded-pill">PDF</span>
-                      </a>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/economia/aula/O Modelo de Crescimento de Schumpeter II.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/economia/aula/O Modelo de Crescimento de Schumpeter II.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
