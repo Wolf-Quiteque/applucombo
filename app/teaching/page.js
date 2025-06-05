@@ -1121,20 +1121,83 @@ export default function Teaching() {
                 </div>
               </div>
               <div className="col-12">
-                <div className="card h-100 border-info text-center py-5">
+                <div className="card h-100 border-info">
                   <div className="card-body">
-                    <h3 className="card-title text-info mb-4">
-                      <i className="bi bi-hourglass-split me-2"></i>
-                      {language === 'pt' ? 'Materiais do Curso em breve! 🚀📚✨' : 'Course materials coming soon! 🚀📚✨'}
+                    <h3 className="card-title text-info">
+                      <i className="bi bi-collection-play-fill me-2"></i>
+                      {language === 'pt' ? '📚 Materiais' : '📚 Materials'}
                     </h3>
-                    <p className="card-text lead text-muted">
-                      {language === 'pt' 
-                        ? 'Estamos a preparar materiais incríveis para este curso. Volte em breve para novidades!'
-                        : 'We are preparing amazing materials for this course. Check back soon for updates!'}
-                    </p>
-                    <p className="card-text text-muted">
-                      {language === 'pt' ? 'Agradecemos a sua paciência e entusiasmo! 😊💡' : 'Thank you for your patience and enthusiasm! 😊💡'}
-                    </p>
+                    <div className="list-group list-group-flush">
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '1. Introdução à Teoria do Jogo' : '1. Introduction to Game Theory'}
+                        </span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Introducão.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Introducão.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '2. Estratégia Dominada' : '2. Dominated Strategy'}
+                        </span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Estragia dominada.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Estragia dominada.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '3. Jogo Estático de Informação Completa' : '3. Static Game of Complete Information'}
+                        </span>
+                        <div className="d-flex">
+                          <a 
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Game estatico de informacao completa.pdf" 
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a 
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Game estatico de informacao completa.pdf" 
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
