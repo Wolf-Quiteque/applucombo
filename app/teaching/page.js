@@ -552,8 +552,8 @@ export default function Teaching() {
                           </a>
                         </div>
                       </div>
-                      <a 
-                        href="/assets/material/financas/risk-and-return-empirical-class exercise.xlsx" 
+                      <a
+                        href="/assets/material/financas/risk-and-return-empirical-class exercise.xlsx"
                         className="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
                         download
                       >
@@ -563,6 +563,121 @@ export default function Teaching() {
                         </span>
                         <span className="badge bg-success rounded-pill">Excel</span>
                       </a>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '6. A Teoria do Trade-Off' : '6. The Trade-Off Theory'}
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/financas/A Teoria do Trade-Off.pdf"
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/financas/A Teoria do Trade-Off.pdf"
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '7. Taxa e orçamento de capital' : '7. Capital Budgeting and Rate'}
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/financas/Taxa e orçamento de capital.pdf"
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/financas/Taxa e orçamento de capital.pdf"
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '8. Estrutura de Capital com Informações Assimétricas' : '8. Capital Structure with Asymmetric Information'}
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/financas/Estrutura de Capital com Informações Assimétricas.pdf"
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/financas/Estrutura de Capital com Informações Assimétricas.pdf"
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '9. Decisões de dividendos' : '9. Dividend Decisions'}
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/financas/Decisões de dividendos.pdf"
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/financas/Decisões de dividendos.pdf"
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? '10. Mercado Financeiro' : '10. Financial Market'}
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/financas/Mercado Financeiro.pdf"
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/financas/Mercado Financeiro.pdf"
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -582,17 +697,86 @@ export default function Teaching() {
                           {language === 'pt' ? 'Ética em Finanças Corporativas' : 'Ethics in Corporate Finance'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/financas/Ética.pdf" 
+                          <a
+                            href="/assets/material/financas/Ética.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/financas/Ética.pdf" 
+                          <a
+                            href="/assets/material/financas/Ética.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-text me-2"></i>
+                          {language === 'pt' ? 'Determinantes da Política de Dividendos - Evidência de Portugal' : 'Determinants of Dividend Policy - Evidence from Portugal'}
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/financas/Determinantes da Politica de Dividendos - Evidencia de Portugal.pdf"
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/financas/Determinantes da Politica de Dividendos - Evidencia de Portugal.pdf"
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-text me-2"></i>
+                          {language === 'pt' ? 'Estrutura Corporativa' : 'Corporate Structure'}
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/financas/Estrutura corporativa.pdf"
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/financas/Estrutura corporativa.pdf"
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-text me-2"></i>
+                          {language === 'pt' ? 'Qual é o valor fundamental das criptomoedas - Comportamentais' : 'What is the fundamental value of cryptocurrencies - Behavioral'}
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/financas/Qual é o valor fundamental das criptomoedas - Comportamentais.pdf"
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/financas/Qual é o valor fundamental das criptomoedas - Comportamentais.pdf"
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -620,17 +804,17 @@ export default function Teaching() {
                           {language === 'pt' ? '1. Sistema Internacional de Combate e Prevenção do Branqueamento de Capitais, Financiamento do Terrorismo' : '1. International System for Combating Money Laundering and Terrorism Financing'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/SISTEMA INTERNACIONAL DE COMBATE E PREVENÇÃO DO BRANQUEAMENTO DE CAPITAIS, FINANCIAMENTO DO TERRORISMO.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/SISTEMA INTERNACIONAL DE COMBATE E PREVENÇÃO DO BRANQUEAMENTO DE CAPITAIS, FINANCIAMENTO DO TERRORISMO.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/SISTEMA INTERNACIONAL DE COMBATE E PREVENÇÃO DO BRANQUEAMENTO DE CAPITAIS, FINANCIAMENTO DO TERRORISMO.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/SISTEMA INTERNACIONAL DE COMBATE E PREVENÇÃO DO BRANQUEAMENTO DE CAPITAIS, FINANCIAMENTO DO TERRORISMO.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -643,17 +827,17 @@ export default function Teaching() {
                           {language === 'pt' ? '2. Enquadramento Teórico sobre Branqueamento de Capitais' : '2. Theoretical Framework on Money Laundering'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE BRANQUEAMENTO DE CAPITAIS.doc II.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE BRANQUEAMENTO DE CAPITAIS.doc II.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE BRANQUEAMENTO DE CAPITAIS.doc II.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE BRANQUEAMENTO DE CAPITAIS.doc II.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -666,17 +850,17 @@ export default function Teaching() {
                           {language === 'pt' ? '3. Enquadramento Teórico sobre Financiamento do Terrorismo' : '3. Theoretical Framework on Terrorism Financing'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DO TERRORISMO.doc II.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DO TERRORISMO.doc II.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DO TERRORISMO.doc II.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DO TERRORISMO.doc II.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -689,17 +873,17 @@ export default function Teaching() {
                           {language === 'pt' ? '4. Enquadramento Teórico sobre os Activos Virtuais' : '4. Theoretical Framework on Virtual Assets'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE OS ACTIVOS VIRTUAIS.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE OS ACTIVOS VIRTUAIS.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -712,17 +896,17 @@ export default function Teaching() {
                           {language === 'pt' ? '5. Enquadramento Teórico sobre Financiamento da Proliferação de Armas de Destruição em Massa' : '5. Theoretical Framework on the Financing of Proliferation of Weapons of Mass Destruction'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -735,17 +919,17 @@ export default function Teaching() {
                           {language === 'pt' ? '6. COMITÉ DE COORDENAÇÃO' : '6. COORDINATION COMMITTEE'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/COMITÉ DE COORDENAÇÃO.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/COMITÉ DE COORDENAÇÃO.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/COMITÉ DE COORDENAÇÃO.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/COMITÉ DE COORDENAÇÃO.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -758,17 +942,17 @@ export default function Teaching() {
                           {language === 'pt' ? '7. ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA' : '7. ADOPTION OF ANGOLA\'S MUTUAL EVALUATION REPORT'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ADOPÇÃO DO RELATÓRIO DE AVALIAÇÃO MÚTUA DE ANGOLA.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -781,17 +965,17 @@ export default function Teaching() {
                           {language === 'pt' ? '8. UNIDADE DE INFORMAÇÃO FINANCEIRA' : '8. FINANCIAL INTELLIGENCE UNIT'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/UNIDADE DE INFORMAÇÃO FINANCEIRA.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/UNIDADE DE INFORMAÇÃO FINANCEIRA.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/UNIDADE DE INFORMAÇÃO FINANCEIRA.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/UNIDADE DE INFORMAÇÃO FINANCEIRA.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -804,17 +988,17 @@ export default function Teaching() {
                           {language === 'pt' ? '9. ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS' : '9. THEORETICAL FRAMEWORK ON VIRTUAL ASSETS'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEOìRICO SOBRE OS ACTIVOS VIRTUAIS.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -827,17 +1011,17 @@ export default function Teaching() {
                           {language === 'pt' ? '10. ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA' : '10. THEORETICAL FRAMEWORK ON THE FINANCING OF PROLIFERATION OF WEAPONS OF MASS DESTRUCTION'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ENQUADRAMENTO TEÓRICO SOBRE FINANCIAMENTO DA PROLIFERAÇÃO DE ARMAS DE DESTRUIÇÃO EM MASSA.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -850,17 +1034,17 @@ export default function Teaching() {
                           {language === 'pt' ? '11. ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI' : '11. LAW ENFORCEMENT STRATEGY FOR COMPLIANCE WITH FATF ACTION PLAN'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/ESTRATÉGIA DOS ÓRGÃOS DE APLICAÇÃO DA LEI PARA CUMPRIMENTO DAS AÇÕES CONTIDAS NO PLANO DE AÇÃO DO GAFI.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -873,17 +1057,17 @@ export default function Teaching() {
                           {language === 'pt' ? '12. MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS' : '12. MANUAL FOR IDENTIFYING AND INVESTIGATING MONEY LAUNDERING CASES'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE BRANQUEAMENTO DE CAPITAIS.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -896,17 +1080,17 @@ export default function Teaching() {
                           {language === 'pt' ? '13. PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI' : '13. COUNTRIES ON THE WAY TO INCLUSION IN THE FATF GREY LIST'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/PAÍSES EM VIA DE INCLUSÃO NA LISTA CINZENTA DO GAFI.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -919,17 +1103,17 @@ export default function Teaching() {
                           {language === 'pt' ? '14. QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO BRANQUEAMENTO DE CAPITAIS' : '14. TECHNICAL ASSESSMENT QUESTIONNAIRE ON UNDERSTANDING THE PHENOMENON OF MONEY LAUNDERING'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_BRANQUEAMENTO_DE_CAPITAIS.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_BRANQUEAMENTO_DE_CAPITAIS.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -942,17 +1126,17 @@ export default function Teaching() {
                           {language === 'pt' ? '15. QUESTIONÁRIO DE AVALIAÇÃO TÉCNICA SOBRE A COMPREENSÃO DO FENÓMENO DO FINANCIAMENTO AO TERRORISMO' : '15. TECHNICAL ASSESSMENT QUESTIONNAIRE ON UNDERSTANDING THE PHENOMENON OF TERRORISM FINANCING'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_FINANCIAMENTO_AO_TERRORISMO.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_FINANCIAMENTO_AO_TERRORISMO.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_FINANCIAMENTO_AO_TERRORISMO.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_DE_AVALIACAO_TECNICA_SOBRE_A_COMPREENSAO_DO_FENOMENO_DO_FINANCIAMENTO_AO_TERRORISMO.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -965,17 +1149,17 @@ export default function Teaching() {
                           {language === 'pt' ? '16. QUESTIONÁRIO PARA A REALIZAÇÃO DE AVALIAÇÃO DE RISCOS EXTERNO DE BRANQUEAMENTO DE CAPITAIS' : '16. QUESTIONNAIRE FOR EXTERNAL MONEY LAUNDERING RISK ASSESSMENT'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_PARA_A_REALIZACAO_DE_AVALIACAO_DE_RISCOS_EXTERNO_DE_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_PARA_A_REALIZACAO_DE_AVALIACAO_DE_RISCOS_EXTERNO_DE_BRANQUEAMENTO_DE_CAPITAIS.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_PARA_A_REALIZACAO_DE_AVALIACAO_DE_RISCOS_EXTERNO_DE_BRANQUEAMENTO_DE_CAPITAIS.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/QUESTIONARIO_PARA_A_REALIZACAO_DE_AVALIACAO_DE_RISCOS_EXTERNO_DE_BRANQUEAMENTO_DE_CAPITAIS.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -988,17 +1172,17 @@ export default function Teaching() {
                           {language === 'pt' ? '17. RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI' : '17. RELATIONSHIP BETWEEN THE ELEVEN IMMEDIATE OUTCOMES AND THE FORTY FATF RECOMMENDATIONS'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/RELAÇÃO EXISTENTE ENTRE OS ONZE RESULTADOS IMEDIATOS E AS QUARENTAS RECOMENDAÇÕES DO GAFI.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1011,17 +1195,17 @@ export default function Teaching() {
                           {language === 'pt' ? '18. MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT' : '18. MANUAL FOR IDENTIFYING AND INVESTIGATING TF CASES'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FT.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1034,17 +1218,17 @@ export default function Teaching() {
                           {language === 'pt' ? '19. ACTIVOS VIRTUAIS' : '19. VIRTUAL ASSETS'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/GAFI.FP.ACTIVOS.VIRTUAISII.26.5.25.Acite.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.ACTIVOS.VIRTUAISII.26.5.25.Acite.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/GAFI.FP.ACTIVOS.VIRTUAISII.26.5.25.Acite.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.ACTIVOS.VIRTUAISII.26.5.25.Acite.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1057,17 +1241,17 @@ export default function Teaching() {
                           {language === 'pt' ? '20. ASPECTOS JURIDICOS DE BC/FT' : '20. LEGAL ASPECTS OF ML/TF'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/GAFI.FP.aspectosJuridicosBDFT26.5.25.Acite.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.aspectosJuridicosBDFT26.5.25.Acite.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/GAFI.FP.aspectosJuridicosBDFT26.5.25.Acite.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.aspectosJuridicosBDFT26.5.25.Acite.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1080,17 +1264,17 @@ export default function Teaching() {
                           {language === 'pt' ? '21. MANUAL PARA IDENTIFICAÇÃO E INVESTIGAÇÃO DE CASOS DE FINANCIAMENTO DO TERRORISMO' : '21. MANUAL FOR IDENTIFYING AND INVESTIGATING TERRORISM FINANCING CASES'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/CBC-FT-FP/GAFI.FP.IdentificacaoFTs26.5.25.Acite.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.IdentificacaoFTs26.5.25.Acite.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/CBC-FT-FP/GAFI.FP.IdentificacaoFTs26.5.25.Acite.pdf" 
+                          <a
+                            href="/assets/material/CBC-FT-FP/GAFI.FP.IdentificacaoFTs26.5.25.Acite.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1134,17 +1318,17 @@ export default function Teaching() {
                           {language === 'pt' ? '1. Introdução à Teoria do Jogo' : '1. Introduction to Game Theory'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Introducão.pdf" 
+                          <a
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Introducão.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Introducão.pdf" 
+                          <a
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Introducão.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1157,17 +1341,17 @@ export default function Teaching() {
                           {language === 'pt' ? '2. Estratégia Dominada' : '2. Dominated Strategy'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Estragia dominada.pdf" 
+                          <a
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Estragia dominada.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Estragia dominada.pdf" 
+                          <a
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Estragia dominada.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1180,17 +1364,17 @@ export default function Teaching() {
                           {language === 'pt' ? '3. Jogo Estático de Informação Completa' : '3. Static Game of Complete Information'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Game estatico de informacao completa.pdf" 
+                          <a
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Game estatico de informacao completa.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Game estatico de informacao completa.pdf" 
+                          <a
+                            href="/assets/material/teoria-do-jogo/teoria-do-jogo-Game estatico de informacao completa.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1212,7 +1396,7 @@ export default function Teaching() {
                       {language === 'pt' ? 'Conteúdos de Investimento Estrangeiro Directo em breve! 🚀📚✨' : 'Foreign Direct Investment content coming soon! 🚀📚✨'}
                     </h3>
                     <p className="card-text lead text-muted">
-                      {language === 'pt' 
+                      {language === 'pt'
                         ? 'Estamos a preparar materiais incríveis para este curso. Volte em breve para novidades!'
                         : 'We are preparing amazing materials for this course. Check back soon for updates!'}
                     </p>
@@ -1233,7 +1417,7 @@ export default function Teaching() {
                       {language === 'pt' ? '📝 Exercícios' : '📝 Exercises'}
                     </h3>
                     <p className="card-text text-muted">
-                      {language === 'pt' 
+                      {language === 'pt'
                         ? 'Baixe os exercícios para praticar seus conhecimentos.'
                         : 'Download exercises to practice your knowledge.'}
                     </p>
@@ -1244,17 +1428,17 @@ export default function Teaching() {
                           {language === 'pt' ? 'Exercício: Modelo de Solow' : 'Exercise: Solow Model'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/Modelo de Solow-exercicio.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Modelo de Solow-exercicio.pdf"
                             className="btn btn-sm btn-success me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/Modelo de Solow-exercicio.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Modelo de Solow-exercicio.pdf"
                             className="btn btn-sm btn-outline-success"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1273,22 +1457,22 @@ export default function Teaching() {
                       {language === 'pt' ? '📝 Plano de Aula' : '📝 Course Plan'}
                     </h3>
                     <p className="card-text text-muted">
-                      {language === 'pt' 
+                      {language === 'pt'
                         ? 'Estrutura completa do curso e objetivos de aprendizagem'
                         : 'Complete course structure and learning objectives'}
                     </p>
                     <div className="d-flex justify-content-center">
-                      <a 
-                        href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf" 
+                      <a
+                        href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf"
                         className="btn btn-primary me-2"
                         download
                       >
                         <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                       </a>
-                      <a 
-                        href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf" 
+                      <a
+                        href="/assets/material/economia/ACITE_PLANO OU PROGRAMA DE AULA_CRESCIMENTO E DESENVOLVIMENTO ECONÓMICO_ 2025.pdf"
                         className="btn btn-outline-primary"
-                        target="_blank" 
+                        target="_blank"
                         rel="noopener noreferrer"
                       >
                         <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1312,17 +1496,17 @@ export default function Teaching() {
                           {language === 'pt' ? '1. Crescimento econômico versus Desenvolvimento econômico' : '1. Economic Growth vs. Economic Development'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/ACITE_AULA 1_2025.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1335,17 +1519,17 @@ export default function Teaching() {
                           {language === 'pt' ? '2. Modelos Teóricos do Crescimento Econômico' : '2. Theoretical Models of Economic Growth'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/ACITE_AULA 2_2025.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1358,17 +1542,17 @@ export default function Teaching() {
                           {language === 'pt' ? '3. Modelo de Solow' : '3. Solow Model'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/ACITE_AULA 3_2025.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1381,17 +1565,17 @@ export default function Teaching() {
                           Revisao do Modelo Classico de Crescimento economico I
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/Revisao dos modelos de crescimento economico.11.5.25.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Revisao dos modelos de crescimento economico.11.5.25.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/Revisao dos modelos de crescimento economico.11.5.25.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Revisao dos modelos de crescimento economico.11.5.25.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1404,17 +1588,17 @@ export default function Teaching() {
                           Revisao do Modelo Classico de Crescimento economico II
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/Revisao do Modelo Classico de Crescimento economico 12.5.25.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Revisao do Modelo Classico de Crescimento economico 12.5.25.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/Revisao do Modelo Classico de Crescimento economico 12.5.25.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Revisao do Modelo Classico de Crescimento economico 12.5.25.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1427,17 +1611,17 @@ export default function Teaching() {
                           Modelo AK
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/Modelo AK.13.5.25.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Modelo AK.13.5.25.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/Modelo AK.13.5.25.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Modelo AK.13.5.25.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1450,17 +1634,17 @@ export default function Teaching() {
                           Rostow
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/Rostow.14.5.25.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Rostow.14.5.25.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/Rostow.14.5.25.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/Rostow.14.5.25.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1473,17 +1657,17 @@ export default function Teaching() {
                           {language === 'pt' ? '5. Schumpeter : O modelo de fluxo circular e a teoria da destruição criativa' : '5. The Circular Flow Model and the Theory of Creative Destruction'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/O modelo de fluxo circular e a teoria da destruição criativa.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/O modelo de fluxo circular e a teoria da destruição criativa.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/O modelo de fluxo circular e a teoria da destruição criativa.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/O modelo de fluxo circular e a teoria da destruição criativa.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
@@ -1496,17 +1680,17 @@ export default function Teaching() {
                           {language === 'pt' ? '6. O Modelo de Crescimento de Schumpeter II' : '6. Schumpeter\'s Growth Model II'}
                         </span>
                         <div className="d-flex">
-                          <a 
-                            href="/assets/material/economia/aula/O Modelo de Crescimento de Schumpeter II.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/O Modelo de Crescimento de Schumpeter II.pdf"
                             className="btn btn-sm btn-primary me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
-                          <a 
-                            href="/assets/material/economia/aula/O Modelo de Crescimento de Schumpeter II.pdf" 
+                          <a
+                            href="/assets/material/economia/aula/O Modelo de Crescimento de Schumpeter II.pdf"
                             className="btn btn-sm btn-outline-primary"
-                            target="_blank" 
+                            target="_blank"
                             rel="noopener noreferrer"
                           >
                             <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
