@@ -1409,8 +1409,9 @@ export default function Teaching() {
 
                           
                         </div>
-                        
-                                               <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                      </div>
+                      
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
                         <span className="mb-2 mb-md-0">
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? 'Modelo de Oligopolio Bertrand' : 'Modelo de Oligopolio Bertrand'}
@@ -1433,11 +1434,10 @@ export default function Teaching() {
                           </a>
 
                           
-                        </div> 
                         </div>
-                        
-                        
                       </div>
+              
+                      
                     </div>
                   </div>
                 </div>
