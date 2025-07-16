@@ -1409,6 +1409,34 @@ export default function Teaching() {
 
                           
                         </div>
+                        
+                                               <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-play me-2"></i>
+                          {language === 'pt' ? 'Modelo de Oligopolio Bertrand' : 'Modelo de Oligopolio Bertrand'}
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/teoria-do-jogo/TeoriaJogo5.Bertrand.2.7.25.pdf"
+                            className="btn btn-sm btn-primary me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/teoria-do-jogo/TeoriaJogo5.Bertrand.2.7.25.pdf"
+                            className="btn btn-sm btn-outline-primary"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+
+                          
+                        </div> 
+                        </div>
+                        
+                        
                       </div>
                     </div>
                   </div>
