@@ -1392,14 +1392,15 @@ export default function Teaching() {
                         </span>
                         <div className="d-flex">
                           <a
-                            href="/assets/material/teoria-do-jogo/TeoriaJogo5NashEquilibrium11625.pdf"
-                            className="btn btn-sm btn-primary me-2"
+                            href="/assets/material/teoria-do-jogo/TeoriaJogo5.NashEquilibrium.pdf"
+                          
+                            className="btn btn-sm btn-primar''y me-2"
                             download
                           >
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
                           <a
-                            href="/assets/material/teoria-do-jogo/TeoriaJogo5NashEquilibrium11625.pdf"
+                            href="/assets/material/teoria-do-jogo/TeoriaJogo5.NashEquilibrium.pdf"
                             className="btn btn-sm btn-outline-primary"
                             target="_blank"
                             rel="noopener noreferrer"
@@ -1416,7 +1417,7 @@ export default function Teaching() {
                           <i className="bi bi-file-earmark-play me-2"></i>
                           {language === 'pt' ? 'Modelo de Oligopolio Bertrand' : 'Modelo de Oligopolio Bertrand'}
                         </span>
-                        <div className="d-flex">
+                        <div classNae="d-flex">
                           <a
                             href="/assets/material/teoria-do-jogo/TeoriaJogo5.Bertrand.2.7.25.pdf"
                             className="btn btn-sm btn-primary me-2"
