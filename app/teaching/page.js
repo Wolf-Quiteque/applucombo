@@ -1392,7 +1392,7 @@ export default function Teaching() {
                         </span>
                         <div className="d-flex">
                           <a
-                            href="/assets/material/teoria-do-jogo/TeoriaJogo5.NashEquilibrium.pdf"
+                            href="/assets/material/teoria-do-jogo/TeoriaJogo5NashEquilibrium11625.pdf"
                           
                             className="btn btn-sm btn-primar''y me-2"
                             download
@@ -1400,7 +1400,7 @@ export default function Teaching() {
                             <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
                           </a>
                           <a
-                            href="/assets/material/teoria-do-jogo/TeoriaJogo5.NashEquilibrium.pdf"
+                            href="/assets/material/teoria-do-jogo/TeoriaJogo5NashEquilibrium11625.pdf"
                             className="btn btn-sm btn-outline-primary"
                             target="_blank"
                             rel="noopener noreferrer"
