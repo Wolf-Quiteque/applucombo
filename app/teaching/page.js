@@ -1288,22 +1288,69 @@ export default function Teaching() {
             </div>
           ) : selectedCourse === 'teoria-do-jogo' ? (
             <div className="row g-3">
-              <div className="col-12 mb-4">
-                <div className="card border-info">
+                  <div className="col-12 mb-4"> {/* Added mb-4 for spacing */}
+                <div className="card border-danger"> {/* Green outline */}
                   <div className="card-body">
-                    <h3 className="card-title text-info mb-4 text-center">
-                      <i className="bi bi-play-circle-fill me-2"></i>
-                      {language === 'pt' ? 'Vídeo de Introdução: Teoria do Jogo' : 'Introduction Video: Game Theory'}
+                    <h3 className="card-title text-danger">
+                      <i className="bi bi-pencil-square me-2"></i> {/* Icon for exercise */}
+                      {language === 'pt' ? '📝 Exame' : '📝 Exam'}
                     </h3>
-                    <div className="ratio ratio-16x9">
-                      <video controls muted playsInline className="w-100 h-100">
-                        <source src="/assets/material/teoria-do-jogo/jogo-de-teoria-introducao.mp4" type="video/mp4" />
-                        {language === 'pt' ? 'Seu navegador não suporta o elemento de vídeo.' : 'Your browser does not support the video tag.'}
-                      </video>
+                    <p className="card-text"><strong>
+                      {language === 'pt'
+                        ? 'Baixe O Exame de avaliação Compreensiva'
+                        : 'Download exercises to practice your knowledge.'}</strong>
+                    </p>
+                    <p className="card-text text-muted">Entrega: atè Segunda feira dia 4/8/25 as 23h00
+                       atravès dos emails dos prof. Josè Marcolino e Lucombo J. Luveia (luveia@hotmail.com)
+                        ou carregar directamente no portal lucombo.luveia.com na disciplina 
+                        de crescimento e desenvolvimento económico ou fazer arranjo 
+                        para entrega fisica na Acite na sala dos professores num envelope selado. </p>
+                    <div className="list-group list-group-flush">
+                      <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-word-fill me-2 text-primary"></i>
+                          Exame de avaliação Compreensiva (versão <strong>WORD</strong> )
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/economia/aula/Crescimento_Desenvolvimento Econ.Exame.27.7.25.docx"
+                            className="btn btn-sm btn-danger me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                      
+                        </div>
+                      </div>
+                         <div className="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap">
+                        <span className="mb-2 mb-md-0">
+                          <i className="bi bi-file-earmark-pdf-fill me-2 text-danger"></i>
+                          Exame de avaliação Compreensiva (versão <strong>PDF</strong> )
+                        </span>
+                        <div className="d-flex">
+                          <a
+                            href="/assets/material/economia/aula/Crescimento_Desenvolvimento Econ.Exame.27.7.25.pdf"
+                            className="btn btn-sm btn-danger me-2"
+                            download
+                          >
+                            <i className="bi bi-download me-1"></i> {language === 'pt' ? 'Baixar' : 'Download'}
+                          </a>
+                          <a
+                            href="/assets/material/economia/aula/Crescimento_Desenvolvimento Econ.Exame.27.7.25.pdf"
+                            className="btn btn-sm btn-outline-danger"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <i className="bi bi-eye me-1"></i> {language === 'pt' ? 'Ver' : 'View'}
+                          </a>
+                        </div>
+                      </div>
+
                     </div>
                   </div>
                 </div>
               </div>
+       
               <div className="col-12">
                 <div className="card h-100 border-info">
                   <div className="card-body">
