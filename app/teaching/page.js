@@ -21,48 +21,67 @@ export default function Teaching() {
         { 
           year: '2025',
           courses: [
-            {
-              id: 'economia',
-              name_pt: 'CRESCIMENTO E DESENVOLVIMENTO ECONOMICO',
-              name_en: 'ECONOMIC GROWTH AND DEVELOPMENT',
-              description_pt: 'Curso sobre os fundamentos do crescimento e desenvolvimento econômico.',
-              description_en: 'Course on the fundamentals of economic growth and development.',
-              passcode: '040450'
-            },
-            {
-              id: 'financas',
-              name_pt: 'FINANÇAS CORPORATIVAS',
-              name_en: 'CORPORATE FINANCE',
-              description_pt: 'Estudo das decisões financeiras dentro das empresas.',
-              description_en: 'Study of financial decisions within corporations.',
-              passcode: '228899'
-            },
-            {
-              id: 'cbc',
-              name_pt: 'Curso Básico sobre CBC/FT/FP',
-              name_en: 'Basic Course on CBC/FT/FP',
-              description_pt: 'Sistema internacional de combate ao branqueamento de capitais e financiamento do terrorismo',
-              description_en: 'International system for combating money laundering and terrorism financing',
-              passcode: '334455'
-            },
-            {
-              id: 'teoria-do-jogo',
-              name_pt: 'Teoria do Jogo',
-              name_en: 'Game Theory',
-              description_pt: 'Introdução aos princípios e aplicações da teoria dos jogos.',
-              description_en: 'Introduction to the principles and applications of game theory.',
-              passcode: '963852'
-            },
-            {
-              id: 'investimento-estrangeiro-directo',
-              name_pt: 'Investimento estrangeiro directo',
-              name_en: 'Foreign Direct Investment',
-              description_pt: 'Análise do investimento estrangeiro direto e seus impactos.',
-              description_en: 'Analysis of foreign direct investment and its impacts.',
-              passcode: '114477'
-            }
-          ]
-        }
+  {
+    id: 'economia',
+    name_pt: 'CRESCIMENTO E DESENVOLVIMENTO ECONOMICO',
+    name_en: 'ECONOMIC GROWTH AND DEVELOPMENT',
+    description_pt: 'Curso sobre os fundamentos do crescimento e desenvolvimento econômico.',
+    description_en: 'Course on the fundamentals of economic growth and development.',
+    passcode: '040450'
+  },
+  {
+    id: 'financas',
+    name_pt: 'FINANÇAS CORPORATIVAS',
+    name_en: 'CORPORATE FINANCE',
+    description_pt: 'Estudo das decisões financeiras dentro das empresas.',
+    description_en: 'Study of financial decisions within corporations.',
+    passcode: '228899'
+  },
+  {
+    id: 'cbc',
+    name_pt: 'Curso Básico sobre CBC/FT/FP',
+    name_en: 'Basic Course on CBC/FT/FP',
+    description_pt: 'Sistema internacional de combate ao branqueamento de capitais e financiamento do terrorismo',
+    description_en: 'International system for combating money laundering and terrorism financing',
+    passcode: '334455'
+  },
+  {
+    id: 'teoria-do-jogo',
+    name_pt: 'Teoria do Jogo',
+    name_en: 'Game Theory',
+    description_pt: 'Introdução aos princípios e aplicações da teoria dos jogos.',
+    description_en: 'Introduction to the principles and applications of game theory.',
+    passcode: '963852'
+  },
+  {
+    id: 'investimento-estrangeiro-directo',
+    name_pt: 'Investimento estrangeiro directo',
+    name_en: 'Foreign Direct Investment',
+    description_pt: 'Análise do investimento estrangeiro direto e seus impactos.',
+    description_en: 'Analysis of foreign direct investment and its impacts.',
+    passcode: '114477'
+  },
+
+  /* >>> NEW COURSE #1 (passcode 000000) <<< */
+  {
+    id: 'baiao-ft',
+    name_pt: 'Baião de identifica, investigação e acusação de FT',
+    name_en: 'Identification, Investigation & Prosecution of TF',
+    description_pt: 'Página em breve. Clique e use o código de acesso para visualizar.',
+    description_en: 'Coming soon page. Click and use the passcode to view.',
+    passcode: '000000'
+  },
+
+  /* >>> NEW COURSE #2 (passcode 000000) <<< */
+  {
+    id: 'inteligencia-bc',
+    name_pt: 'Transformar inteligência em evidências para casos de BC',
+    name_en: 'Turning Intelligence into Evidence for ML Cases',
+    description_pt: 'Página em breve. Clique e use o código de acesso para visualizar.',
+    description_en: 'Coming soon page. Click and use the passcode to view.',
+    passcode: '000000'
+  }
+]  }
       ]
     }
   ]
@@ -303,6 +322,29 @@ export default function Teaching() {
              <strong> <i className="bi bi-arrow-left me-2"></i> </strong>
             </button>
           </div>
+          
+          {(selectedCourse === 'baiao-ft' || selectedCourse === 'inteligencia-bc') && (
+  <div className="row g-3">
+    <div className="col-12">
+      <div className="card h-100 border-info text-center py-5">
+        <div className="card-body">
+          <h3 className="card-title text-info mb-3">
+            <i className="bi bi-hourglass-split me-2"></i>
+            {language === 'pt' ? 'Conteúdos em breve! 🚀📚✨' : 'Content coming soon! 🚀📚✨'}
+          </h3>
+          <p className="card-text lead text-muted">
+            {language === 'pt'
+              ? 'Estamos a preparar materiais para este curso. Volte em breve para novidades!'
+              : 'We are preparing materials for this course. Check back soon for updates!'}
+          </p>
+          <p className="card-text text-muted">
+            {language === 'pt' ? 'Obrigado pela paciência e interesse! 😊💡' : 'Thanks for your patience and interest! 😊💡'}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
           
           {selectedCourse === 'cbc' && (
             <div className="row g-3 mb-4">
