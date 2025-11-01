@@ -1,86 +1,563 @@
-/* Base Styles */
+/* Enhanced Home Page Styles */
+
 .container {
-  padding: 3rem 0;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
-/* Page Content */
-.pageContent {
-  flex-grow: 1;
-}
-
-.pageTitle {
-  font-weight: 700;
-  margin-bottom: 2rem;
-  color: var(--primary, #212529);
-  text-align: center;
-  font-size: 2.5rem;
-}
-
-/* Selection Area */
-.selectionArea {
-  background-color: var(--light-bg, #f8f9fa);
-  border-radius: 12px;
-  padding: 2.5rem;
-  margin-bottom: 2rem;
-  border: 1px solid var(--border, #dee2e6);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-}
-
-.bgLightBlue {
-  background-color: #e6f3ff !important;
-  border-color: #b8daff;
-}
-
-/* Materials Area */
-.materialsArea {
-  background-color: #ffffff;
-  border-radius: 8px;
-  padding: 2rem;
-  border: 1px solid var(--border, #dee2e6);
-  margin-top: 2rem;
-}
-
-/* Course Cards */
-.courseCard {
-  border: 1px solid var(--border, #dee2e6);
-  border-radius: 8px;
-  transition: all 0.3s ease;
-  cursor: pointer;
-}
-
-.courseCard:hover {
-  border-color: var(--accent, #0d6efd);
-  box-shadow: 0 4px 12px rgba(13, 110, 253, 0.1);
-  transform: translateY(-3px);
-}
-
-.courseCard.selected {
-  border-color: var(--accent, #0d6efd);
-  background-color: rgba(13, 110, 253, 0.05);
-}
-
-/* Animations */
 .fadeIn {
   animation: fadeIn 0.8s ease-in;
 }
 
-.slideUp {
-  animation: slideUp 0.5s ease-out forwards;
-}
-
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
+/* Profile Section */
+.profileContainer {
+  display: flex;
+  gap: 3rem;
+  align-items: flex-start;
+  margin-bottom: 4rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
 }
 
-/* Responsive Adjustments */
-@media (max-width: 992px) {
-  .selectionArea, .materialsArea {
-    padding: 1.5rem;
+.profileImageContainer {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profileImage {
+  width: 280px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease;
+}
+
+.profileImage:hover {
+  transform: scale(1.05);
+}
+
+.contactBar {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 1.5rem;
+}
+
+.contactIcon {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0066cc;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.contactIcon:hover {
+  background: #0066cc;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+}
+
+.profileContent {
+  flex: 1;
+}
+
+.nameTitle {
+  font-size: 2.8rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.5px;
+}
+
+.positionTitle {
+  font-size: 1.5rem;
+  color: #0066cc;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.bioSection {
+  margin: 1.5rem 0;
+}
+
+.bioText {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #444;
+  margin-bottom: 1rem;
+  text-align: justify;
+}
+
+.buttonsContainer {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.primaryButton,
+.outlineButton {
+  padding: 0.9rem 2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  display: inline-block;
+}
+
+.primaryButton {
+  background: #0066cc;
+  color: white;
+  border: 2px solid #0066cc;
+}
+
+.primaryButton:hover {
+  background: #0052a3;
+  border-color: #0052a3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+}
+
+.outlineButton {
+  background: transparent;
+  color: #0066cc;
+  border: 2px solid #0066cc;
+}
+
+.outlineButton:hover {
+  background: #0066cc;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
+}
+
+/* Statistics Section */
+.statsSection {
+  margin: 4rem 0;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+}
+
+.statCard {
+  text-align: center;
+  padding: 2rem 1rem;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+}
+
+.statCard:nth-child(2) {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.statCard:nth-child(3) {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+}
+
+.statCard:nth-child(4) {
+  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+}
+
+.statIcon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  opacity: 0.9;
+}
+
+.statNumber {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.statLabel {
+  font-size: 1rem;
+  opacity: 0.95;
+  font-weight: 500;
+}
+
+/* Section Title */
+.sectionTitle {
+  font-size: 2.2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 3rem;
+  color: #1a1a1a;
+  position: relative;
+  padding-bottom: 1rem;
+}
+
+.sectionTitle::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #0066cc, #00ccff);
+  border-radius: 2px;
+}
+
+/* Research Areas Section */
+.researchAreasSection {
+  margin: 5rem 0;
+  padding: 0 1rem;
+}
+
+.researchGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.researchCard {
+  padding: 2.5rem 2rem;
+  background: white;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.researchCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 35px rgba(0, 102, 204, 0.15);
+  border-color: #0066cc;
+}
+
+.researchIcon {
+  font-size: 3rem;
+  color: #0066cc;
+  margin-bottom: 1.5rem;
+}
+
+.researchTitle {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+}
+
+.researchDescription {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #666;
+}
+
+/* Featured Work Section */
+.featuredSection {
+  margin: 5rem 0;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+  border-radius: 20px;
+}
+
+.featuredGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+}
+
+.featuredCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-left: 4px solid #0066cc;
+}
+
+.featuredCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+}
+
+.featuredHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.featuredCategory {
+  background: #0066cc;
+  color: white;
+  padding: 0.4rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.featuredYear {
+  color: #666;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.featuredTitle {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+.featuredDescription {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #666;
+  margin-bottom: 1.5rem;
+}
+
+.readMoreLink {
+  color: #0066cc;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.readMoreLink:hover {
+  color: #0052a3;
+  padding-left: 5px;
+}
+
+/* Call to Action Section */
+.ctaSection {
+  margin: 5rem 0;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 20px;
+  text-align: center;
+  color: white;
+}
+
+.ctaContent {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.ctaTitle {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.ctaDescription {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  opacity: 0.95;
+}
+
+.ctaButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ctaPrimaryButton,
+.ctaSecondaryButton {
+  padding: 1rem 2.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 1.1rem;
+}
+
+.ctaPrimaryButton {
+  background: white;
+  color: #667eea;
+  border: 2px solid white;
+}
+
+.ctaPrimaryButton:hover {
+  background: transparent;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.ctaSecondaryButton {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.ctaSecondaryButton:hover {
+  background: white;
+  color: #667eea;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+/* GDP Section */
+.gdpSection {
+  margin: 5rem 0;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+.gdpTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 1rem;
+  color: #1a1a1a;
+}
+
+.gdpDescription {
+  text-align: center;
+  font-size: 1.1rem;
+  color: #666;
+  margin-bottom: 2rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Regional Focus Section */
+.regionalSection {
+  margin: 5rem 0;
+  padding: 0 1rem;
+}
+
+.regionalGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.regionalCard {
+  padding: 2.5rem 2rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 15px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 2px solid #e0e0e0;
+}
+
+.regionalCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 35px rgba(0, 102, 204, 0.2);
+  border-color: #0066cc;
+}
+
+.regionalCard h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 1.5rem 0 1rem;
+}
+
+.regionalCard p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: #666;
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .profileContainer {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .nameTitle {
+    font-size: 2.2rem;
+  }
+
+  .buttonsContainer {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .researchGrid,
+  .featuredGrid,
+  .regionalGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .ctaButtons {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .ctaPrimaryButton,
+  .ctaSecondaryButton {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+@media (max-width: 576px) {
+  .profileImage {
+    width: 220px;
+    height: 220px;
+  }
+
+  .nameTitle {
+    font-size: 1.8rem;
+  }
+
+  .positionTitle {
+    font-size: 1.2rem;
+  }
+
+  .statsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sectionTitle {
+    font-size: 1.8rem;
+  }
+
+  .ctaTitle {
+    font-size: 1.8rem;
   }
 }
