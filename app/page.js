@@ -14,7 +14,7 @@ export default function Home() {
       description_pt: 'Análise de mercados de trabalho, dinâmica do emprego e desenvolvimento da força de trabalho'
     },
     {
-      icon: 'bi-globe-americas',
+      icon: 'bi-globe',
       title_en: 'International Development',
       title_pt: 'Desenvolvimento Internacional',
       description_en: 'Focus on economic growth in energy-producing countries and Africa',
