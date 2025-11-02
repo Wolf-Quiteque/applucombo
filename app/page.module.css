@@ -1,4 +1,4 @@
-/* Enhanced Home Page Styles */
+/* Enhanced Home Page Styles - Blue and White Theme */
 
 .container {
   max-width: 1400px;
@@ -28,9 +28,9 @@
   align-items: flex-start;
   margin-bottom: 4rem;
   padding: 2rem;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
   border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 10px 40px rgba(0, 102, 204, 0.15);
 }
 
 .profileImageContainer {
@@ -43,8 +43,9 @@
   height: 280px;
   object-fit: cover;
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 8px 30px rgba(0, 102, 204, 0.2);
   transition: transform 0.3s ease;
+  border: 3px solid white;
 }
 
 .profileImage:hover {
@@ -69,7 +70,7 @@
   color: #0066cc;
   font-size: 1.2rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.15);
 }
 
 .contactIcon:hover {
@@ -86,14 +87,14 @@
 .nameTitle {
   font-size: 2.8rem;
   font-weight: 700;
-  color: #1a1a1a;
+  color: #0d47a1;
   margin-bottom: 0.5rem;
   letter-spacing: -0.5px;
 }
 
 .positionTitle {
   font-size: 1.5rem;
-  color: #0066cc;
+  color: #1976d2;
   font-weight: 600;
   margin-bottom: 1.5rem;
 }
@@ -105,7 +106,7 @@
 .bioText {
   font-size: 1.1rem;
   line-height: 1.8;
-  color: #444;
+  color: #1565c0;
   margin-bottom: 1rem;
   text-align: justify;
 }
@@ -128,29 +129,29 @@
 }
 
 .primaryButton {
-  background: #0066cc;
+  background: #1976d2;
   color: white;
-  border: 2px solid #0066cc;
+  border: 2px solid #1976d2;
 }
 
 .primaryButton:hover {
-  background: #0052a3;
-  border-color: #0052a3;
+  background: #0d47a1;
+  border-color: #0d47a1;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
+  box-shadow: 0 6px 20px rgba(13, 71, 161, 0.4);
 }
 
 .outlineButton {
-  background: transparent;
-  color: #0066cc;
-  border: 2px solid #0066cc;
+  background: white;
+  color: #1976d2;
+  border: 2px solid #1976d2;
 }
 
 .outlineButton:hover {
-  background: #0066cc;
+  background: #1976d2;
   color: white;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.3);
+  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
 }
 
 /* Statistics Section */
@@ -159,7 +160,7 @@
   padding: 3rem 2rem;
   background: white;
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 102, 204, 0.1);
 }
 
 .statsGrid {
@@ -172,7 +173,7 @@
   text-align: center;
   padding: 2rem 1rem;
   border-radius: 15px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
   color: white;
   transition: transform 0.3s ease;
 }
@@ -182,15 +183,15 @@
 }
 
 .statCard:nth-child(2) {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
 }
 
 .statCard:nth-child(3) {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
 }
 
 .statCard:nth-child(4) {
-  background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
 }
 
 .statIcon {
@@ -217,7 +218,7 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: 3rem;
-  color: #1a1a1a;
+  color: #0d47a1;
   position: relative;
   padding-bottom: 1rem;
 }
@@ -230,7 +231,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 4px;
-  background: linear-gradient(90deg, #0066cc, #00ccff);
+  background: linear-gradient(90deg, #1976d2, #42a5f5);
   border-radius: 2px;
 }
 
@@ -250,41 +251,41 @@
   padding: 2.5rem 2rem;
   background: white;
   border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 5px 20px rgba(0, 102, 204, 0.1);
   transition: all 0.3s ease;
-  border: 2px solid transparent;
+  border: 2px solid #e3f2fd;
 }
 
 .researchCard:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 35px rgba(0, 102, 204, 0.15);
-  border-color: #0066cc;
+  box-shadow: 0 12px 35px rgba(25, 118, 210, 0.2);
+  border-color: #1976d2;
 }
 
 .researchIcon {
   font-size: 3rem;
-  color: #0066cc;
+  color: #1976d2;
   margin-bottom: 1.5rem;
 }
 
 .researchTitle {
   font-size: 1.4rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #0d47a1;
   margin-bottom: 1rem;
 }
 
 .researchDescription {
   font-size: 1rem;
   line-height: 1.7;
-  color: #666;
+  color: #1565c0;
 }
 
 /* Featured Work Section */
 .featuredSection {
   margin: 5rem 0;
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
   border-radius: 20px;
 }
 
@@ -298,14 +299,14 @@
   background: white;
   padding: 2rem;
   border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 5px 20px rgba(0, 102, 204, 0.1);
   transition: all 0.3s ease;
-  border-left: 4px solid #0066cc;
+  border-left: 4px solid #1976d2;
 }
 
 .featuredCard:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 30px rgba(25, 118, 210, 0.2);
 }
 
 .featuredHeader {
@@ -316,7 +317,7 @@
 }
 
 .featuredCategory {
-  background: #0066cc;
+  background: #1976d2;
   color: white;
   padding: 0.4rem 1rem;
   border-radius: 20px;
@@ -325,7 +326,7 @@
 }
 
 .featuredYear {
-  color: #666;
+  color: #1565c0;
   font-weight: 600;
   font-size: 0.95rem;
 }
@@ -333,7 +334,7 @@
 .featuredTitle {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #0d47a1;
   margin-bottom: 1rem;
   line-height: 1.4;
 }
@@ -341,19 +342,19 @@
 .featuredDescription {
   font-size: 1rem;
   line-height: 1.7;
-  color: #666;
+  color: #1565c0;
   margin-bottom: 1.5rem;
 }
 
 .readMoreLink {
-  color: #0066cc;
+  color: #1976d2;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
 .readMoreLink:hover {
-  color: #0052a3;
+  color: #0d47a1;
   padding-left: 5px;
 }
 
@@ -361,7 +362,7 @@
 .ctaSection {
   margin: 5rem 0;
   padding: 4rem 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
   border-radius: 20px;
   text-align: center;
   color: white;
@@ -404,7 +405,7 @@
 
 .ctaPrimaryButton {
   background: white;
-  color: #667eea;
+  color: #1976d2;
   border: 2px solid white;
 }
 
@@ -412,7 +413,7 @@
   background: transparent;
   color: white;
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
 }
 
 .ctaSecondaryButton {
@@ -423,9 +424,9 @@
 
 .ctaSecondaryButton:hover {
   background: white;
-  color: #667eea;
+  color: #1976d2;
   transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
 }
 
 /* GDP Section */
@@ -434,7 +435,7 @@
   padding: 3rem 2rem;
   background: white;
   border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 30px rgba(0, 102, 204, 0.1);
 }
 
 .gdpTitle {
@@ -442,13 +443,13 @@
   font-weight: 700;
   text-align: center;
   margin-bottom: 1rem;
-  color: #1a1a1a;
+  color: #0d47a1;
 }
 
 .gdpDescription {
   text-align: center;
   font-size: 1.1rem;
-  color: #666;
+  color: #1565c0;
   margin-bottom: 2rem;
   max-width: 800px;
   margin-left: auto;
@@ -469,31 +470,31 @@
 
 .regionalCard {
   padding: 2.5rem 2rem;
-  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  background: white;
   border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 5px 20px rgba(0, 102, 204, 0.1);
   text-align: center;
   transition: all 0.3s ease;
-  border: 2px solid #e0e0e0;
+  border: 2px solid #e3f2fd;
 }
 
 .regionalCard:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 35px rgba(0, 102, 204, 0.2);
-  border-color: #0066cc;
+  box-shadow: 0 12px 35px rgba(25, 118, 210, 0.2);
+  border-color: #1976d2;
 }
 
 .regionalCard h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #1a1a1a;
+  color: #0d47a1;
   margin: 1.5rem 0 1rem;
 }
 
 .regionalCard p {
   font-size: 1rem;
   line-height: 1.7;
-  color: #666;
+  color: #1565c0;
 }
 
 /* Responsive Design */
