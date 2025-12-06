@@ -17,20 +17,27 @@ export async function GET(request) {
     }
 
     const db = await getDb()
-    const programas = db.collection('programas')
+    const programasCol = db.collection('programas')
 
-    const docs = await programas
+    const docs = await programasCol
       .find({ alunoId: new ObjectId(alunoId) })
       .sort({ createdAt: -1 })
       .toArray()
 
-    const result = docs.map(p => ({
-      ...p,
-      id: p._id.toString(),
-      _id: undefined
+    const programas = docs.map(p => ({
+      id: p._id.toString(),      // <- MUITO IMPORTANTE
+      alunoId: p.alunoId.toString(),
+      tema: p.tema,
+      descricao: p.descricao,
+      deadline: p.deadline,
+      notas: p.notas || '',
+      concluido: !!p.concluido,
+      comentarioProfessor: p.comentarioProfessor || '',
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt
     }))
 
-    return NextResponse.json({ programas: result }, { status: 200 })
+    return NextResponse.json({ programas }, { status: 200 })
   } catch (error) {
     console.error('Erro ao listar programas:', error)
     return NextResponse.json(
@@ -54,29 +61,40 @@ export async function POST(request) {
     }
 
     const db = await getDb()
-    const programas = db.collection('programas')
+    const programasCol = db.collection('programas')
 
     const now = new Date()
     const doc = {
       alunoId: new ObjectId(alunoId),
       tema,
       descricao,
-      deadline, // pode ser string "2025-12-31"
+      deadline,       // string yyyy-mm-dd
       notas: notas || '',
       concluido: false,
+      comentarioProfessor: '',
       createdAt: now,
       updatedAt: now
     }
 
-    const result = await programas.insertOne(doc)
+    const result = await programasCol.insertOne(doc)
+
+    const programa = {
+      id: result.insertedId.toString(),
+      alunoId,
+      tema: doc.tema,
+      descricao: doc.descricao,
+      deadline: doc.deadline,
+      notas: doc.notas,
+      concluido: doc.concluido,
+      comentarioProfessor: doc.comentarioProfessor,
+      createdAt: doc.createdAt,
+      updatedAt: doc.updatedAt
+    }
 
     return NextResponse.json(
       {
         message: 'Entrada adicionada ao programa.',
-        programa: {
-          ...doc,
-          id: result.insertedId.toString()
-        }
+        programa
       },
       { status: 201 }
     )

@@ -10,9 +10,9 @@ export async function PUT(request, { params }) {
     const { concluido, notas, comentarioProfessor } = body
 
     const db = await getDb()
-    const programas = db.collection('programas')
+    const programasCol = db.collection('programas')
 
-    const existente = await programas.findOne({ _id: new ObjectId(id) })
+    const existente = await programasCol.findOne({ _id: new ObjectId(id) })
     if (!existente) {
       return NextResponse.json(
         { error: 'Registo não encontrado.' },
@@ -24,7 +24,7 @@ export async function PUT(request, { params }) {
       updatedAt: new Date()
     }
 
-    // Validação do concluído (tanto para aluno como professor)
+    // Validação do "concluido" (só na data ou depois)
     if (typeof concluido === 'boolean') {
       if (concluido && existente.deadline) {
         const hoje = new Date()
@@ -56,7 +56,7 @@ export async function PUT(request, { params }) {
       updateFields.comentarioProfessor = comentarioProfessor
     }
 
-    const result = await programas.findOneAndUpdate(
+    const result = await programasCol.findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: updateFields },
       { returnDocument: 'after' }
@@ -70,14 +70,23 @@ export async function PUT(request, { params }) {
     }
 
     const p = result.value
+    const programa = {
+      id: p._id.toString(),
+      alunoId: p.alunoId.toString(),
+      tema: p.tema,
+      descricao: p.descricao,
+      deadline: p.deadline,
+      notas: p.notas || '',
+      concluido: !!p.concluido,
+      comentarioProfessor: p.comentarioProfessor || '',
+      createdAt: p.createdAt,
+      updatedAt: p.updatedAt
+    }
+
     return NextResponse.json(
       {
-        message: 'Programa actualizado.',
-        programa: {
-          ...p,
-          id: p._id.toString(),
-          _id: undefined
-        }
+        message: 'Programa atualizado.',
+        programa
       },
       { status: 200 }
     )
