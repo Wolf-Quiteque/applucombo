@@ -47,6 +47,12 @@ export default function Navbar() {
                 {language === 'pt' ? 'Ensino' : 'Teaching'}
               </Link>
             </li>
+          
+<li className="nav-item">
+  <Link href="/mentoring" className="nav-link">
+    Mentoria
+  </Link>
+</li>
           </ul>
           
           <div 
