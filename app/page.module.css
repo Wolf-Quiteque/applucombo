@@ -1,564 +1,135 @@
-/* Enhanced Home Page Styles - Blue and White Theme */
-
 .container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 2rem;
+  background-color: white;
 }
 
-.fadeIn {
-  animation: fadeIn 0.8s ease-in;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Profile Section */
 .profileContainer {
   display: flex;
-  gap: 3rem;
-  align-items: flex-start;
-  margin-bottom: 4rem;
-  padding: 2rem;
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  border-radius: 20px;
-  box-shadow: 0 10px 40px rgba(0, 102, 204, 0.15);
+  flex-wrap: wrap;
+  align-items: center;
 }
 
 .profileImageContainer {
-  position: relative;
-  flex-shrink: 0;
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2rem;
 }
 
 .profileImage {
-  width: 280px;
-  height: 280px;
-  object-fit: cover;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 102, 204, 0.2);
-  transition: transform 0.3s ease;
-  border: 3px solid white;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  max-width: 100%;
+  height: auto;
 }
 
-.profileImage:hover {
-  transform: scale(1.05);
+.profileContent {
+  width: 100%;
+  text-align: center;
+}
+
+.nameTitle {
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #212529;
+}
+
+.positionTitle {
+  font-size: 1.2rem;
+  color: #495057;
+  margin-bottom: 2rem;
+  font-weight: 500;
+}
+
+.bioSection {
+  margin-top: 1rem;
+}
+
+.bioText {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+  color: #495057;
 }
 
 .contactBar {
   display: flex;
-  gap: 1rem;
   justify-content: center;
-  margin-top: 1.5rem;
+  gap: 1.5rem;
+  margin: 2rem 0;
 }
 
 .contactIcon {
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #0066cc;
-  font-size: 1.2rem;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 102, 204, 0.15);
+  color: #495057;
+  font-size: 1.5rem;
+  transition: all 0.2s ease;
 }
 
 .contactIcon:hover {
-  background: #0066cc;
-  color: white;
+  color: #0d6efd;
   transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4);
-}
-
-.profileContent {
-  flex: 1;
-}
-
-.nameTitle {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #1a1a1a;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.5px;
-}
-
-.positionTitle {
-  font-size: 1.5rem;
-  color: #1976d2;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-}
-
-.bioSection {
-  margin: 1.5rem 0;
-}
-
-.bioText {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  color: #444;
-  margin-bottom: 1rem;
-  text-align: justify;
 }
 
 .buttonsContainer {
-  display: flex;
-  gap: 1rem;
   margin-top: 2rem;
 }
 
-.primaryButton,
-.outlineButton {
-  padding: 0.9rem 2rem;
-  border-radius: 10px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 1rem;
-  display: inline-block;
-}
-
 .primaryButton {
-  background: #1976d2;
+  background-color: #0d6efd;
   color: white;
-  border: 2px solid #1976d2;
-}
-
-.primaryButton:hover {
-  background: #0d47a1;
-  border-color: #0d47a1;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(13, 71, 161, 0.4);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
 .outlineButton {
-  background: white;
-  color: #1976d2;
-  border: 2px solid #1976d2;
-}
-
-.outlineButton:hover {
-  background: #1976d2;
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
-}
-
-/* Statistics Section */
-.statsSection {
-  margin: 4rem 0;
-  padding: 3rem 2rem;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 102, 204, 0.1);
-}
-
-.statsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
-}
-
-.statCard {
-  text-align: center;
-  padding: 2rem 1rem;
-  border-radius: 15px;
-  background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);
-  color: white;
-  transition: transform 0.3s ease;
-}
-
-.statCard:hover {
-  transform: translateY(-5px);
-}
-
-.statCard:nth-child(2) {
-  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
-}
-
-.statCard:nth-child(3) {
-  background: linear-gradient(135deg, #42a5f5 0%, #2196f3 100%);
-}
-
-.statCard:nth-child(4) {
-  background: linear-gradient(135deg, #64b5f6 0%, #42a5f5 100%);
-}
-
-.statIcon {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  opacity: 0.9;
-}
-
-.statNumber {
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-}
-
-.statLabel {
-  font-size: 1rem;
-  opacity: 0.95;
-  font-weight: 500;
-}
-
-/* Section Title */
-.sectionTitle {
-  font-size: 2.2rem;
-  font-weight: 700;
-  text-align: center;
-  margin-bottom: 3rem;
-  color: #1a1a1a;
-  position: relative;
-  padding-bottom: 1rem;
-}
-
-.sectionTitle::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 4px;
-  background: linear-gradient(90deg, #1976d2, #42a5f5);
-  border-radius: 2px;
-}
-
-/* Research Areas Section */
-.researchAreasSection {
-  margin: 5rem 0;
-  padding: 0 1rem;
-}
-
-.researchGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-}
-
-.researchCard {
-  padding: 2.5rem 2rem;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0, 102, 204, 0.1);
-  transition: all 0.3s ease;
-  border: 2px solid #e3f2fd;
-}
-
-.researchCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 35px rgba(25, 118, 210, 0.2);
-  border-color: #1976d2;
-}
-
-.researchIcon {
-  font-size: 3rem;
-  color: #1976d2;
-  margin-bottom: 1.5rem;
-}
-
-.researchTitle {
-  font-size: 1.4rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 1rem;
-}
-
-.researchDescription {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: #666;
-}
-
-/* Featured Work Section */
-.featuredSection {
-  margin: 5rem 0;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-  border-radius: 20px;
-}
-
-.featuredGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 2rem;
-}
-
-.featuredCard {
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0, 102, 204, 0.1);
-  transition: all 0.3s ease;
-  border-left: 4px solid #1976d2;
-}
-
-.featuredCard:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(25, 118, 210, 0.2);
-}
-
-.featuredHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.featuredCategory {
-  background: #1976d2;
-  color: white;
-  padding: 0.4rem 1rem;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-}
-
-.featuredYear {
-  color: #666;
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-.featuredTitle {
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 1rem;
-  line-height: 1.4;
-}
-
-.featuredDescription {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: #666;
-  margin-bottom: 1.5rem;
-}
-
-.readMoreLink {
-  color: #1976d2;
-  font-weight: 600;
+  border: 1px solid #0d6efd;
+  color: #0d6efd;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
+  margin-right: 0.5rem;
 }
 
-.readMoreLink:hover {
-  color: #0d47a1;
-  padding-left: 5px;
+@media (min-width: 768px) {
+  .profileImageContainer {
+    width: 40%;
+    margin-bottom: 0;
+  }
+
+  .profileContent {
+    width: 60%;
+    padding-left: 2rem;
+    text-align: left;
+  }
 }
 
-/* Call to Action Section */
-.ctaSection {
-  margin: 5rem 0;
-  padding: 4rem 2rem;
-  background: linear-gradient(135deg, #1976d2 0%, #0d47a1 100%);
-  border-radius: 20px;
-  text-align: center;
-  color: white;
-}
-
-.ctaContent {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.ctaTitle {
-  font-size: 2.2rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-}
-
-.ctaDescription {
-  font-size: 1.2rem;
-  line-height: 1.8;
-  margin-bottom: 2.5rem;
-  opacity: 0.95;
-}
-
-.ctaButtons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-
-.ctaPrimaryButton,
-.ctaSecondaryButton {
-  padding: 1rem 2.5rem;
-  border-radius: 10px;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 1.1rem;
-}
-
-.ctaPrimaryButton {
-  background: white;
-  color: #1976d2;
-  border: 2px solid white;
-}
-
-.ctaPrimaryButton:hover {
-  background: transparent;
-  color: white;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
-}
-
-.ctaSecondaryButton {
-  background: transparent;
-  color: white;
-  border: 2px solid white;
-}
-
-.ctaSecondaryButton:hover {
-  background: white;
-  color: #1976d2;
-  transform: translateY(-3px);
-  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.3);
-}
-
-/* GDP Section */
 .gdpSection {
-  margin: 5rem 0;
-  padding: 3rem 2rem;
-  background: white;
-  border-radius: 20px;
-  box-shadow: 0 8px 30px rgba(0, 102, 204, 0.1);
+  margin-top: 3rem;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+  text-align: center; /* Center content for mobile */
 }
 
 .gdpTitle {
-  font-size: 2rem;
   font-weight: 700;
-  text-align: center;
-  margin-bottom: 1rem;
-  color: #1a1a1a;
+  margin-bottom: 1.5rem;
+  color: #212529;
+  font-size: 2rem;
 }
 
-.gdpDescription {
-  text-align: center;
-  font-size: 1.1rem;
-  color: #666;
-  margin-bottom: 2rem;
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-/* Regional Focus Section */
-.regionalSection {
-  margin: 5rem 0;
-  padding: 0 1rem;
-}
-
-.regionalGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-}
-
-.regionalCard {
-  padding: 2.5rem 2rem;
-  background: white;
-  border-radius: 15px;
-  box-shadow: 0 5px 20px rgba(0, 102, 204, 0.1);
-  text-align: center;
-  transition: all 0.3s ease;
-  border: 2px solid #e3f2fd;
-}
-
-.regionalCard:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 35px rgba(25, 118, 210, 0.2);
-  border-color: #1976d2;
-}
-
-.regionalCard h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin: 1.5rem 0 1rem;
-}
-
-.regionalCard p {
-  font-size: 1rem;
-  line-height: 1.7;
-  color: #666;
-}
-
-/* Responsive Design */
-@media (max-width: 968px) {
-  .profileContainer {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+@media (max-width: 767px) {
+  .gdpSection {
+    padding: 1rem;
+    margin-top: 2rem;
   }
 
-  .nameTitle {
-    font-size: 2.2rem;
-  }
-
-  .buttonsContainer {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .statsGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .researchGrid,
-  .featuredGrid,
-  .regionalGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .ctaButtons {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .ctaPrimaryButton,
-  .ctaSecondaryButton {
-    width: 100%;
-    max-width: 300px;
-  }
-}
-
-@media (max-width: 576px) {
-  .profileImage {
-    width: 220px;
-    height: 220px;
-  }
-
-  .nameTitle {
-    font-size: 1.8rem;
-  }
-
-  .positionTitle {
-    font-size: 1.2rem;
-  }
-
-  .statsGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .sectionTitle {
-    font-size: 1.8rem;
-  }
-
-  .ctaTitle {
-    font-size: 1.8rem;
+  .gdpTitle {
+    font-size: 1.5rem;
   }
 }
