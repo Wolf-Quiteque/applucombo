@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react'
 import axios from 'axios'
-import styles from '../page.module.css' // já tem bons estilos de cards/áreas
+import styles from '../page.module.css' // estilos globais de cards/áreas
 
 const cursosDisponiveis = [
   'Crescimento e Desenvolvimento Económico',
@@ -55,6 +55,7 @@ export default function MentoringPage() {
       setUser(parsed)
       carregarProgramas(parsed.id)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   async function handleSignup(e) {
@@ -77,8 +78,7 @@ export default function MentoringPage() {
         window.localStorage.setItem('mentoringUser', JSON.stringify(newUser))
       }
       setInfo('Conta criada com sucesso. Já pode criar o seu programa.')
-      setModo('login') // se preferir, pode deixar já logado
-      // opcional: carregarProgramas(newUser.id)
+      setModo('login') // se preferir que tenha de entrar de novo, basta remover setUser(newUser)
     } catch (err) {
       setErro(
         err.response?.data?.error ||
@@ -175,45 +175,45 @@ export default function MentoringPage() {
     }
   }
 
-async function toggleConcluido(programa) {
-  setErro('')
-  setInfo('')
+  // só deixa marcar concluído na data do deadline ou depois
+  async function toggleConcluido(programa) {
+    setErro('')
+    setInfo('')
 
-  // Só bloqueamos quando ele quer marcar como concluído
-  if (!programa.concluido && programa.deadline) {
-    const hoje = new Date()
-    hoje.setHours(0, 0, 0, 0)
+    if (!programa.concluido && programa.deadline) {
+      const hoje = new Date()
+      hoje.setHours(0, 0, 0, 0)
 
-    const deadlineDate = new Date(programa.deadline)
-    if (!isNaN(deadlineDate)) {
-      deadlineDate.setHours(0, 0, 0, 0)
+      const deadlineDate = new Date(programa.deadline)
+      if (!isNaN(deadlineDate)) {
+        deadlineDate.setHours(0, 0, 0, 0)
 
-      if (deadlineDate > hoje) {
-        setErro(
-          'Só pode marcar esta tarefa como concluída na data do deadline ou depois.'
-        )
-        return
+        if (deadlineDate > hoje) {
+          setErro(
+            'Só pode marcar esta tarefa como concluída na data do deadline ou depois.'
+          )
+          return
+        }
       }
     }
-  }
 
-  try {
-    const res = await axios.put(
-      `/api/mentoring/programas/${programa.id}`,
-      { concluido: !programa.concluido }
-    )
-    const updated = res.data.programa
-    setProgramas(prev =>
-      prev.map(p => (p.id === updated.id ? updated : p))
-    )
-  } catch (err) {
-    console.error(err)
-    setErro(
-      err.response?.data?.error ||
-        'Não foi possível actualizar o status.'
-    )
+    try {
+      const res = await axios.put(
+        `/api/mentoring/programas/${programa.id}`,
+        { concluido: !programa.concluido }
+      )
+      const updated = res.data.programa
+      setProgramas(prev =>
+        prev.map(p => (p.id === updated.id ? updated : p))
+      )
+    } catch (err) {
+      console.error(err)
+      setErro(
+        err.response?.data?.error ||
+          'Não foi possível actualizar o status.'
+      )
+    }
   }
-}
 
   function abrirNotas(programa) {
     setNotaAberta(programa)
@@ -254,8 +254,8 @@ async function toggleConcluido(programa) {
             Programa de Mentoria do Aluno
           </h1>
           <p className="text-muted">
-            Organize os seus temas, tarefas e prazos. O objectivo é ter tudo claro,
-            num só lugar, para si e para o professor.
+            Organize os seus temas, tarefas e prazos. O objectivo é ter tudo
+            claro, num só lugar, para si e para o professor.
           </p>
         </div>
       </div>
@@ -271,128 +271,131 @@ async function toggleConcluido(programa) {
       )}
 
       <div className="row">
-        {/* COLUNA ESQUERDA: LOGIN/REGISTO */}
+        {/* COLUNA ESQUERDA: LOGIN/REGISTO / SESSÃO */}
         <div className="col-lg-4 mb-4">
           <div
             className={`${styles.selectionArea || ''} bg-white border rounded`}
           >
-            <div className="d-flex justify-content-between mb-3">
-              <button
-                className={
-                  'btn btn-sm ' +
-                  (modo === 'login'
-                    ? 'btn-primary'
-                    : 'btn-outline-primary')
-                }
-                onClick={() => setModo('login')}
-              >
-                Entrar
-              </button>
-              <button
-                className={
-                  'btn btn-sm ' +
-                  (modo === 'signup'
-                    ? 'btn-primary'
-                    : 'btn-outline-primary')
-                }
-                onClick={() => setModo('signup')}
-              >
-                Criar conta
-              </button>
-            </div>
-
-            {!user && modo === 'signup' && (
-              <form onSubmit={handleSignup}>
-                <h5 className="mb-3">Criar conta de aluno</h5>
-                <div className="mb-3">
-                  <label className="form-label">Nome completo</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={nomeCompleto}
-                    onChange={e => setNomeCompleto(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Telefone</label>
-                  <input
-                    type="tel"
-                    className="form-control"
-                    value={telefone}
-                    onChange={e => setTelefone(e.target.value)}
-                    placeholder="Ex: 923 000 000"
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Palavra-passe</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    value={senha}
-                    onChange={e => setSenha(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Curso actual</label>
-                  <select
-                    className="form-select"
-                    value={curso}
-                    onChange={e => setCurso(e.target.value)}
+            {!user ? (
+              <>
+                {/* Toggle entre login e signup */}
+                <div className="d-flex justify-content-between mb-3">
+                  <button
+                    className={
+                      'btn btn-sm ' +
+                      (modo === 'login'
+                        ? 'btn-primary'
+                        : 'btn-outline-primary')
+                    }
+                    onClick={() => setModo('login')}
                   >
-                    {cursosDisponiveis.map(c => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
+                    Entrar
+                  </button>
+                  <button
+                    className={
+                      'btn btn-sm ' +
+                      (modo === 'signup'
+                        ? 'btn-primary'
+                        : 'btn-outline-primary')
+                    }
+                    onClick={() => setModo('signup')}
+                  >
+                    Criar conta
+                  </button>
                 </div>
-                <button
-                  type="submit"
-                  className="btn btn-primary w-100"
-                  disabled={loading}
-                >
-                  {loading ? 'A criar conta...' : 'Criar conta'}
-                </button>
-              </form>
-            )}
 
-            {!user && modo === 'login' && (
-              <form onSubmit={handleLogin}>
-                <h5 className="mb-3">Entrar</h5>
-                <div className="mb-3">
-                  <label className="form-label">Telefone</label>
-                  <input
-                    type="tel"
-                    className="form-control"
-                    value={loginTelefone}
-                    onChange={e => setLoginTelefone(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label className="form-label">Palavra-passe</label>
-                  <input
-                    type="password"
-                    className="form-control"
-                    value={loginSenha}
-                    onChange={e => setLoginSenha(e.target.value)}
-                    required
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="btn btn-primary w-100"
-                  disabled={loading}
-                >
-                  {loading ? 'A entrar...' : 'Entrar'}
-                </button>
-              </form>
-            )}
+                {modo === 'signup' && (
+                  <form onSubmit={handleSignup}>
+                    <h5 className="mb-3">Criar conta de aluno</h5>
+                    <div className="mb-3">
+                      <label className="form-label">Nome completo</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={nomeCompleto}
+                        onChange={e => setNomeCompleto(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Telefone</label>
+                      <input
+                        type="tel"
+                        className="form-control"
+                        value={telefone}
+                        onChange={e => setTelefone(e.target.value)}
+                        placeholder="Ex: 923 000 000"
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Palavra-passe</label>
+                      <input
+                        type="password"
+                        className="form-control"
+                        value={senha}
+                        onChange={e => setSenha(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Curso actual</label>
+                      <select
+                        className="form-select"
+                        value={curso}
+                        onChange={e => setCurso(e.target.value)}
+                      >
+                        {cursosDisponiveis.map(c => (
+                          <option key={c} value={c}>
+                            {c}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <button
+                      type="submit"
+                      className="btn btn-primary w-100"
+                      disabled={loading}
+                    >
+                      {loading ? 'A criar conta...' : 'Criar conta'}
+                    </button>
+                  </form>
+                )}
 
-            {user && (
+                {modo === 'login' && (
+                  <form onSubmit={handleLogin}>
+                    <h5 className="mb-3">Entrar</h5>
+                    <div className="mb-3">
+                      <label className="form-label">Telefone</label>
+                      <input
+                        type="tel"
+                        className="form-control"
+                        value={loginTelefone}
+                        onChange={e => setLoginTelefone(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label className="form-label">Palavra-passe</label>
+                      <input
+                        type="password"
+                        className="form-control"
+                        value={loginSenha}
+                        onChange={e => setLoginSenha(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="btn btn-primary w-100"
+                      disabled={loading}
+                    >
+                      {loading ? 'A entrar...' : 'Entrar'}
+                    </button>
+                  </form>
+                )}
+              </>
+            ) : (
               <div>
                 <h5 className="mb-3">Sessão</h5>
                 <p className="mb-1">
@@ -420,32 +423,32 @@ async function toggleConcluido(programa) {
             {user ? (
               <>
                 {/* PROGRESSO */}
-<div className="mb-4">
-  <label className="form-label fw-semibold">
-    Progresso geral: {progresso}%
-  </label>
-  <div className="progress">
-    <div
-      className="progress-bar"
-      role="progressbar"
-      style={{ width: `${progresso}%` }}
-      aria-valuenow={progresso}
-      aria-valuemin="0"
-      aria-valuemax="100"
-    >
-      {progresso}%
-    </div>
-  </div>
-  <small className="text-muted">
-    {progresso === 0
-      ? 'Comece adicionando o primeiro tema.'
-      : progresso < 50
-      ? 'Boa, já começou. Continue a avançar passo a passo.'
-      : progresso < 100
-      ? 'Já fez mais de metade do plano, mantenha o ritmo.'
-      : 'Parabéns, concluiu todo o programa!'}
-  </small>
-</div>
+                <div className="mb-4">
+                  <label className="form-label fw-semibold">
+                    Progresso geral: {progresso}%
+                  </label>
+                  <div className="progress">
+                    <div
+                      className="progress-bar"
+                      role="progressbar"
+                      style={{ width: `${progresso}%` }}
+                      aria-valuenow={progresso}
+                      aria-valuemin="0"
+                      aria-valuemax="100"
+                    >
+                      {progresso}%
+                    </div>
+                  </div>
+                  <small className="text-muted">
+                    {progresso === 0
+                      ? 'Comece adicionando o primeiro tema.'
+                      : progresso < 50
+                      ? 'Boa, já começou. Continue a avançar passo a passo.'
+                      : progresso < 100
+                      ? 'Já fez mais de metade do plano, mantenha o ritmo.'
+                      : 'Parabéns, concluiu todo o programa!'}
+                  </small>
+                </div>
 
                 {/* FORM NOVA ENTRADA */}
                 <form onSubmit={handleCriarPrograma} className="mb-4">
@@ -502,9 +505,7 @@ async function toggleConcluido(programa) {
                         className="btn btn-success"
                         disabled={loading}
                       >
-                        {loading
-                          ? 'A guardar...'
-                          : 'Adicionar ao programa'}
+                        {loading ? 'A guardar...' : 'Adicionar ao programa'}
                       </button>
                     </div>
                   </div>
@@ -519,70 +520,70 @@ async function toggleConcluido(programa) {
                 ) : (
                   <div className="list-group">
                     {programas.map(p => (
-  <div
-    key={p.id}
-    className="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start"
-  >
-    <div className="me-md-3">
-      <div className="d-flex align-items-center mb-1">
-        <input
-          type="checkbox"
-          className="form-check-input me-2"
-          checked={!!p.concluido}
-          onChange={() => toggleConcluido(p)}
-        />
-        <h6 className="mb-0">
-          {p.tema}{' '}
-          {p.concluido && (
-            <span className="badge bg-success ms-2">
-              Concluído
-            </span>
-          )}
+                      <div
+                        key={p.id}
+                        className="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start"
+                      >
+                        <div className="me-md-3">
+                          <div className="d-flex align-items-center mb-1">
+                            <input
+                              type="checkbox"
+                              className="form-check-input me-2"
+                              checked={!!p.concluido}
+                              onChange={() => toggleConcluido(p)}
+                            />
+                            <h6 className="mb-0">
+                              {p.tema}{' '}
+                              {p.concluido && (
+                                <span className="badge bg-success ms-2">
+                                  Concluído
+                                </span>
+                              )}
 
-          {/* Badge extra consoante o prazo */}
-          {!p.concluido && p.deadline && (() => {
-            const hoje = new Date()
-            hoje.setHours(0, 0, 0, 0)
-            const d = new Date(p.deadline)
-            if (!isNaN(d)) {
-              d.setHours(0, 0, 0, 0)
-              if (d.getTime() === hoje.getTime()) {
-                return (
-                  <span className="badge bg-warning text-dark ms-2">
-                    Prazo hoje
-                  </span>
-                )
-              }
-              if (d < hoje) {
-                return (
-                  <span className="badge bg-danger ms-2">
-                    Atrasado
-                  </span>
-                )
-              }
-            }
-            return null
-          })()}
-        </h6>
-      </div>
+                              {/* Badge extra consoante o prazo */}
+                              {!p.concluido &&
+                                p.deadline &&
+                                (() => {
+                                  const hoje = new Date()
+                                  hoje.setHours(0, 0, 0, 0)
+                                  const d = new Date(p.deadline)
+                                  if (!isNaN(d)) {
+                                    d.setHours(0, 0, 0, 0)
+                                    if (d.getTime() === hoje.getTime()) {
+                                      return (
+                                        <span className="badge bg-warning text-dark ms-2">
+                                          Prazo hoje
+                                        </span>
+                                      )
+                                    }
+                                    if (d < hoje) {
+                                      return (
+                                        <span className="badge bg-danger ms-2">
+                                          Atrasado
+                                        </span>
+                                      )
+                                    }
+                                  }
+                                  return null
+                                })()}
+                            </h6>
+                          </div>
 
-      <small className="text-muted">
-        Deadline: {p.deadline || 'Sem data definida'}
-      </small>
-      <p className="mb-1 mt-2">
-        {p.descricao}
-      </p>
-    </div>
-    <div className="mt-2 mt-md-0">
-      <button
-        className="btn btn-sm btn-outline-primary"
-        onClick={() => abrirNotas(p)}
-      >
-        Anotações
-      </button>
-    </div>
-  </div>
-))}
+                          <small className="text-muted">
+                            Deadline: {p.deadline || 'Sem data definida'}
+                          </small>
+                          <p className="mb-1 mt-2">{p.descricao}</p>
+                        </div>
+                        <div className="mt-2 mt-md-0">
+                          <button
+                            className="btn btn-sm btn-outline-primary"
+                            onClick={() => abrirNotas(p)}
+                          >
+                            Anotações
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </>
