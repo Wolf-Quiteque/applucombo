@@ -1,3 +1,4 @@
+// app/api/mentoring/programas/[id]/route.js
 import { NextResponse } from 'next/server'
 import { getDb } from '@/app/lib/mongodb'
 import { ObjectId } from 'mongodb'
@@ -6,7 +7,7 @@ export async function PUT(request, { params }) {
   try {
     const { id } = params
     const body = await request.json()
-    const { concluido, notas } = body
+    const { concluido, notas, comentarioProfessor } = body
 
     const db = await getDb()
     const programas = db.collection('programas')
@@ -23,7 +24,7 @@ export async function PUT(request, { params }) {
       updatedAt: new Date()
     }
 
-    // se estiver a tentar mudar concluído, verificamos o deadline
+    // Validação do concluído (tanto para aluno como professor)
     if (typeof concluido === 'boolean') {
       if (concluido && existente.deadline) {
         const hoje = new Date()
@@ -49,6 +50,10 @@ export async function PUT(request, { params }) {
 
     if (typeof notas === 'string') {
       updateFields.notas = notas
+    }
+
+    if (typeof comentarioProfessor === 'string') {
+      updateFields.comentarioProfessor = comentarioProfessor
     }
 
     const result = await programas.findOneAndUpdate(
