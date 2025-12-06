@@ -1,4 +1,3 @@
-// app/api/mentoring/programas/[id]/route.js
 import { NextResponse } from 'next/server'
 import { getDb } from '@/app/lib/mongodb'
 import { ObjectId } from 'mongodb'
@@ -12,22 +11,49 @@ export async function PUT(request, { params }) {
     const db = await getDb()
     const programas = db.collection('programas')
 
-    const update = {
-      $set: {
-        updatedAt: new Date()
-      }
+    const existente = await programas.findOne({ _id: new ObjectId(id) })
+    if (!existente) {
+      return NextResponse.json(
+        { error: 'Registo não encontrado.' },
+        { status: 404 }
+      )
     }
 
-    if (typeof concluido === 'boolean') {
-      update.$set.concluido = concluido
+    const updateFields = {
+      updatedAt: new Date()
     }
+
+    // se estiver a tentar mudar concluído, verificamos o deadline
+    if (typeof concluido === 'boolean') {
+      if (concluido && existente.deadline) {
+        const hoje = new Date()
+        hoje.setHours(0, 0, 0, 0)
+
+        const deadlineDate = new Date(existente.deadline)
+        if (!isNaN(deadlineDate)) {
+          deadlineDate.setHours(0, 0, 0, 0)
+
+          if (deadlineDate > hoje) {
+            return NextResponse.json(
+              {
+                error:
+                  'Só pode marcar esta tarefa como concluída na data do deadline ou depois.'
+              },
+              { status: 400 }
+            )
+          }
+        }
+      }
+      updateFields.concluido = concluido
+    }
+
     if (typeof notas === 'string') {
-      update.$set.notas = notas
+      updateFields.notas = notas
     }
 
     const result = await programas.findOneAndUpdate(
       { _id: new ObjectId(id) },
-      update,
+      { $set: updateFields },
       { returnDocument: 'after' }
     )
 
@@ -39,7 +65,6 @@ export async function PUT(request, { params }) {
     }
 
     const p = result.value
-
     return NextResponse.json(
       {
         message: 'Programa actualizado.',

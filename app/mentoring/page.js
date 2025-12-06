@@ -175,21 +175,45 @@ export default function MentoringPage() {
     }
   }
 
-  async function toggleConcluido(programa) {
-    try {
-      const res = await axios.put(
-        `/api/mentoring/programas/${programa.id}`,
-        { concluido: !programa.concluido }
-      )
-      const updated = res.data.programa
-      setProgramas(prev =>
-        prev.map(p => (p.id === updated.id ? updated : p))
-      )
-    } catch (err) {
-      console.error(err)
-      setErro('Não foi possível actualizar o status.')
+async function toggleConcluido(programa) {
+  setErro('')
+  setInfo('')
+
+  // Só bloqueamos quando ele quer marcar como concluído
+  if (!programa.concluido && programa.deadline) {
+    const hoje = new Date()
+    hoje.setHours(0, 0, 0, 0)
+
+    const deadlineDate = new Date(programa.deadline)
+    if (!isNaN(deadlineDate)) {
+      deadlineDate.setHours(0, 0, 0, 0)
+
+      if (deadlineDate > hoje) {
+        setErro(
+          'Só pode marcar esta tarefa como concluída na data do deadline ou depois.'
+        )
+        return
+      }
     }
   }
+
+  try {
+    const res = await axios.put(
+      `/api/mentoring/programas/${programa.id}`,
+      { concluido: !programa.concluido }
+    )
+    const updated = res.data.programa
+    setProgramas(prev =>
+      prev.map(p => (p.id === updated.id ? updated : p))
+    )
+  } catch (err) {
+    console.error(err)
+    setErro(
+      err.response?.data?.error ||
+        'Não foi possível actualizar o status.'
+    )
+  }
+}
 
   function abrirNotas(programa) {
     setNotaAberta(programa)
@@ -396,23 +420,32 @@ export default function MentoringPage() {
             {user ? (
               <>
                 {/* PROGRESSO */}
-                <div className="mb-4">
-                  <label className="form-label fw-semibold">
-                    Progresso geral: {progresso}%
-                  </label>
-                  <div className="progress">
-                    <div
-                      className="progress-bar"
-                      role="progressbar"
-                      style={{ width: `${progresso}%` }}
-                      aria-valuenow={progresso}
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                    >
-                      {progresso}%
-                    </div>
-                  </div>
-                </div>
+<div className="mb-4">
+  <label className="form-label fw-semibold">
+    Progresso geral: {progresso}%
+  </label>
+  <div className="progress">
+    <div
+      className="progress-bar"
+      role="progressbar"
+      style={{ width: `${progresso}%` }}
+      aria-valuenow={progresso}
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      {progresso}%
+    </div>
+  </div>
+  <small className="text-muted">
+    {progresso === 0
+      ? 'Comece adicionando o primeiro tema.'
+      : progresso < 50
+      ? 'Boa, já começou. Continue a avançar passo a passo.'
+      : progresso < 100
+      ? 'Já fez mais de metade do plano, mantenha o ritmo.'
+      : 'Parabéns, concluiu todo o programa!'}
+  </small>
+</div>
 
                 {/* FORM NOVA ENTRADA */}
                 <form onSubmit={handleCriarPrograma} className="mb-4">
@@ -486,46 +519,70 @@ export default function MentoringPage() {
                 ) : (
                   <div className="list-group">
                     {programas.map(p => (
-                      <div
-                        key={p.id}
-                        className="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start"
-                      >
-                        <div className="me-md-3">
-                          <div className="d-flex align-items-center mb-1">
-                            <input
-                              type="checkbox"
-                              className="form-check-input me-2"
-                              checked={!!p.concluido}
-                              onChange={() => toggleConcluido(p)}
-                            />
-                            <h6 className="mb-0">
-                              {p.tema}{' '}
-                              {p.concluido && (
-                                <span className="badge bg-success ms-2">
-                                  Concluído
-                                </span>
-                              )}
-                            </h6>
-                          </div>
-                          <small className="text-muted">
-                            Deadline:{' '}
-                            {p.deadline ||
-                              'Sem data definida'}
-                          </small>
-                          <p className="mb-1 mt-2">
-                            {p.descricao}
-                          </p>
-                        </div>
-                        <div className="mt-2 mt-md-0">
-                          <button
-                            className="btn btn-sm btn-outline-primary"
-                            onClick={() => abrirNotas(p)}
-                          >
-                            Anotações
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+  <div
+    key={p.id}
+    className="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start"
+  >
+    <div className="me-md-3">
+      <div className="d-flex align-items-center mb-1">
+        <input
+          type="checkbox"
+          className="form-check-input me-2"
+          checked={!!p.concluido}
+          onChange={() => toggleConcluido(p)}
+        />
+        <h6 className="mb-0">
+          {p.tema}{' '}
+          {p.concluido && (
+            <span className="badge bg-success ms-2">
+              Concluído
+            </span>
+          )}
+
+          {/* Badge extra consoante o prazo */}
+          {!p.concluido && p.deadline && (() => {
+            const hoje = new Date()
+            hoje.setHours(0, 0, 0, 0)
+            const d = new Date(p.deadline)
+            if (!isNaN(d)) {
+              d.setHours(0, 0, 0, 0)
+              if (d.getTime() === hoje.getTime()) {
+                return (
+                  <span className="badge bg-warning text-dark ms-2">
+                    Prazo hoje
+                  </span>
+                )
+              }
+              if (d < hoje) {
+                return (
+                  <span className="badge bg-danger ms-2">
+                    Atrasado
+                  </span>
+                )
+              }
+            }
+            return null
+          })()}
+        </h6>
+      </div>
+
+      <small className="text-muted">
+        Deadline: {p.deadline || 'Sem data definida'}
+      </small>
+      <p className="mb-1 mt-2">
+        {p.descricao}
+      </p>
+    </div>
+    <div className="mt-2 mt-md-0">
+      <button
+        className="btn btn-sm btn-outline-primary"
+        onClick={() => abrirNotas(p)}
+      >
+        Anotações
+      </button>
+    </div>
+  </div>
+))}
                   </div>
                 )}
               </>
