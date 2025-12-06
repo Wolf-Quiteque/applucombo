@@ -1,20 +1,20 @@
-:root {
-  --primary: #212529;
-  --secondary: #495057;
-  --accent: #0d6efd;
-  --light-bg: #f8f9fa;
-  --border: #dee2e6;
-}
-
-body {
-  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-  color: var(--primary);
-  background-color: #fff;
-  overflow-x: hidden;
-}
-
 /* Import Bootstrap Icons */
 @import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css");
 
 /* Import Bootstrap CSS */
 @import url("https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css");
+
+:root {
+  --primary: #212529;
+    --secondary: #495057;
+      --accent: #0d6efd;
+        --light-bg: #f8f9fa;
+          --border: #dee2e6;
+          }
+
+          body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+              color: var(--primary);
+                background-color: #fff;
+                  overflow-x: hidden;
+                  }
