@@ -1,9 +1,4 @@
-// app/api/mentoring/programas/[id]/route.js
 import { NextResponse } from 'next/server'
-import { getDb } from '@/app/lib/mongodb'
-import { ObjectId } from 'mongodb'
-
-export async function PUT(request, { params }) import { NextResponse } from 'next/server'
 import { getDb } from '@/app/lib/mongodb'
 import { ObjectId } from 'mongodb'
 
@@ -14,9 +9,10 @@ function buildFilterById(id) {
   return { _id: id }
 }
 
+// --- PUT: Atualizar Programa ---
 export async function PUT(request, { params }) {
   try {
-    // ⚠️ FIX 1: Aguardar (await) 'params' para garantir que o ID seja capturado
+    // ✅ FIX 1: Aguardar (await) 'params' para capturar corretamente o ID (Next.js 15+)
     const { id } = await params 
     
     const body = await request.json()
@@ -45,7 +41,7 @@ export async function PUT(request, { params }) {
       updatedAt: new Date()
     }
 
-    // validação de concluído (lógica preservada)
+    // Validação de concluído (lógica preservada)
     if (typeof concluido === 'boolean') {
       if (concluido && existente.deadline) {
         const hoje = new Date()
@@ -90,7 +86,7 @@ export async function PUT(request, { params }) {
       { returnDocument: 'after' }
     )
 
-    // ⚠️ FIX 2: Usar 'result.value' OU 'result' para compatibilidade com driver MongoDB v5+
+    // ✅ FIX 2: Usar 'result.value' OU 'result' para compatibilidade com driver MongoDB v5+
     const p = result.value || result 
 
     if (!p) {
@@ -126,11 +122,12 @@ export async function PUT(request, { params }) {
   }
 }
 
-// ----------------------------------------------------------------------
 
+
+// --- DELETE: Remover Programa ---
 export async function DELETE(request, { params }) {
   try {
-    // ⚠️ FIX 1: Aguardar (await) 'params' para garantir que o ID seja capturado
+    // ✅ FIX 1: Aguardar (await) 'params' para capturar corretamente o ID (Next.js 15+)
     const { id } = await params 
     
     const db = await getDb()
@@ -158,4 +155,3 @@ export async function DELETE(request, { params }) {
     )
   }
 }
-
