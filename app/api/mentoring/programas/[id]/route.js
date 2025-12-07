@@ -5,7 +5,9 @@ import { ObjectId } from 'mongodb'
 
 export async function PUT(request, { params }) {
   try {
-    const { id } = params
+    // FIX 1: Await params (Required for Next.js 15+)
+    const { id } = await params
+    
     const body = await request.json()
     const { concluido, notas, comentarioProfessor } = body
 
@@ -17,13 +19,12 @@ export async function PUT(request, { params }) {
     try {
       filtro = { _id: new ObjectId(id) }
     } catch (e) {
-      // se não for um ObjectId válido, tentamos como string
       filtro = { _id: id }
     }
 
+    // Check existing document first
     const existente = await programasCol.findOne(filtro)
     if (!existente) {
-      // aqui é exactamente o 404 que estás a ver
       return NextResponse.json(
         { error: 'Registo não encontrado.' },
         { status: 404 }
@@ -66,20 +67,23 @@ export async function PUT(request, { params }) {
       updateFields.comentarioProfessor = comentarioProfessor
     }
 
+    // FIX 2: Handle findOneAndUpdate return value
     const result = await programasCol.findOneAndUpdate(
       filtro,
       { $set: updateFields },
       { returnDocument: 'after' }
     )
 
-    if (!result.value) {
+    // Handle both old driver (returns { value: doc }) and new driver (returns doc directly)
+    const p = result.value || result
+
+    if (!p) {
       return NextResponse.json(
         { error: 'Registo não encontrado.' },
         { status: 404 }
       )
     }
 
-    const p = result.value
     const programa = {
       id: p._id.toString(),
       alunoId: p.alunoId?.toString?.() || p.alunoId,
