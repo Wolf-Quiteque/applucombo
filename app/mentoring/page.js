@@ -42,14 +42,21 @@ export default function MentoringPage() {
   const [notaAberta, setNotaAberta] = useState(null)
   const [notaTemp, setNotaTemp] = useState('')
 
+  // modal de edição de tarefa
+  const [editPrograma, setEditPrograma] = useState(null)
+  const [editTema, setEditTema] = useState('')
+  const [editDescricao, setEditDescricao] = useState('')
+  const [editDeadline, setEditDeadline] = useState('')
+
+  // perguntas ao professor
+  const [perguntas, setPerguntas] = useState([])
+  const [perguntaTitulo, setPerguntaTitulo] = useState('')
+  const [perguntaDetalhe, setPerguntaDetalhe] = useState('')
+
   const [loading, setLoading] = useState(false)
   const [erro, setErro] = useState('')
   const [info, setInfo] = useState('')
 
-// perguntas ao professor
-  const [perguntas, setPerguntas] = useState([])
-  const [perguntaTitulo, setPerguntaTitulo] = useState('')
-  const [perguntaDetalhe, setPerguntaDetalhe] = useState('')
   // tentar carregar aluno da storage
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -58,7 +65,6 @@ export default function MentoringPage() {
       const parsed = JSON.parse(saved)
       setUser(parsed)
       carregarProgramas(parsed.id)
-      
       carregarPerguntas(parsed.id)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -114,7 +120,6 @@ export default function MentoringPage() {
       }
       setInfo('Sessão iniciada com sucesso.')
       carregarProgramas(loggedUser.id)
-      
       carregarPerguntas(loggedUser.id)
     } catch (err) {
       setErro(
@@ -129,6 +134,9 @@ export default function MentoringPage() {
   function handleLogout() {
     setUser(null)
     setProgramas([])
+    setPerguntas([])
+    setNotaAberta(null)
+    setEditPrograma(null)
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem('mentoringUser')
     }
@@ -146,7 +154,7 @@ export default function MentoringPage() {
       setErro('Não foi possível carregar o seu programa.')
     }
   }
-  
+
   async function carregarPerguntas(alunoId) {
     if (!alunoId) return
     try {
@@ -259,7 +267,63 @@ export default function MentoringPage() {
       setErro('Não foi possível guardar as anotações.')
     }
   }
-  
+
+  function abrirEditar(programa) {
+    setEditPrograma(programa)
+    setEditTema(programa.tema || '')
+    setEditDescricao(programa.descricao || '')
+    setEditDeadline(programa.deadline || '')
+  }
+
+  async function guardarEdicao() {
+    if (!editPrograma) return
+    setErro('')
+    setInfo('')
+    setLoading(true)
+
+    try {
+      const res = await axios.put(
+        `/api/mentoring/programas/${editPrograma.id}`,
+        {
+          tema: editTema,
+          descricao: editDescricao,
+          deadline: editDeadline
+        }
+      )
+      const updated = res.data.programa
+      setProgramas(prev =>
+        prev.map(p => (p.id === updated.id ? updated : p))
+      )
+      setEditPrograma(null)
+    } catch (err) {
+      console.error(err)
+      setErro(
+        err.response?.data?.error ||
+          'Não foi possível actualizar a tarefa.'
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  async function apagarPrograma(programa) {
+    if (!window.confirm('Tem a certeza que quer apagar esta tarefa?')) return
+    setErro('')
+    setInfo('')
+
+    try {
+      await axios.delete(`/api/mentoring/programas/${programa.id}`)
+      setProgramas(prev => prev.filter(p => p.id !== programa.id))
+      setInfo('Tarefa removida do programa.')
+    } catch (err) {
+      console.error(err)
+      setErro(
+        err.response?.data?.error ||
+          'Não foi possível apagar a tarefa.'
+      )
+    }
+  }
+
   async function handleCriarPergunta(e) {
     e.preventDefault()
     if (!user) {
@@ -297,7 +361,7 @@ export default function MentoringPage() {
       setLoading(false)
     }
   }
-  
+
   const totalPerguntas = perguntas.length
   const perguntasRespondidas = perguntas.filter(q => q.respondida).length
   const perguntasPendentes = totalPerguntas - perguntasRespondidas
@@ -478,8 +542,9 @@ export default function MentoringPage() {
           </div>
         </div>
 
-        {/* COLUNA DIREITA: PROGRAMA DO ALUNO */}
+        {/* COLUNA DIREITA */}
         <div className="col-lg-8">
+          {/* PROGRAMA DO ALUNO */}
           <div className={styles.materialsArea || 'border rounded p-3'}>
             <h4 className="mb-3">Programa de aluno</h4>
 
@@ -636,13 +701,37 @@ export default function MentoringPage() {
                             Deadline: {p.deadline || 'Sem data definida'}
                           </small>
                           <p className="mb-1 mt-2">{p.descricao}</p>
+
+                          {p.notas && (
+                            <p className="mb-1">
+                              <strong>Minhas anotações:</strong> {p.notas}
+                            </p>
+                          )}
+                          {p.comentarioProfessor && (
+                            <p className="mb-0">
+                              <strong>Anotações do professor:</strong>{' '}
+                              {p.comentarioProfessor}
+                            </p>
+                          )}
                         </div>
-                        <div className="mt-2 mt-md-0">
+                        <div className="mt-3 mt-md-0 d-flex flex-wrap gap-2 justify-content-end">
                           <button
                             className="btn btn-sm btn-outline-primary"
                             onClick={() => abrirNotas(p)}
                           >
                             Anotações
+                          </button>
+                          <button
+                            className="btn btn-sm btn-outline-secondary"
+                            onClick={() => abrirEditar(p)}
+                          >
+                            Editar
+                          </button>
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            onClick={() => apagarPrograma(p)}
+                          >
+                            Apagar
                           </button>
                         </div>
                       </div>
@@ -657,110 +746,114 @@ export default function MentoringPage() {
               </p>
             )}
           </div>
-          
-          
-          {/* ------------------------------------ */}
-                {/* PERGUNTAS AO PROFESSOR              */}
-                {/* ------------------------------------ */}
-                <hr className="my-4" />
-                <h4 className="mb-3">Perguntas ao professor</h4>
 
-                <div className="mb-3 d-flex flex-wrap align-items-center gap-2">
-                  <span className="badge bg-secondary">
-                    Total: {totalPerguntas}
-                  </span>
-                  <span className="badge bg-success">
-                    Respondidas: {perguntasRespondidas}
-                  </span>
-                  <span className="badge bg-warning text-dark">
-                    Pendentes: {perguntasPendentes}
-                  </span>
+          {/* PERGUNTAS AO PROFESSOR – só visível se estiver logado */}
+          {user && (
+            <div
+              className={
+                styles.materialsArea || 'border rounded p-3 mt-4'
+              }
+            >
+              <h4 className="mb-3">Perguntas ao professor</h4>
+
+              <div className="mb-3 d-flex flex-wrap align-items-center gap-2">
+                <span className="badge bg-secondary">
+                  Total: {totalPerguntas}
+                </span>
+                <span className="badge bg-success">
+                  Respondidas: {perguntasRespondidas}
+                </span>
+                <span className="badge bg-warning text-dark">
+                  Pendentes: {perguntasPendentes}
+                </span>
+              </div>
+
+              {/* FORM NOVA PERGUNTA */}
+              <form onSubmit={handleCriarPergunta} className="mb-4">
+                <div className="mb-3">
+                  <label className="form-label">Pergunta</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={perguntaTitulo}
+                    onChange={e => setPerguntaTitulo(e.target.value)}
+                    placeholder="Ex: Não entendi a parte dos multiplicadores fiscais..."
+                    required
+                  />
                 </div>
+                <div className="mb-3">
+                  <label className="form-label">
+                    Detalhe / contexto (opcional)
+                  </label>
+                  <textarea
+                    className="form-control"
+                    rows={3}
+                    value={perguntaDetalhe}
+                    onChange={e => setPerguntaDetalhe(e.target.value)}
+                    placeholder="Explique melhor onde ficou a dúvida, página, exercício, etc."
+                  />
+                </div>
+                <div className="text-end">
+                  <button
+                    type="submit"
+                    className="btn btn-outline-primary"
+                    disabled={loading}
+                  >
+                    {loading ? 'A enviar...' : 'Enviar pergunta'}
+                  </button>
+                </div>
+              </form>
 
-                {/* FORM NOVA PERGUNTA */}
-                <form onSubmit={handleCriarPergunta} className="mb-4">
-                  <div className="mb-3">
-                    <label className="form-label">Pergunta</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={perguntaTitulo}
-                      onChange={e => setPerguntaTitulo(e.target.value)}
-                      placeholder="Ex: Não entendi a parte dos multiplicadores fiscais..."
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">
-                      Detalhe / contexto (opcional)
-                    </label>
-                    <textarea
-                      className="form-control"
-                      rows={3}
-                      value={perguntaDetalhe}
-                      onChange={e => setPerguntaDetalhe(e.target.value)}
-                      placeholder="Explique melhor onde ficou a dúvida, página, exercício, etc."
-                    />
-                  </div>
-                  <div className="text-end">
-                    <button
-                      type="submit"
-                      className="btn btn-outline-primary"
-                      disabled={loading}
+              {/* LISTA DE PERGUNTAS */}
+              {perguntas.length === 0 ? (
+                <p className="text-muted">
+                  Ainda não enviou nenhuma pergunta ao professor.
+                </p>
+              ) : (
+                <div className="list-group">
+                  {perguntas.map(q => (
+                    <div
+                      key={q.id}
+                      className="list-group-item d-flex flex-column"
                     >
-                      {loading ? 'A enviar...' : 'Enviar pergunta'}
-                    </button>
-                  </div>
-                </form>
-
-                {/* LISTA DE PERGUNTAS */}
-                {perguntas.length === 0 ? (
-                  <p className="text-muted">
-                    Ainda não enviou nenhuma pergunta ao professor.
-                  </p>
-                ) : (
-                  <div className="list-group">
-                    {perguntas.map(q => (
-                      <div
-                        key={q.id}
-                        className="list-group-item d-flex flex-column"
-                      >
-                        <div className="d-flex justify-content-between align-items-start">
-                          <h6 className="mb-1">
-                            {q.pergunta}{' '}
-                            {q.respondida ? (
-                              <span className="badge bg-success ms-2">
-                                Respondida
-                              </span>
-                            ) : (
-                              <span className="badge bg-warning text-dark ms-2">
-                                Pendente
-                              </span>
-                            )}
-                          </h6>
-                          <small className="text-muted ms-2">
-                            {q.createdAt
-                              ? new Date(q.createdAt).toLocaleDateString(
-                                  'pt-PT'
-                                )
-                              : ''}
-                          </small>
-                        </div>
-                        {q.detalhe && (
-                          <p className="mb-1">
-                            <strong>Detalhe:</strong> {q.detalhe}
-                          </p>
-                        )}
-                        {q.respondida && (
-                          <p className="mb-0">
-                            <strong>Resposta do professor:</strong>{' '}
-                            {q.resposta}
-                          </p>
-                        )}
+                      <div className="d-flex justify-content-between align-items-start">
+                        <h6 className="mb-1">
+                          {q.pergunta}{' '}
+                          {q.respondida ? (
+                            <span className="badge bg-success ms-2">
+                              Respondida
+                            </span>
+                          ) : (
+                            <span className="badge bg-warning text-dark ms-2">
+                              Pendente
+                            </span>
+                          )}
+                        </h6>
+                        <small className="text-muted ms-2">
+                          {q.createdAt
+                            ? new Date(q.createdAt).toLocaleDateString(
+                                'pt-PT'
+                              )
+                            : ''}
+                        </small>
                       </div>
-                    ))}
-                  </div>
-                )}
+                      {q.detalhe && (
+                        <p className="mb-1">
+                          <strong>Detalhe:</strong> {q.detalhe}
+                        </p>
+                      )}
+                      {q.respondida && (
+                        <p className="mb-0">
+                          <strong>Resposta do professor:</strong>{' '}
+                          {q.resposta}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
@@ -806,6 +899,80 @@ export default function MentoringPage() {
                   onClick={guardarNotas}
                 >
                   Guardar notas
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE EDIÇÃO DE TAREFA */}
+      {editPrograma && (
+        <div
+          className="modal d-block"
+          tabIndex="-1"
+          style={{ background: 'rgba(0,0,0,0.5)' }}
+        >
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  Editar tarefa – {editPrograma.tema}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setEditPrograma(null)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <label className="form-label">Tema</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={editTema}
+                      onChange={e => setEditTema(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label className="form-label">Deadline</label>
+                    <input
+                      type="date"
+                      className="form-control"
+                      value={editDeadline}
+                      onChange={e => setEditDeadline(e.target.value)}
+                    />
+                  </div>
+                  <div className="col-12">
+                    <label className="form-label">Descrição</label>
+                    <textarea
+                      className="form-control"
+                      rows={3}
+                      value={editDescricao}
+                      onChange={e =>
+                        setEditDescricao(e.target.value)
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setEditPrograma(null)}
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={guardarEdicao}
+                  disabled={loading}
+                >
+                  {loading ? 'A guardar...' : 'Guardar alterações'}
                 </button>
               </div>
             </div>
