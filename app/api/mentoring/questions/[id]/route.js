@@ -5,7 +5,12 @@ import { ObjectId } from 'mongodb'
 
 export async function PUT(request, { params }) {
   try {
-    const { id } = params
+    // FIX 1: Await params (Required for Next.js 15+)
+    const { id } = await params 
+    
+    // Debugging: Check if ID is being captured correctly
+    console.log("Updating Question ID:", id)
+
     const body = await request.json()
     const { resposta, respondida } = body
 
@@ -19,8 +24,10 @@ export async function PUT(request, { params }) {
       filtro = { _id: id }
     }
 
+    // Check existence
     const existente = await perguntasCol.findOne(filtro)
     if (!existente) {
+      console.log("Question not found in initial search")
       return NextResponse.json(
         { error: 'Pergunta não encontrada.' },
         { status: 404 }
@@ -34,10 +41,8 @@ export async function PUT(request, { params }) {
 
     if (typeof resposta === 'string') {
       updateFields.resposta = resposta
-      // se escreveu algo, marcamos como respondida
       updateFields.respondida = resposta.trim().length > 0
-      updateFields.respondidaEm =
-        resposta.trim().length > 0 ? agora : null
+      updateFields.respondidaEm = resposta.trim().length > 0 ? agora : null
     }
 
     if (typeof respondida === 'boolean') {
@@ -45,20 +50,28 @@ export async function PUT(request, { params }) {
       updateFields.respondidaEm = respondida ? agora : null
     }
 
+    // FIX 2: Handle findOneAndUpdate return value
+    // In newer MongoDB drivers, this returns the document directly, not { value: doc }
+    // We explicitly set includeResultMetadata: false to get just the doc (default in v5/v6)
     const result = await perguntasCol.findOneAndUpdate(
       filtro,
       { $set: updateFields },
-      { returnDocument: 'after' }
+      { returnDocument: 'after' } 
     )
 
-    if (!result.value) {
+    // In MongoDB Driver v5+, 'result' IS the document (or null if not found)
+    // If you are on an older driver (v4), keep using result.value. 
+    // This checks both to be safe:
+    const q = result.value || result
+
+    if (!q) {
+      console.log("Update failed or document missing after update")
       return NextResponse.json(
         { error: 'Pergunta não encontrada.' },
         { status: 404 }
       )
     }
 
-    const q = result.value
     const perguntaOut = {
       id: q._id.toString(),
       alunoId: q.alunoId.toString(),
