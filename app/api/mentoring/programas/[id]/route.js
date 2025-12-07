@@ -12,8 +12,18 @@ export async function PUT(request, { params }) {
     const db = await getDb()
     const programasCol = db.collection('programas')
 
-    const existente = await programasCol.findOne({ _id: new ObjectId(id) })
+    // 🔑 Filtro robusto: tenta ObjectId, se não der, usa string
+    let filtro
+    try {
+      filtro = { _id: new ObjectId(id) }
+    } catch (e) {
+      // se não for um ObjectId válido, tentamos como string
+      filtro = { _id: id }
+    }
+
+    const existente = await programasCol.findOne(filtro)
     if (!existente) {
+      // aqui é exactamente o 404 que estás a ver
       return NextResponse.json(
         { error: 'Registo não encontrado.' },
         { status: 404 }
@@ -24,7 +34,7 @@ export async function PUT(request, { params }) {
       updatedAt: new Date()
     }
 
-    // Validação do "concluido" (só na data ou depois)
+    // ✅ Validação do concluído (só na data ou depois)
     if (typeof concluido === 'boolean') {
       if (concluido && existente.deadline) {
         const hoje = new Date()
@@ -57,7 +67,7 @@ export async function PUT(request, { params }) {
     }
 
     const result = await programasCol.findOneAndUpdate(
-      { _id: new ObjectId(id) },
+      filtro,
       { $set: updateFields },
       { returnDocument: 'after' }
     )
@@ -72,7 +82,7 @@ export async function PUT(request, { params }) {
     const p = result.value
     const programa = {
       id: p._id.toString(),
-      alunoId: p.alunoId.toString(),
+      alunoId: p.alunoId?.toString?.() || p.alunoId,
       tema: p.tema,
       descricao: p.descricao,
       deadline: p.deadline,
