@@ -46,6 +46,10 @@ export default function MentoringPage() {
   const [erro, setErro] = useState('')
   const [info, setInfo] = useState('')
 
+// perguntas ao professor
+  const [perguntas, setPerguntas] = useState([])
+  const [perguntaTitulo, setPerguntaTitulo] = useState('')
+  const [perguntaDetalhe, setPerguntaDetalhe] = useState('')
   // tentar carregar aluno da storage
   useEffect(() => {
     if (typeof window === 'undefined') return
@@ -54,6 +58,8 @@ export default function MentoringPage() {
       const parsed = JSON.parse(saved)
       setUser(parsed)
       carregarProgramas(parsed.id)
+      
+      carregarPerguntas(parsed.id)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -108,6 +114,8 @@ export default function MentoringPage() {
       }
       setInfo('Sessão iniciada com sucesso.')
       carregarProgramas(loggedUser.id)
+      
+      carregarPerguntas(loggedUser.id)
     } catch (err) {
       setErro(
         err.response?.data?.error ||
@@ -136,6 +144,19 @@ export default function MentoringPage() {
     } catch (err) {
       console.error(err)
       setErro('Não foi possível carregar o seu programa.')
+    }
+  }
+  
+  async function carregarPerguntas(alunoId) {
+    if (!alunoId) return
+    try {
+      const res = await axios.get('/api/mentoring/questions', {
+        params: { alunoId }
+      })
+      setPerguntas(res.data.perguntas || [])
+    } catch (err) {
+      console.error(err)
+      setErro('Não foi possível carregar as perguntas.')
     }
   }
 
@@ -238,6 +259,48 @@ export default function MentoringPage() {
       setErro('Não foi possível guardar as anotações.')
     }
   }
+  
+  async function handleCriarPergunta(e) {
+    e.preventDefault()
+    if (!user) {
+      setErro('Inicie sessão para enviar perguntas.')
+      return
+    }
+    if (!perguntaTitulo.trim()) {
+      setErro('Escreva a pergunta antes de enviar.')
+      return
+    }
+
+    setErro('')
+    setInfo('')
+    setLoading(true)
+
+    try {
+      const res = await axios.post('/api/mentoring/questions', {
+        alunoId: user.id,
+        pergunta: perguntaTitulo,
+        detalhe: perguntaDetalhe
+      })
+
+      // respondidas primeiro
+      setPerguntas(prev => [res.data.pergunta, ...prev])
+      setPerguntaTitulo('')
+      setPerguntaDetalhe('')
+      setInfo('Pergunta enviada ao professor.')
+    } catch (err) {
+      console.error(err)
+      setErro(
+        err.response?.data?.error ||
+          'Erro ao enviar pergunta ao professor.'
+      )
+    } finally {
+      setLoading(false)
+    }
+  }
+  
+  const totalPerguntas = perguntas.length
+  const perguntasRespondidas = perguntas.filter(q => q.respondida).length
+  const perguntasPendentes = totalPerguntas - perguntasRespondidas
 
   const progresso =
     programas.length === 0
@@ -594,6 +657,110 @@ export default function MentoringPage() {
               </p>
             )}
           </div>
+          
+          
+          {/* ------------------------------------ */}
+                {/* PERGUNTAS AO PROFESSOR              */}
+                {/* ------------------------------------ */}
+                <hr className="my-4" />
+                <h4 className="mb-3">Perguntas ao professor</h4>
+
+                <div className="mb-3 d-flex flex-wrap align-items-center gap-2">
+                  <span className="badge bg-secondary">
+                    Total: {totalPerguntas}
+                  </span>
+                  <span className="badge bg-success">
+                    Respondidas: {perguntasRespondidas}
+                  </span>
+                  <span className="badge bg-warning text-dark">
+                    Pendentes: {perguntasPendentes}
+                  </span>
+                </div>
+
+                {/* FORM NOVA PERGUNTA */}
+                <form onSubmit={handleCriarPergunta} className="mb-4">
+                  <div className="mb-3">
+                    <label className="form-label">Pergunta</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      value={perguntaTitulo}
+                      onChange={e => setPerguntaTitulo(e.target.value)}
+                      placeholder="Ex: Não entendi a parte dos multiplicadores fiscais..."
+                      required
+                    />
+                  </div>
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Detalhe / contexto (opcional)
+                    </label>
+                    <textarea
+                      className="form-control"
+                      rows={3}
+                      value={perguntaDetalhe}
+                      onChange={e => setPerguntaDetalhe(e.target.value)}
+                      placeholder="Explique melhor onde ficou a dúvida, página, exercício, etc."
+                    />
+                  </div>
+                  <div className="text-end">
+                    <button
+                      type="submit"
+                      className="btn btn-outline-primary"
+                      disabled={loading}
+                    >
+                      {loading ? 'A enviar...' : 'Enviar pergunta'}
+                    </button>
+                  </div>
+                </form>
+
+                {/* LISTA DE PERGUNTAS */}
+                {perguntas.length === 0 ? (
+                  <p className="text-muted">
+                    Ainda não enviou nenhuma pergunta ao professor.
+                  </p>
+                ) : (
+                  <div className="list-group">
+                    {perguntas.map(q => (
+                      <div
+                        key={q.id}
+                        className="list-group-item d-flex flex-column"
+                      >
+                        <div className="d-flex justify-content-between align-items-start">
+                          <h6 className="mb-1">
+                            {q.pergunta}{' '}
+                            {q.respondida ? (
+                              <span className="badge bg-success ms-2">
+                                Respondida
+                              </span>
+                            ) : (
+                              <span className="badge bg-warning text-dark ms-2">
+                                Pendente
+                              </span>
+                            )}
+                          </h6>
+                          <small className="text-muted ms-2">
+                            {q.createdAt
+                              ? new Date(q.createdAt).toLocaleDateString(
+                                  'pt-PT'
+                                )
+                              : ''}
+                          </small>
+                        </div>
+                        {q.detalhe && (
+                          <p className="mb-1">
+                            <strong>Detalhe:</strong> {q.detalhe}
+                          </p>
+                        )}
+                        {q.respondida && (
+                          <p className="mb-0">
+                            <strong>Resposta do professor:</strong>{' '}
+                            {q.resposta}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
         </div>
       </div>
 
