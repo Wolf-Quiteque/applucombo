@@ -8,6 +8,12 @@ import styles from '../../page.module.css' // reaproveitar estilos
 export default function MentoringAdminPage() {
   const [teacherAuth, setTeacherAuth] = useState(false)
 
+const [perguntas, setPerguntas] = useState([])
+
+  const [perguntaAberta, setPerguntaAberta] = useState(null)
+  const [respostaTemp, setRespostaTemp] = useState('')
+  
+  
   // login do professor
   const [telefone, setTelefone] = useState('')
   const [senha, setSenha] = useState('')
@@ -98,6 +104,21 @@ export default function MentoringAdminPage() {
       console.error(err)
       setErro('Não foi possível carregar o programa deste aluno.')
     }
+    
+    // carregar perguntas deste aluno
+    try {
+      const res2 = await axios.get('/api/mentoring/questions', {
+        params: { alunoId: aluno.id }
+      })
+      setPerguntas(res2.data.perguntas || [])
+    } catch (err) {
+      console.error(err)
+      setErro(prev =>
+        prev
+          ? prev + ' Não foi possível carregar as perguntas.'
+          : 'Não foi possível carregar as perguntas.'
+      )
+    }
   }
 
   function abrirComentario(programa) {
@@ -125,6 +146,38 @@ export default function MentoringAdminPage() {
     }
   }
 
+function abrirResposta(pergunta) {
+    setPerguntaAberta(pergunta)
+    setRespostaTemp(pergunta.resposta || '')
+  }
+
+  async function guardarResposta() {
+    if (!perguntaAberta) return
+    try {
+      const res = await axios.put(
+        `/api/mentoring/questions/${perguntaAberta.id}`,
+        {
+          resposta: respostaTemp
+        }
+      )
+      const updated = res.data.pergunta
+      setPerguntas(prev =>
+        prev.map(q => (q.id === updated.id ? updated : q))
+      )
+      setPerguntaAberta(null)
+      setRespostaTemp('')
+      setInfo('Resposta do professor actualizada.')
+    } catch (err) {
+      console.error(err)
+      setErro('Não foi possível guardar a resposta.')
+    }
+  }
+  
+  
+  const totalPerguntasAluno = perguntas.length
+  const perguntasRespondidasAluno = perguntas.filter(q => q.respondida).length
+  const perguntasPendentesAluno =
+    totalPerguntasAluno - perguntasRespondidasAluno
   const total = programas.length
   const concluidas = programas.filter(p => p.concluido).length
   const progresso =
@@ -352,6 +405,84 @@ export default function MentoringAdminPage() {
                       ))}
                     </div>
                   )}
+                  
+                  {/* ------------------------------------ */}
+                  {/* PERGUNTAS DO ALUNO                  */}
+                  {/* ------------------------------------ */}
+                  <hr className="my-4" />
+                  <h5 className="mb-3">Perguntas deste aluno</h5>
+
+                  <div className="mb-3 d-flex flex-wrap align-items-center gap-2">
+                    <span className="badge bg-secondary">
+                      Total: {totalPerguntasAluno}
+                    </span>
+                    <span className="badge bg-success">
+                      Respondidas: {perguntasRespondidasAluno}
+                    </span>
+                    <span className="badge bg-warning text-dark">
+                      Pendentes: {perguntasPendentesAluno}
+                    </span>
+                  </div>
+
+                  {perguntas.length === 0 ? (
+                    <p className="text-muted">
+                      Este aluno ainda não enviou perguntas.
+                    </p>
+                  ) : (
+                    <div className="list-group">
+                      {perguntas.map(q => (
+                        <div
+                          key={q.id}
+                          className="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start"
+                        >
+                          <div className="me-md-3">
+                            <div className="d-flex align-items-center mb-1">
+                              <h6 className="mb-0">
+                                {q.pergunta}{' '}
+                                {q.respondida ? (
+                                  <span className="badge bg-success ms-2">
+                                    Respondida
+                                  </span>
+                                ) : (
+                                  <span className="badge bg-warning text-dark ms-2">
+                                    Pendente
+                                  </span>
+                                )}
+                              </h6>
+                            </div>
+                            <small className="text-muted">
+                              Enviada em:{' '}
+                              {q.createdAt
+                                ? new Date(
+                                    q.createdAt
+                                  ).toLocaleDateString('pt-PT')
+                                : ''}
+                            </small>
+                            {q.detalhe && (
+                              <p className="mb-1 mt-2">
+                                <strong>Detalhe:</strong> {q.detalhe}
+                              </p>
+                            )}
+                            {q.respondida && (
+                              <p className="mb-0">
+                                <strong>Sua resposta:</strong> {q.resposta}
+                              </p>
+                            )}
+                          </div>
+                          <div className="mt-2 mt-md-0">
+                            <button
+                              className="btn btn-sm btn-outline-primary"
+                              onClick={() => abrirResposta(q)}
+                            >
+                              {q.respondida
+                                ? 'Editar resposta'
+                                : 'Responder'}
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </>
               ) : (
                 <p className="text-muted">
@@ -359,6 +490,62 @@ export default function MentoringAdminPage() {
                   mentoria e adicionar comentários.
                 </p>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+      
+      
+      {/* MODAL RESPOSTA DO PROFESSOR PARA PERGUNTAS */}
+      {perguntaAberta && (
+        <div
+          className="modal d-block"
+          tabIndex="-1"
+          style={{ background: 'rgba(0,0,0,0.5)' }}
+        >
+          <div className="modal-dialog modal-lg modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  Responder pergunta – {perguntaAberta.pergunta}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setPerguntaAberta(null)}
+                ></button>
+              </div>
+              <div className="modal-body">
+                {perguntaAberta.detalhe && (
+                  <p>
+                    <strong>Detalhe do aluno:</strong>{' '}
+                    {perguntaAberta.detalhe}
+                  </p>
+                )}
+                <textarea
+                  className="form-control"
+                  rows={6}
+                  value={respostaTemp}
+                  onChange={e => setRespostaTemp(e.target.value)}
+                  placeholder="Escreva aqui a sua resposta detalhada para o aluno."
+                />
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setPerguntaAberta(null)}
+                >
+                  Fechar
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={guardarResposta}
+                >
+                  Guardar resposta
+                </button>
+              </div>
             </div>
           </div>
         </div>
