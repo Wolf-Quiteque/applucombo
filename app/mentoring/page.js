@@ -426,7 +426,7 @@ export default function MentoringPage() {
                         ? 'btn-primary'
                         : 'btn-outline-primary')
                     }
-                    onClick={() => setModo('signuojp')}
+                    onClick={() => setModo('signup')}
                   >
                     Criar conta
                   </button>
