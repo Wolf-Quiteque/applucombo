@@ -12,7 +12,8 @@ const cursosDisponiveis = [
   'Teoria dos Jogos',
   'Investimento Estrangeiro Directo',
   'Baiao FT',
-  'Inteligência BC'
+  'Inteligência BC',
+  'Economia e Finanças Internacionais'
 ]
 
 export default function MentoringPage() {
