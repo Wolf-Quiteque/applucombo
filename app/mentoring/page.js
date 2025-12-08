@@ -419,18 +419,18 @@ export default function MentoringPage() {
                   >
                     Entrar
                   </button>
-                  <button
+                 <button
                     className={
                       'btn btn-sm ' +
                       (modo === 'signup'
                         ? 'btn-primary'
                         : 'btn-outline-primary')
                     }
-                    onClick={() => setModo('signup')}
+                    onClick={() => setModo('signuojp')}
                   >
                     Criar conta
                   </button>
-                </div>
+              </div>
 
                 {modo === 'signup' && (
                   <form onSubmit={handleSignup}>
