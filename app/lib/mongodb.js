@@ -20,6 +20,6 @@ clientPromise = global._mongoClientPromise
 
 export async function getDb() {
   const client = await clientPromise
-  // pode trocar o nome da DB se quiser
+  // pode trocar o nome da DB se quiserbhhhhhbbggv
   return client.db('Lucombo')
 }
