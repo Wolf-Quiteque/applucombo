@@ -358,7 +358,7 @@ export default function MentoringPage() {
           <div className="card p-4 mb-4">
             <div className="d-flex align-items-center justify-content-between mb-2">
               <h4 className="mb-0">Programa</h4>
-              <span className="text-muted small">Word (.doc/.docx) ou PDF</span>
+              <span className="text-muted small">Word (.doc/.docx)</span>
             </div>
 
             {programaDoc ? (
@@ -406,7 +406,7 @@ export default function MentoringPage() {
                 <input
                   className="form-control"
                   type="file"
-                  accept=".doc,.docx,.pdf"
+                  accept=".doc,.docx"
                   onChange={e => setProgramaFile(e.target.files?.[0] || null)}
                 />
               </div>

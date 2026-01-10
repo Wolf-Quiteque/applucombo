@@ -20,6 +20,7 @@ clientPromise = global._mongoClientPromise
 
 export async function getDb() {
   const client = await clientPromise
-  // pode trocar o nome da DB se quiserbhhhhhbbggv
-  return client.db('Lucombo')
+  // Permite configurar a DB via env (fallback para o nome antigo)
+  const dbName = process.env.MONGODB_DB || 'educational_platform'
+  return client.db(dbName)
 }

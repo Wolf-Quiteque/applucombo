@@ -1,533 +1,430 @@
 // app/mentoring/admin/page.js
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import axios from 'axios'
-import styles from '../../page.module.css' // reaproveitar estilos
 
 export default function MentoringAdminPage() {
   const [teacherAuth, setTeacherAuth] = useState(false)
 
-const [perguntas, setPerguntas] = useState([])
-
-  const [perguntaAberta, setPerguntaAberta] = useState(null)
-  const [respostaTemp, setRespostaTemp] = useState('')
-  
-  
-  // login do professor
+  // login
   const [telefone, setTelefone] = useState('')
   const [senha, setSenha] = useState('')
 
+  // data
   const [alunos, setAlunos] = useState([])
   const [selectedAluno, setSelectedAluno] = useState(null)
-  const [programas, setProgramas] = useState([])
+  const [documents, setDocuments] = useState([])
+  const [unreadCount, setUnreadCount] = useState(0)
 
-  const [comentarioAberto, setComentarioAberto] = useState(null)
-  const [comentarioTemp, setComentarioTemp] = useState('')
+  // perguntas
+  const [perguntas, setPerguntas] = useState([])
+  const [perguntaAberta, setPerguntaAberta] = useState(null)
+  const [respostaTemp, setRespostaTemp] = useState('')
+
+  // preview documento
+  const [docAberto, setDocAberto] = useState(null)
+  const [teacherNoteTemp, setTeacherNoteTemp] = useState('')
 
   const [erro, setErro] = useState('')
   const [info, setInfo] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // carregar flag de auth do professor
+  // init auth
   useEffect(() => {
     if (typeof window === 'undefined') return
     const flag = window.localStorage.getItem('mentoringTeacherAuth')
     if (flag === 'true') {
       setTeacherAuth(true)
-      carregarAlunos()
+      carregarTudo()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  async function handleTeacherLogin(e) {
+  async function carregarTudo() {
+    await Promise.all([carregarAlunos(), carregarDocuments()])
+  }
+
+  async function carregarAlunos() {
+    try {
+      const res = await axios.get('/api/mentoring/admin/alunos')
+      setAlunos(res.data?.alunos || [])
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async function carregarDocuments() {
+    try {
+      const res = await axios.get('/api/mentoring/admin/documents')
+      setDocuments(res.data?.documents || [])
+      setUnreadCount(res.data?.unreadCount || 0)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async function carregarPerguntas(alunoId) {
+    try {
+      const res = await axios.get(`/api/mentoring/questions?alunoId=${alunoId}`)
+      setPerguntas(res.data?.perguntas || [])
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  // polling de notificações (docs) - mais frequente para capturar actualizações
+  useEffect(() => {
+    if (!teacherAuth) return
+    const t = setInterval(() => {
+      carregarDocuments()
+    }, 5000) // 5 segundos em vez de 25
+    return () => clearInterval(t)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [teacherAuth])
+
+  const unreadByAluno = useMemo(() => {
+    const m = {}
+    for (const d of documents) {
+      if (!d?.alunoId) continue
+      if (!d.teacherUnread) continue
+      m[d.alunoId] = (m[d.alunoId] || 0) + 1
+    }
+    return m
+  }, [documents])
+
+  function docOf(alunoId, type) {
+    return documents.find(d => d.alunoId === alunoId && d.type === type) || null
+  }
+
+  // --- login professor ---
+  async function handleLogin(e) {
     e.preventDefault()
     setErro('')
     setInfo('')
     setLoading(true)
 
     try {
-      const res = await axios.post('/api/mentoring/admin/login', {
-        telefone,
-        senha
-      })
-
+      await axios.post('/api/mentoring/admin/login', { telefone, senha })
       if (typeof window !== 'undefined') {
         window.localStorage.setItem('mentoringTeacherAuth', 'true')
       }
       setTeacherAuth(true)
-      setInfo('Sessão de professor iniciada com sucesso.')
-      setSenha('')
-      carregarAlunos()
+      setInfo('Bem-vindo, Professor.')
+      await carregarTudo()
     } catch (err) {
-      setErro(
-        err.response?.data?.error ||
-          'Erro ao iniciar sessão como professor.'
-      )
+      setErro(err?.response?.data?.error || 'Erro no login do professor.')
     } finally {
       setLoading(false)
     }
   }
 
-  function handleTeacherLogout() {
-    setTeacherAuth(false)
-    setAlunos([])
-    setSelectedAluno(null)
-    setProgramas([])
+  function logout() {
     if (typeof window !== 'undefined') {
       window.localStorage.removeItem('mentoringTeacherAuth')
     }
-  }
-
-  async function carregarAlunos() {
-    try {
-      const res = await axios.get('/api/mentoring/admin/alunos')
-      setAlunos(res.data.alunos || [])
-    } catch (err) {
-      console.error(err)
-      setErro('Não foi possível carregar a lista de alunos.')
-    }
-  }
-
-  async function seleccionarAluno(aluno) {
-    setSelectedAluno(aluno)
-    setProgramas([])
+    setTeacherAuth(false)
+    setSelectedAluno(null)
+    setAlunos([])
+    setDocuments([])
+    setPerguntas([])
+    setPerguntaAberta(null)
+    setDocAberto(null)
     setErro('')
     setInfo('')
-
-    try {
-      const res = await axios.get('/api/mentoring/programas', {
-        params: { alunoId: aluno.id }
-      })
-      setProgramas(res.data.programas || [])
-    } catch (err) {
-      console.error(err)
-      setErro('Não foi possível carregar o programa deste aluno.')
-    }
-    
-    // carregar perguntas deste aluno
-    try {
-      const res2 = await axios.get('/api/mentoring/questions', {
-        params: { alunoId: aluno.id }
-      })
-      setPerguntas(res2.data.perguntas || [])
-    } catch (err) {
-      console.error(err)
-      setErro(prev =>
-        prev
-          ? prev + ' Não foi possível carregar as perguntas.'
-          : 'Não foi possível carregar as perguntas.'
-      )
-    }
   }
 
-  function abrirComentario(programa) {
-    setComentarioAberto(programa)
-    setComentarioTemp(programa.comentarioProfessor || '')
+  async function selecionarAluno(aluno) {
+    setSelectedAluno(aluno)
+    await Promise.all([
+      carregarPerguntas(aluno.id),
+      carregarDocuments() // refresh documents when selecting student
+    ])
   }
 
-  async function guardarComentario() {
-    if (!comentarioAberto) return
-    try {
-      const res = await axios.put(
-        `/api/mentoring/programas/${comentarioAberto.id}`,
-        { comentarioProfessor: comentarioTemp }
-      )
-      const updated = res.data.programa
-      setProgramas(prev =>
-        prev.map(p => (p.id === updated.id ? updated : p))
-      )
-      setComentarioAberto(null)
-      setComentarioTemp('')
-      setInfo('Comentário do professor actualizado.')
-    } catch (err) {
-      console.error(err)
-      setErro('Não foi possível guardar o comentário.')
-    }
-  }
-
-function abrirResposta(pergunta) {
-    setPerguntaAberta(pergunta)
-    setRespostaTemp(pergunta.resposta || '')
+  // --- Perguntas ---
+  function abrirPergunta(p) {
+    setPerguntaAberta(p)
+    setRespostaTemp(p.resposta || '')
   }
 
   async function guardarResposta() {
     if (!perguntaAberta) return
+    setErro('')
+    setInfo('')
+    setLoading(true)
+
     try {
-      const res = await axios.put(
-        `/api/mentoring/questions/${perguntaAberta.id}`,
-        {
-          resposta: respostaTemp
-        }
-      )
-      const updated = res.data.pergunta
-      setPerguntas(prev =>
-        prev.map(q => (q.id === updated.id ? updated : q))
-      )
+      await axios.patch(`/api/mentoring/questions/${perguntaAberta.id}`, {
+        resposta: respostaTemp
+      })
+      setInfo('Resposta enviada.')
       setPerguntaAberta(null)
       setRespostaTemp('')
-      setInfo('Resposta do professor actualizada.')
+      if (selectedAluno?.id) await carregarPerguntas(selectedAluno.id)
     } catch (err) {
-      console.error(err)
-      setErro('Não foi possível guardar a resposta.')
+      setErro(err?.response?.data?.error || 'Erro ao guardar resposta.')
+    } finally {
+      setLoading(false)
     }
   }
-  
-  
-  const totalPerguntasAluno = perguntas.length
-  const perguntasRespondidasAluno = perguntas.filter(q => q.respondida).length
-  const perguntasPendentesAluno =
-    totalPerguntasAluno - perguntasRespondidasAluno
-  const total = programas.length
-  const concluidas = programas.filter(p => p.concluido).length
-  const progresso =
-    total === 0 ? 0 : Math.round((concluidas / total) * 100)
+
+  // --- Documentos ---
+  async function abrirDocumento(doc) {
+    if (!doc) return
+    setDocAberto(doc)
+    setTeacherNoteTemp(doc.teacherNote || '')
+
+    // marcar como aberto -> remove "novo"
+    if (doc.teacherUnread) {
+      try {
+        await axios.patch(`/api/mentoring/admin/documents/${doc.id}/opened`)
+        setDocuments(prev =>
+          prev.map(d =>
+            d.id === doc.id
+              ? { ...d, teacherUnread: false, teacherLastOpenedAt: new Date().toISOString() }
+              : d
+          )
+        )
+        setUnreadCount(c => (c > 0 ? c - 1 : 0))
+      } catch (e) {
+        console.error(e)
+      }
+    }
+  }
+
+  async function salvarNotaProfessor() {
+    if (!docAberto?.id) return
+    setErro('')
+    setInfo('')
+    setLoading(true)
+
+    try {
+      const res = await axios.patch(`/api/mentoring/admin/documents/${docAberto.id}/note`, {
+        teacherNote: teacherNoteTemp
+      })
+      const newNote = res.data?.document?.teacherNote || teacherNoteTemp
+
+      setDocuments(prev =>
+        prev.map(d => (d.id === docAberto.id ? { ...d, teacherNote: newNote } : d))
+      )
+      setDocAberto(prev => (prev ? { ...prev, teacherNote: newNote } : prev))
+      setInfo('Nota do professor guardada.')
+    } catch (err) {
+      setErro(err?.response?.data?.error || 'Erro ao guardar nota do professor.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (!teacherAuth) {
+    return (
+      <div className="container py-5" style={{ maxWidth: 820 }}>
+        <h2 className="mb-2">Mentoria – Área do Professor</h2>
+        <p className="text-muted">Entre com o telefone e palavra-passe.</p>
+
+        {erro && <div className="alert alert-danger">{erro}</div>}
+        {info && <div className="alert alert-success">{info}</div>}
+
+        <form onSubmit={handleLogin} className="card p-4">
+          <div className="mb-3">
+            <label className="form-label">Telefone</label>
+            <input
+              className="form-control"
+              value={telefone}
+              onChange={e => setTelefone(e.target.value)}
+            />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Palavra-passe</label>
+            <input
+              className="form-control"
+              type="password"
+              value={senha}
+              onChange={e => setSenha(e.target.value)}
+            />
+          </div>
+          <button className="btn btn-primary" disabled={loading}>
+            {loading ? 'A entrar...' : 'Entrar'}
+          </button>
+        </form>
+      </div>
+    )
+  }
+
+  const selectedPrograma = selectedAluno?.id ? docOf(selectedAluno.id, 'programa') : null
+  const selectedMonografia = selectedAluno?.id ? docOf(selectedAluno.id, 'monografia') : null
 
   return (
-    <div className="container py-5">
-      <div className="row mb-4">
-        <div className="col-12 text-center">
-          <h1 className={styles.pageTitle || 'h2 fw-bold'}>
-            Painel do Professor – Mentoria
-          </h1>
-          <p className="text-muted">
-            Consulte o progresso de cada aluno, veja o programa e deixe os seus
-            comentários e orientações.
-          </p>
+    <div className="container py-5" style={{ maxWidth: 1200 }}>
+      <div className="d-flex align-items-center justify-content-between mb-4">
+        <div>
+          <h2 className="mb-1">Mentoria – Painel do Professor</h2>
+          <div className="text-muted">
+            <i className="bi bi-bell me-1" />
+            Notificações de documentos: <strong>{unreadCount}</strong>
+          </div>
+        </div>
+        <button className="btn btn-outline-secondary" onClick={logout}>
+          Sair
+        </button>
+      </div>
+
+      {erro && <div className="alert alert-danger">{erro}</div>}
+      {info && <div className="alert alert-success">{info}</div>}
+
+      <div className="row g-4">
+        <div className="col-lg-4">
+          <div className="card p-3">
+            <div className="fw-semibold mb-2">Alunos</div>
+            {alunos.length === 0 ? (
+              <div className="text-muted">Sem alunos.</div>
+            ) : (
+              <div className="list-group">
+                {alunos.map(a => (
+                  <button
+                    key={a.id}
+                    type="button"
+                    className={`list-group-item list-group-item-action d-flex align-items-center justify-content-between ${
+                      selectedAluno?.id === a.id ? 'active' : ''
+                    }`}
+                    onClick={() => selecionarAluno(a)}
+                  >
+                    <div>
+                      <div className="fw-semibold">{a.nomeCompleto}</div>
+                      <div className={`small ${selectedAluno?.id === a.id ? 'text-white' : 'text-muted'}`}>
+                        {a.curso || ''}
+                      </div>
+                    </div>
+                    {unreadByAluno[a.id] ? (
+                      <span className="badge bg-danger">{unreadByAluno[a.id]} novo</span>
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="card p-3 mt-4">
+            <div className="fw-semibold mb-2">Últimos "Novos" (documentos)</div>
+            {documents.filter(d => d.teacherUnread).length === 0 ? (
+              <div className="text-muted">Sem novidades.</div>
+            ) : (
+              <div className="d-flex flex-column gap-2">
+                {documents
+                  .filter(d => d.teacherUnread)
+                  .slice(0, 8)
+                  .map(d => (
+                    <button
+                      key={d.id}
+                      type="button"
+                      className="btn btn-outline-danger text-start"
+                      onClick={() => {
+                        if (d.aluno) setSelectedAluno(d.aluno)
+                        abrirDocumento(d)
+                      }}
+                    >
+                      <div className="d-flex align-items-center justify-content-between">
+                        <div>
+                          <i className="bi bi-file-earmark-fill me-2" />
+                          <strong>{d.aluno?.nomeCompleto || 'Aluno'}</strong>
+                          <span className="ms-2 text-uppercase small">{d.type}</span>
+                        </div>
+                        <span className="badge bg-danger">novo</span>
+                      </div>
+                    </button>
+                  ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="col-lg-8">
+          {!selectedAluno ? (
+            <div className="alert alert-info">Seleccione um aluno para ver documentos e perguntas.</div>
+          ) : (
+            <>
+              <div className="card p-4 mb-4">
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <div>
+                    <h4 className="mb-0">{selectedAluno.nomeCompleto}</h4>
+                    <div className="text-muted">{selectedAluno.curso || ''}</div>
+                  </div>
+                </div>
+
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <DocumentoCard
+                      titulo="Programa"
+                      doc={selectedPrograma}
+                      onOpen={() => abrirDocumento(selectedPrograma)}
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <DocumentoCard
+                      titulo="Monografia"
+                      doc={selectedMonografia}
+                      onOpen={() => abrirDocumento(selectedMonografia)}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="card p-4">
+                <h4 className="mb-3">Perguntas do Aluno</h4>
+                {perguntas.length === 0 ? (
+                  <div className="text-muted">Sem perguntas.</div>
+                ) : (
+                  <div className="d-flex flex-column gap-3">
+                    {perguntas.map(p => (
+                      <div key={p.id} className="border rounded p-3">
+                        <div className="fw-semibold">{p.pergunta}</div>
+                        <div className="text-muted small">
+                          {p.createdAt ? new Date(p.createdAt).toLocaleString() : ''}
+                        </div>
+                        <div className="mt-2">
+                          <div className="small text-muted">Resposta</div>
+                          <div>
+                            {p.resposta ? p.resposta : <span className="text-muted">(sem resposta)</span>}
+                          </div>
+                        </div>
+                        <button
+                          className="btn btn-sm btn-primary mt-2"
+                          type="button"
+                          onClick={() => abrirPergunta(p)}
+                        >
+                          Responder
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
 
-      {(erro || info) && (
-        <div className="row mb-3">
-          <div className="col-12">
-            {erro && <div className="alert alert-danger">{erro}</div>}
-            {info && <div className="alert alert-success">{info}</div>}
-          </div>
-        </div>
-      )}
-
-      {!teacherAuth ? (
-        <div className="row justify-content-center">
-          <div className="col-md-6 col-lg-4">
-            <div className="card shadow-sm">
-              <div className="card-body">
-                <h5 className="card-title mb-3 text-center">
-                  Login do Professor
-                </h5>
-                <form onSubmit={handleTeacherLogin}>
-                  <div className="mb-3">
-                    <label className="form-label">Telefone</label>
-                    <input
-                      type="tel"
-                      className="form-control"
-                      value={telefone}
-                      onChange={e => setTelefone(e.target.value)}
-                      placeholder="Ex: 923 000 000"
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label">Palavra-passe</label>
-                    <input
-                      type="password"
-                      className="form-control"
-                      value={senha}
-                      onChange={e => setSenha(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="btn btn-primary w-100"
-                    disabled={loading}
-                  >
-                    {loading ? 'A entrar...' : 'Entrar como professor'}
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="row">
-          {/* COLUNA ESQUERDA: lista de alunos */}
-          <div className="col-lg-4 mb-4">
-            <div
-              className={`${styles.selectionArea || ''} bg-white border rounded`}
-            >
-              <div className="d-flex justify-content-between align-items-center mb-3">
-                <h5 className="mb-0">Alunos</h5>
-                <button
-                  className="btn btn-outline-danger btn-sm"
-                  onClick={handleTeacherLogout}
-                >
-                  Terminar sessão
-                </button>
-              </div>
-              {alunos.length === 0 ? (
-                <p className="text-muted">
-                  Ainda não há alunos registados ou não foi possível carregar a
-                  lista.
-                </p>
-              ) : (
-                <div className="list-group">
-                  {alunos.map(a => (
-                    <button
-                      key={a.id}
-                      type="button"
-                      className={
-                        'list-group-item list-group-item-action text-start ' +
-                        (selectedAluno?.id === a.id ? 'active' : '')
-                      }
-                      onClick={() => seleccionarAluno(a)}
-                    >
-                      <div className="fw-semibold">{a.nomeCompleto}</div>
-                      <small>
-                        {a.curso} · Tel: {a.telefone}
-                      </small>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* COLUNA DIREITA: programa do aluno seleccionado */}
-          <div className="col-lg-8">
-            <div className={styles.materialsArea || 'border rounded p-3'}>
-              {selectedAluno ? (
-                <>
-                  <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
-                    <div>
-                      <h4 className="mb-1">
-                        Programa – {selectedAluno.nomeCompleto}
-                      </h4>
-                      <p className="text-muted mb-0">
-                        Curso: {selectedAluno.curso} · Tel:{' '}
-                        {selectedAluno.telefone}
-                      </p>
-                    </div>
-                    <div className="mt-3 mt-md-0">
-                      <label className="form-label fw-semibold mb-1">
-                        Progresso do aluno: {progresso}%
-                      </label>
-                      <div className="progress" style={{ minWidth: '200px' }}>
-                        <div
-                          className="progress-bar"
-                          role="progressbar"
-                          style={{ width: `${progresso}%` }}
-                          aria-valuenow={progresso}
-                          aria-valuemin="0"
-                          aria-valuemax="100"
-                        >
-                          {progresso}%
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {programas.length === 0 ? (
-                    <p className="text-muted">
-                      Este aluno ainda não criou itens no programa de mentoria.
-                    </p>
-                  ) : (
-                    <div className="list-group">
-                      {programas.map(p => (
-                        <div
-                          key={p.id}
-                          className="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start"
-                        >
-                          <div className="me-md-3">
-                            <div className="d-flex align-items-center mb-1">
-                              <h6 className="mb-0">
-                                {p.tema}{' '}
-                                {p.concluido && (
-                                  <span className="badge bg-success ms-2">
-                                    Concluído
-                                  </span>
-                                )}
-
-                                {/* Prazo hoje / atrasado */}
-                                {!p.concluido &&
-                                  p.deadline &&
-                                  (() => {
-                                    const hoje = new Date()
-                                    hoje.setHours(0, 0, 0, 0)
-                                    const d = new Date(p.deadline)
-                                    if (!isNaN(d)) {
-                                      d.setHours(0, 0, 0, 0)
-                                      if (d.getTime() === hoje.getTime()) {
-                                        return (
-                                          <span className="badge bg-warning text-dark ms-2">
-                                            Prazo hoje
-                                          </span>
-                                        )
-                                      }
-                                      if (d < hoje) {
-                                        return (
-                                          <span className="badge bg-danger ms-2">
-                                            Atrasado
-                                          </span>
-                                        )
-                                      }
-                                    }
-                                    return null
-                                  })()}
-                              </h6>
-                            </div>
-                            <small className="text-muted">
-                              Deadline: {p.deadline || 'Sem data definida'}
-                            </small>
-                            <p className="mb-1 mt-2">{p.descricao}</p>
-                            {p.notas && (
-                              <p className="mb-1">
-                                <strong>Notas do aluno:</strong> {p.notas}
-                              </p>
-                            )}
-                            {p.comentarioProfessor && (
-                              <p className="mb-0">
-                                <strong>Comentário do professor:</strong>{' '}
-                                {p.comentarioProfessor}
-                              </p>
-                            )}
-                          </div>
-                          <div className="mt-2 mt-md-0">
-                            <button
-                              className="btn btn-sm btn-outline-primary"
-                              onClick={() => abrirComentario(p)}
-                            >
-                              {p.comentarioProfessor
-                                ? 'Editar comentário'
-                                : 'Adicionar comentário'}
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                  
-                  {/* ------------------------------------ */}
-                  {/* PERGUNTAS DO ALUNO                  */}
-                  {/* ------------------------------------ */}
-                  <hr className="my-4" />
-                  <h5 className="mb-3">Perguntas deste aluno</h5>
-
-                  <div className="mb-3 d-flex flex-wrap align-items-center gap-2">
-                    <span className="badge bg-secondary">
-                      Total: {totalPerguntasAluno}
-                    </span>
-                    <span className="badge bg-success">
-                      Respondidas: {perguntasRespondidasAluno}
-                    </span>
-                    <span className="badge bg-warning text-dark">
-                      Pendentes: {perguntasPendentesAluno}
-                    </span>
-                  </div>
-
-                  {perguntas.length === 0 ? (
-                    <p className="text-muted">
-                      Este aluno ainda não enviou perguntas.
-                    </p>
-                  ) : (
-                    <div className="list-group">
-                      {perguntas.map(q => (
-                        <div
-                          key={q.id}
-                          className="list-group-item d-flex flex-column flex-md-row justify-content-between align-items-start"
-                        >
-                          <div className="me-md-3">
-                            <div className="d-flex align-items-center mb-1">
-                              <h6 className="mb-0">
-                                {q.pergunta}{' '}
-                                {q.respondida ? (
-                                  <span className="badge bg-success ms-2">
-                                    Respondida
-                                  </span>
-                                ) : (
-                                  <span className="badge bg-warning text-dark ms-2">
-                                    Pendente
-                                  </span>
-                                )}
-                              </h6>
-                            </div>
-                            <small className="text-muted">
-                              Enviada em:{' '}
-                              {q.createdAt
-                                ? new Date(
-                                    q.createdAt
-                                  ).toLocaleDateString('pt-PT')
-                                : ''}
-                            </small>
-                            {q.detalhe && (
-                              <p className="mb-1 mt-2">
-                                <strong>Detalhe:</strong> {q.detalhe}
-                              </p>
-                            )}
-                            {q.respondida && (
-                              <p className="mb-0">
-                                <strong>Sua resposta:</strong> {q.resposta}
-                              </p>
-                            )}
-                          </div>
-                          <div className="mt-2 mt-md-0">
-                            <button
-                              className="btn btn-sm btn-outline-primary"
-                              onClick={() => abrirResposta(q)}
-                            >
-                              {q.respondida
-                                ? 'Editar resposta'
-                                : 'Responder'}
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <p className="text-muted">
-                  Selecione um aluno na coluna à esquerda para ver o programa de
-                  mentoria e adicionar comentários.
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-      
-      
-      {/* MODAL RESPOSTA DO PROFESSOR PARA PERGUNTAS */}
+      {/* Modal Pergunta */}
       {perguntaAberta && (
-        <div
-          className="modal d-block"
-          tabIndex="-1"
-          style={{ background: 'rgba(0,0,0,0.5)' }}
-        >
-          <div className="modal-dialog modal-lg modal-dialog-centered">
+        <div className="modal d-block" tabIndex={-1} role="dialog">
+          <div className="modal-dialog modal-lg" role="document">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">
-                  Responder pergunta – {perguntaAberta.pergunta}
-                </h5>
+                <h5 className="modal-title">Responder pergunta</h5>
                 <button
                   type="button"
                   className="btn-close"
                   onClick={() => setPerguntaAberta(null)}
-                ></button>
+                />
               </div>
               <div className="modal-body">
-                {perguntaAberta.detalhe && (
-                  <p>
-                    <strong>Detalhe do aluno:</strong>{' '}
-                    {perguntaAberta.detalhe}
-                  </p>
-                )}
+                <div className="fw-semibold mb-2">{perguntaAberta.pergunta}</div>
                 <textarea
                   className="form-control"
                   rows={6}
                   value={respostaTemp}
                   onChange={e => setRespostaTemp(e.target.value)}
-                  placeholder="Escreva aqui a sua resposta detalhada para o aluno."
                 />
               </div>
               <div className="modal-footer">
@@ -536,14 +433,15 @@ function abrirResposta(pergunta) {
                   className="btn btn-secondary"
                   onClick={() => setPerguntaAberta(null)}
                 >
-                  Fechar
+                  Cancelar
                 </button>
                 <button
                   type="button"
                   className="btn btn-primary"
                   onClick={guardarResposta}
+                  disabled={loading}
                 >
-                  Guardar resposta
+                  {loading ? 'A guardar...' : 'Guardar'}
                 </button>
               </div>
             </div>
@@ -551,53 +449,168 @@ function abrirResposta(pergunta) {
         </div>
       )}
 
-      {/* MODAL COMENTÁRIO DO PROFESSOR */}
-      {comentarioAberto && (
-        <div
-          className="modal d-block"
-          tabIndex="-1"
-          style={{ background: 'rgba(0,0,0,0.5)' }}
-        >
-          <div className="modal-dialog modal-lg modal-dialog-centered">
+      {/* Modal Documento */}
+      {docAberto && (
+        <div className="modal d-block" tabIndex={-1} role="dialog">
+          <div className="modal-dialog modal-fullscreen" role="document">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">
-                  Comentário – {comentarioAberto.tema}
+                  {docAberto.type === 'programa' ? 'Programa' : 'Monografia'} –{' '}
+                  {docAberto.aluno?.nomeCompleto || selectedAluno?.nomeCompleto}
                 </h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setComentarioAberto(null)}
-                ></button>
+                <button type="button" className="btn-close" onClick={() => setDocAberto(null)} />
               </div>
+
               <div className="modal-body">
-                <textarea
-                  className="form-control"
-                  rows={6}
-                  value={comentarioTemp}
-                  onChange={e => setComentarioTemp(e.target.value)}
-                  placeholder="Deixe aqui o seu feedback, orientações ou observações para o aluno."
-                />
+                <div className="row g-3">
+                  <div className="col-lg-8">
+                    {docAberto.original?.url ? (
+                      // Check if it's a PDF - show directly
+                      docAberto.original.contentType === 'application/pdf' ? (
+                        <iframe
+                          title="preview"
+                          src={docAberto.original.url}
+                          style={{ width: '100%', height: '80vh', border: '1px solid #ddd', borderRadius: 8 }}
+                        />
+                      ) : (
+                        // For Word docs and other files, use Google Docs Viewer
+                        <iframe
+                          title="preview"
+                          src={`https://docs.google.com/gview?url=${encodeURIComponent(docAberto.original.url)}&embedded=true`}
+                          style={{ width: '100%', height: '80vh', border: '1px solid #ddd', borderRadius: 8 }}
+                        />
+                      )
+                    ) : (
+                      <div className="alert alert-warning">
+                        Sem pré-visualização disponível.
+                      </div>
+                    )}
+
+                    <div className="d-flex gap-2 mt-3">
+                      {docAberto.original?.url && (
+                        <a
+                          className="btn btn-outline-primary"
+                          href={docAberto.original.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Download original
+                        </a>
+                      )}
+                      {docAberto.pdf?.url && (
+                        <a
+                          className="btn btn-outline-secondary"
+                          href={docAberto.pdf.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Abrir PDF
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="col-lg-4">
+                    <div className="border rounded p-3 mb-3">
+                      <div className="small text-muted">Nota do aluno</div>
+                      <div>
+                        {docAberto.studentNote ? docAberto.studentNote : <span className="text-muted">(sem nota)</span>}
+                      </div>
+                    </div>
+
+                    <div className="border rounded p-3">
+                      <div className="small text-muted mb-2">Nota do professor</div>
+                      <textarea
+                        className="form-control"
+                        rows={8}
+                        value={teacherNoteTemp}
+                        onChange={e => setTeacherNoteTemp(e.target.value)}
+                        placeholder="Escreva feedback para o aluno..."
+                      />
+                      <button
+                        className="btn btn-primary mt-2"
+                        type="button"
+                        onClick={salvarNotaProfessor}
+                        disabled={loading}
+                      >
+                        {loading ? 'A guardar...' : 'Guardar nota'}
+                      </button>
+                      <div className="text-muted small mt-2">
+                        Dica: deixe claro o que deve ser corrigido e a prioridade.
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
+
               <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setComentarioAberto(null)}
-                >
+                <button type="button" className="btn btn-secondary" onClick={() => setDocAberto(null)}>
                   Fechar
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={guardarComentario}
-                >
-                  Guardar comentário
                 </button>
               </div>
             </div>
           </div>
         </div>
+      )}
+
+      {/* backdrop */}
+      {(perguntaAberta || docAberto) && <div className="modal-backdrop show" />}
+    </div>
+  )
+}
+
+function DocumentoCard({ titulo, doc, onOpen }) {
+  const isNovo = !!doc?.teacherUnread
+
+  return (
+    <div className="border rounded p-3 h-100">
+      <div className="d-flex align-items-center justify-content-between">
+        <div className="fw-semibold">{titulo}</div>
+        {isNovo ? <span className="badge bg-danger">novo</span> : null}
+      </div>
+
+      {!doc ? (
+        <div className="text-muted mt-2">Ainda não enviado.</div>
+      ) : (
+        <>
+          <div className="d-flex align-items-center gap-2 mt-2">
+            <i className={`bi ${isNovo ? 'bi-file-earmark-fill' : 'bi-file-earmark-text'}`} />
+            <div>
+              <div className="fw-semibold" style={{ fontSize: 14 }}>
+                {doc.original?.filename || 'Documento'}
+              </div>
+              <div className="text-muted small">
+                Actualizado: {doc.updatedAt ? new Date(doc.updatedAt).toLocaleString() : '-'}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-2">
+            <div className="small text-muted">Nota do aluno</div>
+            <div style={{ whiteSpace: 'pre-wrap' }}>
+              {doc.studentNote ? doc.studentNote : <span className="text-muted">(sem nota)</span>}
+            </div>
+          </div>
+
+          <div className="d-flex gap-2 mt-3">
+            <button className="btn btn-sm btn-primary" type="button" onClick={onOpen}>
+              Pré-visualizar
+            </button>
+            {doc.original?.url ? (
+              <a
+                className="btn btn-sm btn-outline-secondary"
+                href={doc.original.url}
+                target="_blank"
+                rel="noreferrer"
+              >
+                Download
+              </a>
+            ) : null}
+          </div>
+
+
+        </>
       )}
     </div>
   )
