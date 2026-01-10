@@ -486,29 +486,6 @@ export default function MentoringAdminPage() {
                         Sem pré-visualização disponível.
                       </div>
                     )}
-
-                    <div className="d-flex gap-2 mt-3">
-                      {docAberto.original?.url && (
-                        <a
-                          className="btn btn-outline-primary"
-                          href={docAberto.original.url}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Download original
-                        </a>
-                      )}
-                      {docAberto.pdf?.url && (
-                        <a
-                          className="btn btn-outline-secondary"
-                          href={docAberto.pdf.url}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          Abrir PDF
-                        </a>
-                      )}
-                    </div>
                   </div>
 
                   <div className="col-lg-4">
@@ -519,7 +496,7 @@ export default function MentoringAdminPage() {
                       </div>
                     </div>
 
-                    <div className="border rounded p-3">
+                    <div className="border rounded p-3 mb-3">
                       <div className="small text-muted mb-2">Nota do professor</div>
                       <textarea
                         className="form-control"
@@ -540,14 +517,29 @@ export default function MentoringAdminPage() {
                         Dica: deixe claro o que deve ser corrigido e a prioridade.
                       </div>
                     </div>
+
+                    {/* Download button and close button in the sidebar */}
+                    <div className="d-flex gap-2">
+                      {docAberto.original?.url && (
+                        <a
+                          className="btn btn-primary flex-fill"
+                          href={docAberto.original.url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          Baixar
+                        </a>
+                      )}
+                      <button
+                        type="button"
+                        className="btn btn-outline-secondary"
+                        onClick={() => setDocAberto(null)}
+                      >
+                        Fechar
+                      </button>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setDocAberto(null)}>
-                  Fechar
-                </button>
               </div>
             </div>
           </div>
