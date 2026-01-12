@@ -1,98 +1,88 @@
 // app/api/mentoring/questions/[id]/route.js
+// Actualiza resposta e flags de notificações.
+
 import { NextResponse } from 'next/server'
 import { getDb } from '@/app/lib/mongodb'
 import { ObjectId } from 'mongodb'
 
-export async function PUT(request, { params }) {
+export const runtime = 'nodejs'
+
+function buildFilterById(id) {
+  if (ObjectId.isValid(id)) return { _id: new ObjectId(id) }
+  return { _id: id }
+}
+
+async function updateQuestion(request, params) {
+  const { id } = params
+  const body = await request.json()
+
+  const action = (body?.action || '').toString() // markTeacherRead|markStudentRead|''
+  const resposta = body?.resposta
+
+  const db = await getDb()
+  const col = db.collection('perguntas')
+
+  const existing = await col.findOne(buildFilterById(id))
+  if (!existing) {
+    return NextResponse.json({ error: 'Pergunta não encontrada.' }, { status: 404 })
+  }
+
+  const now = new Date()
+  const $set = { updatedAt: now }
+
+  if (action === 'markTeacherRead') {
+    $set.teacherUnread = false
+  } else if (action === 'markStudentRead') {
+    $set.studentUnread = false
+  } else if (typeof resposta === 'string') {
+    const text = resposta.toString()
+    $set.resposta = text
+    const answered = text.trim().length > 0
+    $set.respondida = answered
+    $set.respondidaEm = answered ? now : null
+
+    // professor respondeu -> aluno deve ser notificado
+    $set.teacherUnread = false
+    $set.studentUnread = answered
+  } else {
+    return NextResponse.json({ error: 'Nada para actualizar.' }, { status: 400 })
+  }
+
+  const result = await col.findOneAndUpdate(buildFilterById(id), { $set }, { returnDocument: 'after' })
+  const q = result.value || result
+
+  return NextResponse.json(
+    {
+      message: 'Pergunta actualizada.',
+      pergunta: {
+        id: q._id.toString(),
+        alunoId: q.alunoId?.toString(),
+        mentorshipId: q.mentorshipId?.toString() || null,
+        pergunta: q.pergunta || '',
+        detalhe: q.detalhe || '',
+        resposta: q.resposta || '',
+        respondida: !!q.respondida,
+        teacherUnread: !!q.teacherUnread,
+        studentUnread: !!q.studentUnread,
+        createdAt: q.createdAt || null,
+        updatedAt: q.updatedAt || null,
+        respondidaEm: q.respondidaEm || null
+      }
+    },
+    { status: 200 }
+  )
+}
+
+export async function PATCH(request, { params }) {
   try {
-    // FIX 1: Await params (Required for Next.js 15+)
-    const { id } = await params 
-    
-    // Debugging: Check if ID is being captured correctly
-    console.log("Updating Question ID:", id)
-
-    const body = await request.json()
-    const { resposta, respondida } = body
-
-    const db = await getDb()
-    const perguntasCol = db.collection('perguntas')
-
-    let filtro
-    try {
-      filtro = { _id: new ObjectId(id) }
-    } catch {
-      filtro = { _id: id }
-    }
-
-    // Check existence
-    const existente = await perguntasCol.findOne(filtro)
-    if (!existente) {
-      console.log("Question not found in initial search")
-      return NextResponse.json(
-        { error: 'Pergunta não encontrada.' },
-        { status: 404 }
-      )
-    }
-
-    const agora = new Date()
-    const updateFields = {
-      updatedAt: agora
-    }
-
-    if (typeof resposta === 'string') {
-      updateFields.resposta = resposta
-      updateFields.respondida = resposta.trim().length > 0
-      updateFields.respondidaEm = resposta.trim().length > 0 ? agora : null
-    }
-
-    if (typeof respondida === 'boolean') {
-      updateFields.respondida = respondida
-      updateFields.respondidaEm = respondida ? agora : null
-    }
-
-    // FIX 2: Handle findOneAndUpdate return value
-    // In newer MongoDB drivers, this returns the document directly, not { value: doc }
-    // We explicitly set includeResultMetadata: false to get just the doc (default in v5/v6)
-    const result = await perguntasCol.findOneAndUpdate(
-      filtro,
-      { $set: updateFields },
-      { returnDocument: 'after' } 
-    )
-
-    // In MongoDB Driver v5+, 'result' IS the document (or null if not found)
-    // If you are on an older driver (v4), keep using result.value. 
-    // This checks both to be safe:
-    const q = result.value || result
-
-    if (!q) {
-      console.log("Update failed or document missing after update")
-      return NextResponse.json(
-        { error: 'Pergunta não encontrada.' },
-        { status: 404 }
-      )
-    }
-
-    const perguntaOut = {
-      id: q._id.toString(),
-      alunoId: q.alunoId.toString(),
-      pergunta: q.pergunta,
-      detalhe: q.detalhe || '',
-      resposta: q.resposta || '',
-      respondida: !!q.respondida,
-      createdAt: q.createdAt,
-      updatedAt: q.updatedAt,
-      respondidaEm: q.respondidaEm || null
-    }
-
-    return NextResponse.json(
-      { message: 'Pergunta actualizada.', pergunta: perguntaOut },
-      { status: 200 }
-    )
+    return await updateQuestion(request, params)
   } catch (error) {
     console.error('Erro ao actualizar pergunta:', error)
-    return NextResponse.json(
-      { error: 'Erro ao actualizar a pergunta.' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Erro ao actualizar a pergunta.' }, { status: 500 })
   }
+}
+
+// Compatibilidade (algum código antigo usa PUT)
+export async function PUT(request, { params }) {
+  return PATCH(request, { params })
 }

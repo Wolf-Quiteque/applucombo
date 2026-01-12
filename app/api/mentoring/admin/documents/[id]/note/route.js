@@ -12,7 +12,7 @@ function buildFilterById(id) {
 
 export async function PATCH(request, { params }) {
   try {
-    const { id } = await params
+    const { id } = params
     const body = await request.json()
     const teacherNote = (body?.teacherNote || '').toString()
 
@@ -26,7 +26,9 @@ export async function PATCH(request, { params }) {
         $set: {
           teacherNote,
           teacherNoteUpdatedAt: now,
-          updatedAt: now
+          updatedAt: now,
+          // quando o professor adiciona feedback, o aluno deve ser notificado
+          studentUnread: true
         }
       },
       { returnDocument: 'after' }

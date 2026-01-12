@@ -18,3 +18,44 @@
                 background-color: #fff;
                   overflow-x: hidden;
                   }
+
+/* ---------- Modern UI helpers (Bootstrap-friendly) ---------- */
+.modern-card {
+  border: 0 !important;
+  border-radius: 18px !important;
+  box-shadow: 0 10px 30px rgba(16, 24, 40, 0.08);
+}
+
+.modern-card .card-header {
+  border-top-left-radius: 18px !important;
+  border-top-right-radius: 18px !important;
+}
+
+.soft-border {
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+}
+
+.hero-gradient {
+  background: radial-gradient(1200px 400px at 20% 10%, rgba(41, 198, 210, 0.20), transparent 55%),
+    radial-gradient(900px 340px at 90% 20%, rgba(13, 110, 253, 0.18), transparent 60%),
+    linear-gradient(180deg, rgba(248, 249, 250, 0.95), rgba(255, 255, 255, 0.95));
+}
+
+.file-drop {
+  border: 1px dashed rgba(15, 23, 42, 0.25);
+  border-radius: 16px;
+  padding: 14px;
+  background: rgba(248, 249, 250, 0.9);
+}
+
+.file-drop:hover {
+  border-color: rgba(41, 198, 210, 0.75);
+}
+
+.truncate-1 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+  vertical-align: bottom;
+}

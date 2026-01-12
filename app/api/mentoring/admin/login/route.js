@@ -11,7 +11,7 @@ export async function POST(request) {
 
     if (!envPhone || !envPassword) {
       return NextResponse.json(
-        { error: 'Credenciais do professor não estão configuradas no servidor.' },
+        { ok: false, error: 'Credenciais do professor não estão configuradas no servidor.' },
         { status: 500 }
       )
     }
@@ -21,7 +21,7 @@ export async function POST(request) {
 
     if (telefoneLimpo !== envTelefoneLimpo || senha !== envPassword) {
       return NextResponse.json(
-        { error: 'Telefone ou palavra-passe inválidos.' },
+        { ok: false, error: 'Telefone ou palavra-passe inválidos.' },
         { status: 401 }
       )
     }
@@ -29,6 +29,7 @@ export async function POST(request) {
     // Como é só um professor, não precisamos de muito mais
     return NextResponse.json(
       {
+        ok: true,
         message: 'Login de professor efectuado com sucesso.',
         teacher: {
           telefone: envTelefoneLimpo
@@ -39,7 +40,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('Erro no login do professor:', error)
     return NextResponse.json(
-      { error: 'Erro ao iniciar sessão como professor.' },
+      { ok: false, error: 'Erro ao iniciar sessão como professor.' },
       { status: 500 }
     )
   }

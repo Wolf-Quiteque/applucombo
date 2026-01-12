@@ -1,4 +1,5 @@
 // app/api/mentoring/documents/route.js
+
 import { NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
 import { getDb } from '@/app/lib/mongodb'
@@ -6,93 +7,427 @@ import { uploadBuffer } from '@/app/lib/r2'
 
 export const runtime = 'nodejs'
 
-const MAX_FILE_BYTES = 25 * 1024 * 1024 // 25MB
+const ALLOWED_TYPES = new Set([
+  'programa',
+  'monografia',
+  'tez',
+  'dissertacao',
+  'pesquisa',
+  'outras_pesquisa'
+])
 
-function getExt(filename) {
-  const idx = (filename || '').lastIndexOf('.')
-  return idx === -1 ? '' : filename.slice(idx).toLowerCase()
-}
+const ALLOWED_CONTENT_TYPES = new Set([
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+])
 
-function contentTypeFromExt(ext) {
-  if (ext === '.pdf') return 'application/pdf'
-  if (ext === '.doc') return 'application/msword'
-  if (ext === '.docx') {
-    return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+function oid(id) {
+  if (!id) return null
+  try {
+    return new ObjectId(id)
+  } catch {
+    return null
   }
-  return 'application/octet-stream'
 }
 
-function sanitizeForKey(filename) {
-  // apenas para o key no bucket (sem espaços estranhos)
-  return (filename || 'ficheiro')
-    .trim()
-    .replaceAll(' ', '_')
-    .replaceAll('..', '.')
-    .replaceAll('/', '_')
+function safeName(name) {
+  const base = (name || 'documento').toString().trim().replace(/\s+/g, '_')
+  return base.replace(/[^a-zA-Z0-9._-]/g, '_')
 }
 
+function randomId() {
+  try {
+    return crypto.randomUUID()
+  } catch {
+    return `${Date.now()}_${Math.random().toString(16).slice(2)}`
+  }
+}
 
-
-// GET /api/mentoring/documents?alunoId=...  (opcional: type=programa|monografia)
+// GET
+// - Novo: /api/mentoring/documents?mentorshipId=...&type=...&kind=submission,correction
+// - Legacy: /api/mentoring/documents?alunoId=...
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
-    const alunoId = searchParams.get('alunoId')
-    const type = searchParams.get('type')
+    const mentorshipId = searchParams.get('mentorshipId')
 
-    if (!alunoId) {
+    // v2
+    if (mentorshipId) {
+      const mentorshipOid = oid(mentorshipId)
+      if (!mentorshipOid) {
+        return NextResponse.json({ error: 'mentorshipId inválido.' }, { status: 400 })
+      }
+
+      const type = (searchParams.get('type') || '').toString().trim()
+      const kindParam = (searchParams.get('kind') || '').toString().trim()
+      const alunoId = searchParams.get('alunoId')
+      const alunoOid = alunoId ? oid(alunoId) : null
+
+      const filter = { mentorshipId: mentorshipOid }
+      if (alunoOid) filter.alunoId = alunoOid
+
+      if (type) {
+        if (!ALLOWED_TYPES.has(type)) {
+          return NextResponse.json({ error: 'Tipo de documento inválido.' }, { status: 400 })
+        }
+        filter.type = type
+      }
+
+      if (kindParam) {
+        const kinds = kindParam
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean)
+        if (kinds.length === 1) filter.kind = kinds[0]
+        else filter.kind = { $in: kinds }
+      }
+
+      const db = await getDb()
+      const col = db.collection('mentoring_documents')
+
+      const docs = await col
+        .find(filter)
+        .sort({ createdAt: -1, version: -1 })
+        .toArray()
+
+      const documents = docs.map(d => ({
+        id: d._id.toString(),
+        mentorshipId: d.mentorshipId?.toString(),
+        alunoId: d.alunoId?.toString(),
+        type: d.type,
+        kind: d.kind || 'submission',
+        version: d.version || 1,
+        parentDocumentId: d.parentDocumentId ? d.parentDocumentId.toString() : null,
+        forDocumentVersion: d.forDocumentVersion ?? null,
+        original: d.original || null,
+        pdf: d.pdf || null,
+        studentNote: d.studentNote || '',
+        teacherNote: d.teacherNote || '',
+        teacherUnread: !!d.teacherUnread,
+        studentUnread: !!d.studentUnread,
+        teacherViewedAt: d.teacherViewedAt || d.teacherLastOpenedAt || null,
+        teacherDownloadedAt: d.teacherDownloadedAt || null,
+        studentViewedAt: d.studentViewedAt || null,
+        studentDownloadedAt: d.studentDownloadedAt || null,
+        createdAt: d.createdAt || null,
+        updatedAt: d.updatedAt || null
+      }))
+
+      return NextResponse.json({ documents }, { status: 200 })
+    }
+
+    // legacy
+    const { searchParams: sp } = new URL(request.url)
+    const alunoId = sp.get('alunoId')
+    const alunoOid = oid(alunoId)
+    if (!alunoOid) {
       return NextResponse.json(
         { error: 'alunoId é obrigatório.' },
         { status: 400 }
       )
     }
 
-    const filter = { alunoId: new ObjectId(alunoId) }
-    if (type) filter.type = type
-
     const db = await getDb()
     const col = db.collection('mentoring_documents')
 
     const docs = await col
-      .find(filter)
-      .sort({ updatedAt: -1 })
+      .find({ alunoId: alunoOid })
+      .sort({ updatedAt: -1, createdAt: -1 })
       .toArray()
 
-    const documents = docs.map(d => ({
-      id: d._id.toString(),
-      alunoId: d.alunoId.toString(),
-      type: d.type,
-      version: d.version || 1,
-      original: d.original || null,
-      pdf: d.pdf || null,
-      pdfConversionError: d.pdfConversionError || null,
-      studentNote: d.studentNote || '',
-      teacherNote: d.teacherNote || '',
-      teacherUnread: !!d.teacherUnread,
-      teacherLastOpenedAt: d.teacherLastOpenedAt || null,
-      createdAt: d.createdAt || null,
-      updatedAt: d.updatedAt || null
+    const documents = docs.map(doc => ({
+      id: doc._id.toString(),
+      type: doc.type,
+      original: doc.original || null,
+      pdf: doc.pdf || null,
+      studentNote: doc.studentNote || '',
+      teacherNote: doc.teacherNote || '',
+      teacherUnread: !!doc.teacherUnread,
+      createdAt: doc.createdAt || null,
+      updatedAt: doc.updatedAt || null,
+      version: doc.version || 1
     }))
 
     return NextResponse.json({ documents }, { status: 200 })
   } catch (error) {
     console.error('Erro ao listar documentos:', error)
-    return NextResponse.json(
-      { error: 'Erro ao carregar documentos.' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Erro ao carregar documentos.' }, { status: 500 })
   }
 }
 
-// POST /api/mentoring/documents
-// form-data: alunoId, type (programa|monografia), note (opcional), file (opcional)
+// POST
+// - Novo: multipart form-data com mentorshipId
+//   campos: mentorshipId, alunoId, type, kind=submission|correction|resource, parentDocumentId?, note, file
+// - Legacy: campos: alunoId, type, note, file (faz upsert)
 export async function POST(request) {
   try {
-    const form = await request.formData()
-    const alunoId = form.get('alunoId')
-    const type = form.get('type')
-    const note = (form.get('note') || '').toString()
-    const file = form.get('file') // File | null
+    const formData = await request.formData()
+
+    const mentorshipId = formData.get('mentorshipId')
+
+    // v2
+    if (mentorshipId) {
+      const mentorshipOid = oid(mentorshipId)
+      const alunoId = formData.get('alunoId')
+      const alunoOid = oid(alunoId)
+      const type = (formData.get('type') || '').toString().trim()
+      const kindRaw = (formData.get('kind') || 'submission').toString().trim()
+      const kind = ['submission', 'correction', 'resource'].includes(kindRaw)
+        ? kindRaw
+        : 'submission'
+
+      const note = (formData.get('note') || '').toString()
+      const file = formData.get('file')
+
+      if (!mentorshipOid || !alunoOid) {
+        return NextResponse.json({ error: 'mentorshipId/alunoId inválido.' }, { status: 400 })
+      }
+
+      if (!ALLOWED_TYPES.has(type)) {
+        return NextResponse.json({ error: 'Tipo de documento inválido.' }, { status: 400 })
+      }
+
+      const db = await getDb()
+      const col = db.collection('mentoring_documents')
+      const mentorshipsCol = db.collection('mentoring_mentorships')
+
+      const now = new Date()
+
+      // Se não veio ficheiro (apenas nota) -> actualiza a última submissão
+      // Suporta nota do aluno (studentNote) e feedback do professor (teacherNote)
+      // via uploadedByRole/role = 'student' | 'teacher'
+      if (!file || typeof file === 'string') {
+        if (!note.trim()) {
+          return NextResponse.json(
+            { error: 'Envie um ficheiro ou escreva uma nota.' },
+            { status: 400 }
+          )
+        }
+
+        const role = (formData.get('uploadedByRole') || formData.get('role') || 'student')
+          .toString()
+          .trim()
+          .toLowerCase()
+        const isTeacher = role === 'teacher'
+
+        const latest = await col
+          .find({ mentorshipId: mentorshipOid, alunoId: alunoOid, type, kind: 'submission' })
+          .sort({ version: -1, createdAt: -1 })
+          .limit(1)
+          .toArray()
+          .then(arr => arr[0])
+
+        if (!latest) {
+          return NextResponse.json(
+            { error: 'Ainda não existe uma versão para actualizar a nota. Envie o ficheiro primeiro.' },
+            { status: 400 }
+          )
+        }
+
+        if (isTeacher) {
+          await col.updateOne(
+            { _id: latest._id },
+            {
+              $set: {
+                teacherNote: note,
+                studentUnread: true,
+                studentUnreadAt: now,
+                teacherUnread: false,
+                updatedAt: now
+              }
+            }
+          )
+
+          await mentorshipsCol.updateOne(
+            { _id: mentorshipOid },
+            { $set: { updatedAt: now } }
+          )
+        } else {
+          await col.updateOne(
+            { _id: latest._id },
+            {
+              $set: {
+                studentNote: note,
+                teacherUnread: true,
+                teacherUnreadAt: now,
+                updatedAt: now
+              }
+            }
+          )
+
+          await mentorshipsCol.updateOne(
+            { _id: mentorshipOid },
+            {
+              $set: {
+                teacherQueueStatus: 'pending',
+                teacherQueueUpdatedAt: now,
+                updatedAt: now
+              }
+            }
+          )
+        }
+
+        return NextResponse.json(
+          {
+            message: 'Nota actualizada.',
+            documentId: latest._id.toString(),
+            updatedRole: isTeacher ? 'teacher' : 'student'
+          },
+          { status: 200 }
+        )
+      }
+
+      // ficheiro presente
+      const contentType = file.type || 'application/octet-stream'
+      if (!ALLOWED_CONTENT_TYPES.has(contentType)) {
+        return NextResponse.json(
+          { error: 'Formato inválido. Apenas PDF, DOC e DOCX.' },
+          { status: 400 }
+        )
+      }
+
+      const filename = safeName(file.name)
+      const bytes = Buffer.from(await file.arrayBuffer())
+
+      // calcula versão
+      let version = 1
+      let parentDocumentId = null
+      let forDocumentVersion = null
+
+      if (kind === 'submission') {
+        const last = await col
+          .find({ mentorshipId: mentorshipOid, alunoId: alunoOid, type, kind: 'submission' })
+          .sort({ version: -1 })
+          .limit(1)
+          .toArray()
+          .then(arr => arr[0])
+
+        version = (last?.version || 0) + 1
+      } else if (kind === 'correction') {
+        const parentId = formData.get('parentDocumentId')
+        const parentOid = oid(parentId)
+        if (!parentOid) {
+          return NextResponse.json(
+            { error: 'parentDocumentId é obrigatório para correcções.' },
+            { status: 400 }
+          )
+        }
+
+        const parent = await col.findOne({ _id: parentOid })
+        if (!parent) {
+          return NextResponse.json({ error: 'Documento base não encontrado.' }, { status: 404 })
+        }
+
+        parentDocumentId = parentOid
+        forDocumentVersion = parent.version || null
+
+        const lastCorr = await col
+          .find({ parentDocumentId: parentOid, kind: 'correction' })
+          .sort({ createdAt: -1 })
+          .limit(1)
+          .toArray()
+          .then(arr => arr[0])
+
+        // versão de correção (1,2,3...) por documento base
+        version = (lastCorr?.version || 0) + 1
+      } else if (kind === 'resource') {
+        const lastRes = await col
+          .find({ mentorshipId: mentorshipOid, type, kind: 'resource' })
+          .sort({ createdAt: -1, version: -1 })
+          .limit(1)
+          .toArray()
+          .then(arr => arr[0])
+        version = (lastRes?.version || 0) + 1
+      }
+
+      const key = `mentoring/${alunoOid.toString()}/${mentorshipOid.toString()}/${type}/${kind}/${Date.now()}_${randomId()}_${filename}`
+      const upload = await uploadBuffer({ key, body: bytes, contentType })
+
+      const original = {
+        key: upload.key,
+        url: upload.url,
+        filename,
+        contentType,
+        size: bytes.length,
+        uploadedAt: now
+      }
+
+      const pdf = contentType === 'application/pdf'
+        ? { ...original, generatedAt: now, source: 'original' }
+        : null
+
+      const uploadedByRole = kind === 'submission' ? 'student' : 'teacher'
+
+      const doc = {
+        mentorshipId: mentorshipOid,
+        alunoId: alunoOid,
+        type,
+        kind,
+        version,
+        uploadedByRole,
+        parentDocumentId,
+        forDocumentVersion,
+        original,
+        pdf,
+        studentNote: kind === 'submission' ? note : '',
+        teacherNote: kind !== 'submission' ? note : '',
+        teacherUnread: kind === 'submission',
+        studentUnread: kind !== 'submission',
+        teacherUnreadAt: kind === 'submission' ? now : null,
+        studentUnreadAt: kind !== 'submission' ? now : null,
+        createdAt: now,
+        updatedAt: now
+      }
+
+      const ins = await col.insertOne(doc)
+
+      if (kind === 'submission') {
+        await mentorshipsCol.updateOne(
+          { _id: mentorshipOid },
+          {
+            $set: {
+              teacherQueueStatus: 'pending',
+              teacherQueueUpdatedAt: now,
+              updatedAt: now
+            }
+          }
+        )
+      } else {
+        await mentorshipsCol.updateOne(
+          { _id: mentorshipOid },
+          { $set: { updatedAt: now } }
+        )
+      }
+
+      return NextResponse.json(
+        {
+          message: 'Documento enviado.',
+          document: {
+            id: ins.insertedId.toString(),
+            mentorshipId: mentorshipId.toString(),
+            alunoId: alunoId.toString(),
+            type,
+            kind,
+            version,
+            parentDocumentId: parentDocumentId ? parentDocumentId.toString() : null,
+            forDocumentVersion,
+            original,
+            pdf,
+            studentNote: doc.studentNote,
+            teacherNote: doc.teacherNote,
+            createdAt: now
+          }
+        },
+        { status: 201 }
+      )
+    }
+
+    // legacy upsert (mantido para compatibilidade)
+    const alunoId = formData.get('alunoId')
+    const type = formData.get('type')
+    const note = formData.get('note') || ''
+    const file = formData.get('file')
 
     if (!alunoId || !type) {
       return NextResponse.json(
@@ -101,131 +436,71 @@ export async function POST(request) {
       )
     }
 
+    const alunoOid = oid(alunoId)
+    if (!alunoOid) {
+      return NextResponse.json({ error: 'alunoId inválido.' }, { status: 400 })
+    }
+
     if (type !== 'programa' && type !== 'monografia') {
       return NextResponse.json(
-        { error: 'type inválido. Use programa ou monografia.' },
+        { error: 'Tipo inválido. Use "programa" ou "monografia".' },
         { status: 400 }
       )
     }
 
+    if (!file) {
+      return NextResponse.json({ error: 'Ficheiro é obrigatório.' }, { status: 400 })
+    }
+
+    const contentType = file.type || 'application/octet-stream'
+    if (!ALLOWED_CONTENT_TYPES.has(contentType)) {
+      return NextResponse.json(
+        { error: 'Formato inválido. Apenas PDF, DOC e DOCX.' },
+        { status: 400 }
+      )
+    }
+
+    const bytes = Buffer.from(await file.arrayBuffer())
+    const filename = safeName(file.name)
+
+    const now = new Date()
+    const key = `mentoring/${alunoOid.toString()}/${type}/${Date.now()}_${randomId()}_${filename}`
+
+    const upload = await uploadBuffer({ key, body: bytes, contentType })
+
+    const original = {
+      key: upload.key,
+      url: upload.url,
+      filename,
+      contentType,
+      size: bytes.length,
+      uploadedAt: now
+    }
+
+    const pdf = contentType === 'application/pdf'
+      ? { ...original, generatedAt: now, source: 'original' }
+      : null
+
     const db = await getDb()
     const col = db.collection('mentoring_documents')
 
-    const filter = { alunoId: new ObjectId(alunoId), type }
-    const existing = await col.findOne(filter)
-
-    const now = new Date()
-
-    // Regras de extensão por tipo - ambos permitem PDF e Word
-    const allowedExts = ['.doc', '.docx', '.pdf']
-
-    const updateDoc = {
-      updatedAt: now
-    }
-
-    // Se o aluno mexer em algo (nota ou upload), o professor deve ver "Novo"
-    const setTeacherUnread = () => {
-      updateDoc.teacherUnread = true
-      updateDoc.teacherUnreadAt = now
-      updateDoc.teacherLastOpenedAt = null
-    }
-
-    // --- NOTA (pode ser sem ficheiro) ---
-    if (typeof note === 'string') {
-      updateDoc.studentNote = note
-      updateDoc.studentNoteUpdatedAt = now
-      setTeacherUnread()
-    }
-
-    // --- FICHEIRO (opcional) ---
-    if (file && typeof file === 'object' && 'arrayBuffer' in file) {
-      const filename = file.name || 'documento'
-      const ext = getExt(filename)
-
-      if (!allowedExts.includes(ext)) {
-        return NextResponse.json(
-          {
-            error: `${type === 'programa' ? 'Programa' : 'Monografia'}: envie apenas Word (.doc/.docx) ou PDF (.pdf).`
-          },
-          { status: 400 }
-        )
-      }
-
-      const arrayBuf = await file.arrayBuffer()
-      const buf = Buffer.from(arrayBuf)
-
-      if (buf.length > MAX_FILE_BYTES) {
-        return NextResponse.json(
-          { error: 'Ficheiro demasiado grande (máx: 25MB).' },
-          { status: 400 }
-        )
-      }
-
-      const safeName = sanitizeForKey(filename)
-      const random = globalThis.crypto?.randomUUID
-        ? globalThis.crypto.randomUUID()
-        : Math.random().toString(16).slice(2)
-
-      const baseKey = `mentoring/${alunoId}/${type}/${Date.now()}_${random}`
-      const originalKey = `${baseKey}_${safeName}`
-
-      const originalContentType = file.type || contentTypeFromExt(ext)
-
-      const uploadedOriginal = await uploadBuffer({
-        key: originalKey,
-        body: buf,
-        contentType: originalContentType
-      })
-
-      updateDoc.original = {
-        key: uploadedOriginal.key,
-        url: uploadedOriginal.url,
-        filename,
-        contentType: originalContentType,
-        size: buf.length,
-        uploadedAt: now
-      }
-
-      // Para PDFs, usamos o ficheiro original directamente
-      // Para Word docs, usaremos Google Docs Viewer para pré-visualização
-      if (ext === '.pdf') {
-        updateDoc.pdf = {
-          key: uploadedOriginal.key,
-          url: uploadedOriginal.url,
-          filename,
-          contentType: 'application/pdf',
-          size: buf.length,
-          generatedAt: now,
-          source: 'original'
-        }
-      }
-      // Para Word docs, não há necessidade de conversão - usaremos Google Docs Viewer
-
-      updateDoc.version = (existing?.version || 0) + 1
-      setTeacherUnread()
-    } else {
-      // Sem ficheiro: precisa existir um doc para permitir apenas editar nota
-      if (!existing) {
-        return NextResponse.json(
-          {
-            error:
-              'Envie um ficheiro primeiro. Depois poderá actualizar apenas a nota.'
-          },
-          { status: 400 }
-        )
-      }
-    }
-
     const result = await col.findOneAndUpdate(
-      filter,
+      { alunoId: alunoOid, type },
       {
-        $set: updateDoc,
+        $set: {
+          original,
+          pdf,
+          studentNote: note.toString(),
+          teacherUnread: true,
+          updatedAt: now
+        },
         $setOnInsert: {
-          alunoId: new ObjectId(alunoId),
+          alunoId: alunoOid,
           type,
           createdAt: now,
-          teacherNote: ''
-        }
+          version: 0
+        },
+        $inc: { version: 1 }
       },
       { upsert: true, returnDocument: 'after' }
     )
@@ -234,29 +509,25 @@ export async function POST(request) {
 
     return NextResponse.json(
       {
-        message: 'Documento actualizado.',
+        message: 'Documento enviado com sucesso.',
         document: {
           id: doc._id.toString(),
-          alunoId: doc.alunoId.toString(),
           type: doc.type,
-          version: doc.version || 1,
-          original: doc.original || null,
-          pdf: doc.pdf || null,
-          pdfConversionError: doc.pdfConversionError || null,
-          studentNote: doc.studentNote || '',
-          teacherNote: doc.teacherNote || '',
+          original: doc.original,
+          pdf: doc.pdf,
+          studentNote: doc.studentNote,
           teacherUnread: !!doc.teacherUnread,
-          teacherLastOpenedAt: doc.teacherLastOpenedAt || null,
-          createdAt: doc.createdAt || null,
-          updatedAt: doc.updatedAt || null
+          createdAt: doc.createdAt,
+          updatedAt: doc.updatedAt,
+          version: doc.version
         }
       },
-      { status: 200 }
+      { status: 201 }
     )
   } catch (error) {
-    console.error('Erro ao criar/actualizar documento:', error)
+    console.error('Erro ao enviar documento:', error)
     return NextResponse.json(
-      { error: 'Erro ao guardar documento.' },
+      { error: 'Erro ao enviar documento.' },
       { status: 500 }
     )
   }
