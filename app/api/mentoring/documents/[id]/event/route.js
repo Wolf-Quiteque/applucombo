@@ -8,8 +8,7 @@ import { ObjectId } from 'mongodb'
 export const runtime = 'nodejs'
 
 function buildFilterById(id) {
-  if (ObjectId.isValid(id)) return { _id: new ObjectId(id) }
-  return { _id: id }
+  return { _id: new ObjectId(id) }
 }
 
 // PATCH /api/mentoring/documents/[id]/event

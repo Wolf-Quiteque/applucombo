@@ -13,7 +13,7 @@ function buildFilterById(id) {
 }
 
 async function updateQuestion(request, params) {
-  const { id } = params
+  const { id } = await params
   const body = await request.json()
 
   const action = (body?.action || '').toString() // markTeacherRead|markStudentRead|''

@@ -5,7 +5,7 @@ import axios from 'axios'
 import {
   FileText, Download, Eye, Clock, Upload, MessageSquare, Calendar, TrendingUp,
   Bell, LogOut, Plus, Edit2, File, AlertCircle, Search, Check, XCircle,
-  Users, BookOpen, Send, User, Phone, Book, UploadCloud
+  Users, BookOpen, Send, User, Phone, Book, UploadCloud, History, ChevronRight
 } from 'lucide-react'
 
 const MENTORIA_TYPES = {
@@ -80,7 +80,12 @@ export default function TeacherDashboard() {
   // notifications
   const [notifCount, setNotifCount] = useState(0)
   const [notifItems, setNotifItems] = useState([])
-  const [showNotif, setShowNotif] = useState(false)
+  const [showNotifSidebar, setShowNotifSidebar] = useState(false)
+  const [dismissedNotifs, setDismissedNotifs] = useState(new Set())
+
+  // pagination for students
+  const [currentStudentPage, setCurrentStudentPage] = useState(1)
+  const studentsPerPage = 10
 
   // modals
   const [showPreview, setShowPreview] = useState(null)
@@ -88,6 +93,7 @@ export default function TeacherDashboard() {
   const [showReply, setShowReply] = useState(null)
   const [showMeetingModal, setShowMeetingModal] = useState(false)
   const [showResourceModal, setShowResourceModal] = useState(false)
+  const [showHistory, setShowHistory] = useState(null)
 
   // forms
   const [feedbackText, setFeedbackText] = useState('')
@@ -129,6 +135,14 @@ export default function TeacherDashboard() {
   // ---------- Load selected panel ----------
   useEffect(() => {
     if (!auth || !selectedMentorshipId) return
+    // Clear modals when switching mentorships to avoid stale data
+    setShowReply(null)
+    setShowPreview(null)
+    setShowCorrection(null)
+    setShowHistory(null)
+    setShowResourceModal(false)
+    setReplyText('')
+    setFeedbackText('')
     loadSelectedPanel()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [auth, selectedMentorshipId])
@@ -176,6 +190,18 @@ export default function TeacherDashboard() {
     }
     return filtered
   }, [mentorships, listMode, search])
+
+  // Pagination for students
+  const totalStudentPages = Math.ceil(filteredMentorships.length / studentsPerPage)
+  const paginatedMentorships = useMemo(() => {
+    const startIndex = (currentStudentPage - 1) * studentsPerPage
+    return filteredMentorships.slice(startIndex, startIndex + studentsPerPage)
+  }, [filteredMentorships, currentStudentPage])
+
+  // Active notifications (not dismissed)
+  const activeNotifItems = useMemo(() => {
+    return notifItems.filter(n => !dismissedNotifs.has(n.refId))
+  }, [notifItems, dismissedNotifs])
 
   const docsGrouped = useMemo(() => {
     const submissions = documents.filter(d => d.kind === 'submission')
@@ -360,7 +386,7 @@ export default function TeacherDashboard() {
 
   async function markTeacherEventOnDoc(docId, action) {
     try {
-      await axios.patch(`/api/mentoring/documents/${docId}/event`, { role: 'teacher', action })
+      await axios.patch(`/api/mentoring/admin/documents/${docId}/opened`)
     } catch (e) {
       console.error(e)
     }
@@ -560,33 +586,42 @@ export default function TeacherDashboard() {
     return (
       <button
         onClick={onClick}
-        className={`w-full p-4 rounded-xl text-left transition-all ${
-          active ? 'bg-primary text-white shadow-lg' : 'bg-white hover:bg-light border border-gray-200'
+        className={`w-100 p-4 rounded-3 text-left transition-all ${
+          active
+            ? 'bg-primary text-white shadow-lg border-0'
+            : 'bg-white hover:bg-light border border-gray-200 hover:shadow-sm'
         }`}
+        style={{ height: '120px', minHeight: '120px' }}
       >
-        <div className="d-flex align-items-center gap-3">
+        <div className="d-flex align-items-start gap-3 h-100">
           <div
-            className={`rounded-circle d-flex align-items-center justify-content-center ${
-              active ? 'bg-white/20' : 'bg-primary-light text-primary'
+            className={`rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 ${
+              active
+                ? 'bg-white text-primary border border-white border-2'
+                : 'bg-primary text-white'
             }`}
-            style={{ width: '48px', height: '48px' }}
+            style={{ width: '56px', height: '56px', fontSize: '18px', fontWeight: '600' }}
           >
             {initials(m.aluno?.nomeCompleto)}
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="d-flex align-items-center gap-2">
-              <span className="font-semibold text-truncate">{m.aluno?.nomeCompleto}</span>
-              {hasNew && (
-                <span className={`badge ${active ? 'bg-white/20' : 'bg-danger text-white'}`}>
-                  {m.pendingCounts.total}
+          <div className="flex-1 min-w-0 d-flex flex-column justify-content-between">
+            <div>
+              <div className="d-flex align-items-center gap-2 mb-2">
+                <span className="fw-semibold text-truncate fs-6" title={m.aluno?.nomeCompleto}>
+                  {m.aluno?.nomeCompleto}
                 </span>
-              )}
+                {hasNew && (
+                  <span className={`badge ${active ? 'bg-white text-primary' : 'bg-danger text-white'} px-2 py-1`}>
+                    {m.pendingCounts.total}
+                  </span>
+                )}
+              </div>
+              <p className={`small mb-1 ${active ? 'text-white-75' : 'text-muted'} text-truncate`}>
+                {getMentoriaConfig(m.tipoKey).label}
+              </p>
             </div>
-            <p className={`small text-truncate ${active ? 'text-white-75' : 'text-muted'}`}>
-              {getMentoriaConfig(m.tipoKey).label}
-            </p>
-            <p className={`text-xs text-truncate mt-1 ${active ? 'text-white-75' : 'text-muted'}`}>
-              {truncate(m.titulo, 35)}
+            <p className={`text-xs text-truncate ${active ? 'text-white-75' : 'text-muted'}`} title={m.titulo}>
+              {truncate(m.titulo, 40)}
             </p>
           </div>
         </div>
@@ -662,6 +697,16 @@ export default function TeacherDashboard() {
             </a>
           ) : null}
         </div>
+
+        <div className="d-flex gap-2 mt-2">
+          <button
+            onClick={() => setShowHistory(doc.type)}
+            className="btn btn-outline-primary flex-1 d-flex align-items-center justify-content-center gap-2"
+          >
+            <History size={16} />
+            Ver histórico
+          </button>
+        </div>
       </div>
     )
   }
@@ -700,53 +745,80 @@ export default function TeacherDashboard() {
 
   const QuestionCard = ({ question }) => {
     return (
-      <div className="bg-white border rounded-xl p-4 mb-3">
+      <div className="mb-4">
+        {/* Student Question Bubble */}
         <div className="d-flex align-items-start gap-3 mb-3">
-          <div
-            className="rounded-circle d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary"
-            style={{ width: '40px', height: '40px' }}
-          >
-            <User size={16} />
+          <div className="flex-shrink-0">
+            <div
+              className="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
+              style={{ width: '40px', height: '40px' }}
+            >
+              {initials(selectedMentorship?.aluno?.nomeCompleto || 'A')}
+            </div>
           </div>
           <div className="flex-1">
-            <div className="d-flex align-items-center gap-2 mb-1">
-              <span className="fw-semibold">{question.pergunta}</span>
-              {question.teacherUnread && <span className="badge bg-danger text-white">Novo</span>}
+            <div className="bg-light rounded-3 p-3 position-relative">
+              <div className="d-flex align-items-center justify-content-between mb-2">
+                <span className="fw-semibold small text-primary">
+                  {selectedMentorship?.aluno?.nomeCompleto || 'Aluno'}
+                </span>
+                <div className="d-flex align-items-center gap-2">
+                  {question.teacherUnread && <span className="badge bg-danger text-white small">Novo</span>}
+                  <span className="small text-muted">{fmtDate(question.createdAt)}</span>
+                </div>
+              </div>
+              <p className="mb-1 fw-medium">{question.pergunta}</p>
+              {question.detalhe && <p className="small text-muted mb-0">{question.detalhe}</p>}
             </div>
-            {question.detalhe ? <p className="small text-muted mb-2">{question.detalhe}</p> : null}
-            <p className="text-xs text-muted">{fmtDate(question.createdAt)}</p>
           </div>
         </div>
 
-        {question.resposta ? (
-          <div className="p-3 bg-success bg-opacity-10 rounded-lg border border-success border-opacity-25 mb-3">
-            <p className="small fw-medium text-success mb-1">Sua resposta</p>
-            <p className="small text-muted">{question.resposta}</p>
+        {/* Teacher Response Bubble */}
+        {question.resposta && (
+          <div className="d-flex align-items-start gap-3 mb-3 justify-content-end">
+            <div className="flex-1 d-flex justify-content-end">
+              <div className="bg-primary text-white rounded-3 p-3 position-relative" style={{ maxWidth: '80%' }}>
+                <div className="d-flex align-items-center justify-content-between mb-2">
+                  <span className="small fw-semibold">Você</span>
+                  <span className="small opacity-75">{fmtDate(question.respondidaEm || question.updatedAt)}</span>
+                </div>
+                <p className="mb-0">{question.resposta}</p>
+              </div>
+            </div>
+            <div className="flex-shrink-0">
+              <div
+                className="rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white"
+                style={{ width: '40px', height: '40px' }}
+              >
+                P
+              </div>
+            </div>
           </div>
-        ) : null}
+        )}
 
-        <div className="d-flex gap-2">
-          <button
-            onClick={() => {
-              setShowReply(question)
-              setReplyText(question.resposta || '')
-            }}
-            className="btn btn-primary flex-1 d-flex align-items-center justify-content-center gap-2"
-          >
-            <MessageSquare size={16} />
-            Responder
-          </button>
-
-          {question.teacherUnread ? (
+        {/* Action Buttons */}
+        {!question.resposta && (
+          <div className="d-flex gap-2 justify-content-end">
             <button
               onClick={() => markQuestionRead(question)}
-              className="btn btn-outline-secondary d-flex align-items-center justify-content-center"
-              title="Marcar lida"
+              className="btn btn-sm btn-outline-secondary"
+              title="Marcar como lida"
             >
-              <Check size={16} />
+              <Check size={14} className="me-1" />
+              Lida
             </button>
-          ) : null}
-        </div>
+            <button
+              onClick={() => {
+                setShowReply(question)
+                setReplyText('')
+              }}
+              className="btn btn-sm btn-primary"
+            >
+              <MessageSquare size={14} className="me-1" />
+              Responder
+            </button>
+          </div>
+        )}
       </div>
     )
   }
@@ -880,11 +952,11 @@ export default function TeacherDashboard() {
               <span className="d-none d-md-inline">Nova Reunião</span>
             </button>
 
-            <button className="btn btn-outline-secondary position-relative" onClick={() => setShowNotif(true)}>
+            <button className="btn btn-outline-secondary position-relative" onClick={() => setShowNotifSidebar(true)}>
               <Bell size={16} />
-              {notifCount > 0 ? (
+              {activeNotifItems.length > 0 ? (
                 <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                  {notifCount}
+                  {activeNotifItems.length}
                 </span>
               ) : null}
             </button>
@@ -935,20 +1007,45 @@ export default function TeacherDashboard() {
                   />
                 </div>
 
-                <div style={{ maxHeight: 'calc(100vh - 300px)', overflowY: 'auto' }}>
-                  {filteredMentorships.length ? (
-                    filteredMentorships.map(m => (
-                      <StudentCard
-                        key={m.id}
-                        m={m}
-                        active={m.id === selectedMentorshipId}
-                        onClick={() => setSelectedMentorshipId(m.id)}
-                      />
-                    ))
+                <div style={{ maxHeight: 'calc(100vh - 400px)', overflowY: 'auto' }}>
+                  {paginatedMentorships.length ? (
+                    <div className="d-flex flex-column gap-3">
+                      {paginatedMentorships.map(m => (
+                        <StudentCard
+                          key={m.id}
+                          m={m}
+                          active={m.id === selectedMentorshipId}
+                          onClick={() => setSelectedMentorshipId(m.id)}
+                        />
+                      ))}
+                    </div>
                   ) : (
                     <div className="text-center py-4 text-muted">Nenhum aluno encontrado</div>
                   )}
                 </div>
+
+                {/* Pagination */}
+                {totalStudentPages > 1 && (
+                  <div className="d-flex justify-content-center align-items-center gap-2 mt-3">
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      disabled={currentStudentPage === 1}
+                      onClick={() => setCurrentStudentPage(prev => Math.max(1, prev - 1))}
+                    >
+                      Anterior
+                    </button>
+                    <span className="small text-muted">
+                      Página {currentStudentPage} de {totalStudentPages}
+                    </span>
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      disabled={currentStudentPage === totalStudentPages}
+                      onClick={() => setCurrentStudentPage(prev => Math.min(totalStudentPages, prev + 1))}
+                    >
+                      Próxima
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -980,7 +1077,7 @@ export default function TeacherDashboard() {
                               <span><Book size={14} className="me-1" /> {selectedMentorship.aluno?.curso || '-'}</span>
                             </div>
                             <div className="mt-2">
-                              <span className="badge bg-white bg-opacity-20">{getMentoriaConfig(selectedMentorship.tipoKey).label}</span>
+                              <span className="badge bg-black bg-opacity-20">{getMentoriaConfig(selectedMentorship.tipoKey).label}</span>
                             </div>
                           </div>
                         </div>
@@ -1045,20 +1142,103 @@ export default function TeacherDashboard() {
                             ))}
                           </div>
 
+                          {/* Prominent Program Display */}
                           {docsGrouped[docTab]?.submissions?.length ? (
-                            <div className="mb-4">
-                              <h6 className="mb-3">
-                                <FileText size={18} className="me-2" />
-                                Documentos ({docsGrouped[docTab].submissions.length})
-                              </h6>
-                              {docsGrouped[docTab].submissions.map(doc => (
-                                <DocumentCard key={doc.id} doc={doc} />
-                              ))}
+                            <div className="card shadow-sm mb-4">
+                              <div className="card-body">
+                                <div className="d-flex align-items-center justify-content-between mb-4">
+                                  <h5 className="card-title mb-0">
+                                    <FileText size={20} className="me-2 text-primary" />
+                                    {getDocLabel(docTab, selectedMentorship.tipoKey)} Enviado
+                                  </h5>
+                                  {docsGrouped[docTab].submissions[0].teacherUnread && (
+                                    <span className="badge bg-danger">Novo</span>
+                                  )}
+                                </div>
+
+                                <div className="row g-3 mb-4">
+                                  <div className="col-md-8">
+                                    <div className="p-3 bg-light rounded">
+                                      <div className="d-flex align-items-center gap-3 mb-2">
+                                        <div className="p-2 bg-white rounded shadow-sm">
+                                          <FileText size={24} className="text-danger" />
+                                        </div>
+                                        <div>
+                                          <h6 className="mb-1">{docsGrouped[docTab].submissions[0].original?.filename}</h6>
+                                          <p className="small text-muted mb-0">
+                                            Versão {docsGrouped[docTab].submissions[0].version || 1} · {fmtDate(docsGrouped[docTab].submissions[0].createdAt)}
+                                          </p>
+                                        </div>
+                                      </div>
+                                      {docsGrouped[docTab].submissions[0].studentNote && (
+                                        <p className="small text-muted mt-2">
+                                          <strong>Nota do aluno:</strong> {docsGrouped[docTab].submissions[0].studentNote}
+                                        </p>
+                                      )}
+                                    </div>
+                                  </div>
+                                  <div className="col-md-4">
+                                    <div className="d-grid gap-2">
+                                      <button
+                                        onClick={() => openPreview(docsGrouped[docTab].submissions[0])}
+                                        className="btn btn-primary d-flex align-items-center justify-content-center gap-2"
+                                      >
+                                        <Eye size={16} />
+                                        Pré-visualizar
+                                      </button>
+                                      <button
+                                        onClick={() => setShowCorrection({
+                                          parentId: docsGrouped[docTab].submissions[0].id,
+                                          type: docsGrouped[docTab].submissions[0].type,
+                                          filename: docsGrouped[docTab].submissions[0].original?.filename
+                                        })}
+                                        className="btn btn-success d-flex align-items-center justify-content-center gap-2"
+                                      >
+                                        <Send size={16} />
+                                        Enviar Correção
+                                      </button>
+                                      <button
+                                        onClick={() => setShowHistory(docTab)}
+                                        className="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2"
+                                      >
+                                        <History size={16} />
+                                        Ver histórico
+                                      </button>
+                                      {docsGrouped[docTab].submissions[0].original?.url && (
+                                        <a
+                                          href={docsGrouped[docTab].submissions[0].original.url}
+                                          target="_blank"
+                                          rel="noreferrer"
+                                          onClick={() => trackDocDownload(docsGrouped[docTab].submissions[0].id)}
+                                          className="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2"
+                                        >
+                                          <Download size={16} />
+                                          Descarregar
+                                        </a>
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+
+                                {/* Teacher Feedback */}
+                                {docsGrouped[docTab].submissions[0].teacherNote && (
+                                  <div className="alert alert-success">
+                                    <h6 className="alert-heading mb-2">
+                                      <MessageSquare size={16} className="me-2" />
+                                      Seu Feedback Anterior
+                                    </h6>
+                                    <p className="mb-0">{docsGrouped[docTab].submissions[0].teacherNote}</p>
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           ) : (
-                            <div className="alert alert-info mb-4">
-                              <AlertCircle size={16} className="me-2" />
-                              Nenhum documento enviado nesta secção
+                            <div className="card border-dashed border-2 mb-4">
+                              <div className="card-body text-center py-5">
+                                <FileText size={48} className="text-muted mb-3" />
+                                <h5 className="text-muted">Nenhum documento enviado</h5>
+                                <p className="text-muted mb-0">O aluno ainda não enviou o {getDocLabel(docTab, selectedMentorship.tipoKey).toLowerCase()}</p>
+                              </div>
                             </div>
                           )}
 
@@ -1084,21 +1264,21 @@ export default function TeacherDashboard() {
                             )}
                           </div>
 
-                          {/* Feedback */}
+                          {/* New Feedback */}
                           <div className="card">
                             <div className="card-body">
                               <h6 className="card-title mb-3">
                                 <MessageSquare size={18} className="me-2" />
-                                Feedback
+                                Enviar Feedback
                               </h6>
                               <div className="mb-3">
                                 <label className="form-label">Mensagem para o aluno</label>
-                                <input
-                                  type="text"
+                                <textarea
                                   className="form-control"
+                                  rows={3}
                                   value={feedbackText}
                                   onChange={(e) => setFeedbackText(e.target.value)}
-                                  placeholder="Escreva o seu feedback..."
+                                  placeholder="Escreva o seu feedback sobre o trabalho..."
                                 />
                               </div>
                               <button
@@ -1234,19 +1414,66 @@ export default function TeacherDashboard() {
         />
       ) : null}
 
-      {/* Notifications Modal */}
-      {showNotif ? (
-        <NotificationsModal
-          items={notifItems}
-          onClose={() => setShowNotif(false)}
-          onGo={(type) => {
-            setShowNotif(false)
-            if (type === 'document') setTab('mentoria')
-            if (type === 'question') setTab('questions')
-            if (type === 'meeting') setTab('meetings')
-          }}
-        />
-      ) : null}
+      {/* Notifications Sidebar */}
+      {showNotifSidebar && (
+        <div className="position-fixed top-0 end-0 bg-white border-start shadow-lg" style={{ width: '400px', height: '100vh', zIndex: 1050, overflowY: 'auto' }}>
+          <div className="p-3 border-bottom">
+            <div className="d-flex align-items-center justify-content-between">
+              <h5 className="mb-0">Notificações</h5>
+              <button className="btn btn-sm btn-outline-secondary" onClick={() => setShowNotifSidebar(false)}>
+                <XCircle size={16} />
+              </button>
+            </div>
+          </div>
+          <div className="p-3">
+            {activeNotifItems.length === 0 ? (
+              <div className="text-center py-4 text-muted">
+                <Bell size={48} className="mb-3" />
+                <p className="mb-0">Sem notificações novas</p>
+              </div>
+            ) : (
+              <div className="d-flex flex-column gap-3">
+                {activeNotifItems.map((n, idx) => (
+                  <div key={idx} className="card border-0 shadow-sm">
+                    <div className="card-body p-3">
+                      <div className="d-flex align-items-start gap-3">
+                        <div className={`p-2 rounded-circle ${n.type === 'document' ? 'bg-danger bg-opacity-10 text-danger' : n.type === 'question' ? 'bg-primary bg-opacity-10 text-primary' : 'bg-warning bg-opacity-10 text-warning'}`}>
+                          {n.type === 'document' ? <FileText size={16} /> : n.type === 'question' ? <MessageSquare size={16} /> : <Calendar size={16} />}
+                        </div>
+                        <div className="flex-1">
+                          <div className="d-flex align-items-start justify-content-between mb-2">
+                            <h6 className="mb-0 fw-semibold">{n.title}</h6>
+                            <button
+                              className="btn btn-sm btn-outline-secondary ms-2"
+                              onClick={() => setDismissedNotifs(prev => new Set([...prev, n.refId]))}
+                              title="Marcar como vista"
+                            >
+                              <Check size={14} />
+                            </button>
+                          </div>
+                          <p className="small text-muted mb-2">{n.message}</p>
+                          <p className="small text-muted mb-0">{fmtDate(n.createdAt)}</p>
+                          <button
+                            className="btn btn-sm btn-outline-primary mt-2"
+                            onClick={() => {
+                              setShowNotifSidebar(false)
+                              if (n.type === 'document') setTab('mentoria')
+                              if (n.type === 'question') setTab('questions')
+                              if (n.type === 'meeting') setTab('meetings')
+                            }}
+                          >
+                            Ver
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Correction Modal */}
       {showCorrection ? (
@@ -1421,6 +1648,52 @@ export default function TeacherDashboard() {
         </div>
       ) : null}
 
+      {/* History Modal */}
+      {showHistory ? (
+        <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+          <div className="modal-dialog modal-lg">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Histórico - {getDocLabel(showHistory, selectedMentorship?.tipoKey)}</h5>
+                <button type="button" className="btn-close" onClick={() => setShowHistory(null)}></button>
+              </div>
+              <div className="modal-body">
+                <div className="list-group">
+                  {docsGrouped[showHistory]?.submissions?.map((doc) => (
+                    <button
+                      key={doc.id}
+                      type="button"
+                      className="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3"
+                      onClick={() => openPreview(doc)}
+                    >
+                      <div className="bg-white border rounded-3 p-2 d-inline-flex align-items-center justify-content-center">
+                        <FileText size={20} className="text-danger" />
+                      </div>
+
+                      <div className="flex-grow-1 min-w-0">
+                        <div className="fw-semibold text-truncate" title={doc.original?.filename}>
+                          {truncate(doc.original?.filename, 55)}
+                        </div>
+                        <div className="d-flex align-items-center gap-2 text-muted small mt-1">
+                          <span className="badge text-bg-secondary">v{doc.version || 1}</span>
+                          <span>{fmtDate(doc.createdAt)}</span>
+                          {doc.teacherUnread && <span className="badge text-bg-danger ms-1">Novo</span>}
+                        </div>
+                      </div>
+
+                      <ChevronRight size={18} className="text-muted" />
+                    </button>
+                  )) || []}
+                </div>
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setShowHistory(null)}>Fechar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : null}
+
     </div>
 
   )
@@ -1433,71 +1706,44 @@ function PreviewModal({ doc, onClose, onDownload }) {
   const canGview = !!url && !isPdf
   const src = !url ? '' : isPdf ? url : `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`
 
-  return (
-    <div className="modal d-block" tabIndex={-1} role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog modal-dialog-centered modal-xl" style={{ maxWidth: 1100 }} role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">
-              <FileText size={18} className="me-2" />
-              {doc?.original?.filename || 'Documento'}
-            </h5>
-            <button type="button" className="btn-close" onClick={onClose} />
-          </div>
-          <div className="modal-body">
-            {!url ? (
-              <div className="alert alert-warning">Sem pré-visualização disponível.</div>
-            ) : (
-              <iframe title="preview" src={src} style={{ width: '100%', height: '70vh', minHeight: 420, border: '1px solid #ddd', borderRadius: 10 }} />
-            )}
-            {url && canGview ? <div className="text-muted small mt-2">Nota: para alguns ficheiros Word, o preview usa Google Viewer.</div> : null}
-          </div>
-          <div className="modal-footer">
-            {url ? (
-              <a className="btn btn-primary" href={url} target="_blank" rel="noreferrer" onClick={onDownload}>
-                <Download size={16} className="me-1" /> Baixar
-              </a>
-            ) : null}
-            <button type="button" className="btn btn-outline-secondary" onClick={onClose}>Fechar</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }
 
-function NotificationsModal({ items, onClose, onGo }) {
-  const mapped = (items || []).slice(0, 30)
   return (
-    <div className="modal d-block" tabIndex={-1} role="dialog" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-      <div className="modal-dialog" role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title">Notificações</h5>
-            <button type="button" className="btn-close" onClick={onClose} />
-          </div>
-          <div className="modal-body">
-            {mapped.length === 0 ? (
-              <div className="text-muted">Sem novidades.</div>
-            ) : (
-              <div className="d-flex flex-column gap-2">
-                {mapped.map((n, idx) => (
-                  <button key={idx} type="button" className="btn btn-light text-start" onClick={() => onGo(n.type)}>
-                    <div className="d-flex align-items-center justify-content-between">
-                      <div className="fw-semibold" style={{ fontSize: 14 }}>{n.title}</div>
-                      <div className="text-muted small">{fmtDate(n.createdAt)}</div>
-                    </div>
-                    <div className="text-muted small">{n.message}</div>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-outline-secondary" onClick={onClose}>Fechar</button>
+    <>
+      <div className="modal-backdrop fade show" onClick={onClose} />
+      <div className="modal fade show d-block" tabIndex={-1} role="dialog" aria-modal="true" onClick={handleBackdropClick}>
+        <div className="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable" style={{ maxWidth: 1100 }} role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title">
+                <FileText size={18} className="me-2" />
+                {doc?.original?.filename || 'Documento'}
+              </h5>
+              <button type="button" className="btn-close" onClick={onClose} />
+            </div>
+            <div className="modal-body">
+              {!url ? (
+                <div className="alert alert-warning">Sem pré-visualização disponível.</div>
+              ) : (
+                <iframe title="preview" src={src} style={{ width: '100%', height: '70vh', minHeight: 420, border: '1px solid #ddd', borderRadius: 10 }} />
+              )}
+              {url && canGview ? <div className="text-muted small mt-2">Nota: para alguns ficheiros Word, o preview usa Google Viewer.</div> : null}
+            </div>
+            <div className="modal-footer">
+              {url ? (
+                <a className="btn btn-primary" href={url} target="_blank" rel="noreferrer" onClick={onDownload}>
+                  <Download size={16} className="me-2" /> Baixar
+                </a>
+              ) : null}
+              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>Fechar</button>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }

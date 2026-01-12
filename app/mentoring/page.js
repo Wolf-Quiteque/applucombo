@@ -122,6 +122,7 @@ export default function MentoringStudent() {
   const [mentorships, setMentorships] = useState([])
   const [selectedMentorshipId, setSelectedMentorshipId] = useState('')
   const [documents, setDocuments] = useState([])
+  const [questions, setQuestions] = useState([])
 
   /** -------- UI -------- */
   const [tab, setTab] = useState('mentoria')
@@ -142,6 +143,12 @@ export default function MentoringStudent() {
   /** -------- Upload form (modal) -------- */
   const uploadFileRef = useRef(null)
   const [uploadNote, setUploadNote] = useState('')
+
+  /** -------- Questions form -------- */
+  const [newQuestion, setNewQuestion] = useState('')
+  const [newQuestionDetail, setNewQuestionDetail] = useState('')
+  const [showAskForm, setShowAskForm] = useState(false)
+  const [selectedQuestion, setSelectedQuestion] = useState(null) // for viewing full question
 
   /** -------- Derived -------- */
   const mentorship = useMemo(
@@ -182,11 +189,12 @@ export default function MentoringStudent() {
     window.localStorage.setItem('mentoringSelectedMentorshipId', selectedMentorshipId)
   }, [selectedMentorshipId])
 
-  /** -------------------- Load docs + notifications when mentorship changes -------------------- */
+  /** -------------------- Load docs + questions + notifications when mentorship changes -------------------- */
   useEffect(() => {
     if (!user?.id || !selectedMentorshipId) return
 
     carregarDocs()
+    carregarQuestions()
     carregarNotificacoes()
 
     const t = setInterval(() => {
@@ -232,6 +240,16 @@ export default function MentoringStudent() {
       )
       setNotifCount(res.data?.count || 0)
       setNotifItems(res.data?.items || [])
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async function carregarQuestions() {
+    try {
+      const res = await axios.get(`/api/mentoring/questions?alunoId=${user.id}&mentorshipId=${selectedMentorshipId}`)
+      const list = res.data?.perguntas || []
+      setQuestions(list)
     } catch (e) {
       console.error(e)
     }
@@ -381,6 +399,116 @@ export default function MentoringStudent() {
     } catch {
       // ignore
     }
+  }
+
+  /** -------------------- Questions logic -------------------- */
+  async function askQuestion(e) {
+    e.preventDefault()
+    if (!newQuestion.trim()) return
+
+    setErro('')
+    setInfo('')
+    setBusy(true)
+    try {
+      await axios.post('/api/mentoring/questions', {
+        alunoId: user.id,
+        mentorshipId: selectedMentorshipId,
+        pergunta: newQuestion.trim(),
+        detalhe: newQuestionDetail.trim() || undefined,
+      })
+
+      setInfo('Pergunta enviada ao professor.')
+      setNewQuestion('')
+      setNewQuestionDetail('')
+      setShowAskForm(false)
+      await carregarQuestions()
+      await carregarNotificacoes()
+    } catch (err) {
+      setErro(err?.response?.data?.error || 'Erro ao enviar pergunta.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function viewQuestion(question) {
+    setSelectedQuestion(question)
+    if (question.studentUnread) {
+      try {
+        await axios.patch(`/api/mentoring/questions/${question.id}`, { action: 'markStudentRead' })
+        await carregarQuestions()
+        await carregarNotificacoes()
+      } catch {
+        // ignore
+      }
+    }
+  }
+
+  /** -------------------- QuestionCard -------------------- */
+  function QuestionCard({ question, onClick }) {
+    const isAnswered = question.respondida
+    const hasNew = question.studentUnread
+
+    return (
+      <button
+        type="button"
+        className="card border-0 shadow-sm text-start"
+        onClick={onClick}
+        style={{ cursor: 'pointer' }}
+      >
+        <div className="card-body">
+          <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
+            <div className="d-flex align-items-start gap-3 flex-1 min-w-0">
+              <div className={`rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 ${
+                isAnswered ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning'
+              }`} style={{ width: 40, height: 40 }}>
+                <MessageSquare size={20} />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="d-flex align-items-center gap-2 mb-1">
+                  <span className="fw-semibold text-truncate" title={question.pergunta}>
+                    {truncate(question.pergunta, 60)}
+                  </span>
+                  {hasNew && <span className="badge bg-danger text-white">Novo</span>}
+                </div>
+
+                {question.detalhe && (
+                  <p className="text-muted small mb-2 text-truncate" title={question.detalhe}>
+                    {truncate(question.detalhe, 80)}
+                  </p>
+                )}
+
+                <div className="d-flex align-items-center gap-2 small text-muted">
+                  <Clock size={14} />
+                  <span>{fmtDate(question.createdAt)}</span>
+                  {isAnswered && question.respondidaEm && (
+                    <>
+                      <span>•</span>
+                      <CheckCircle size={14} className="text-success" />
+                      <span>Respondida em {fmtDate(question.respondidaEm)}</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <ChevronRight size={18} className="text-muted flex-shrink-0" />
+          </div>
+
+          {isAnswered && (
+            <div className="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
+              <div className="d-flex align-items-center gap-2 small fw-semibold text-success mb-1">
+                <CheckCircle size={14} />
+                Resposta do Professor
+              </div>
+              <p className="small text-body mb-0" style={{ whiteSpace: 'pre-wrap' }}>
+                {truncate(question.resposta, 200)}
+              </p>
+            </div>
+          )}
+        </div>
+      </button>
+    )
   }
 
   /** -------------------- DocCard (new UI but API data) -------------------- */
@@ -794,7 +922,40 @@ export default function MentoringStudent() {
             </div>
           ) : null}
 
-          {tab !== 'mentoria' ? (
+          {tab === 'questions' ? (
+            <div>
+              <div className="d-flex justify-content-between align-items-center mb-4">
+                <h5 className="mb-0">Perguntas ao Professor</h5>
+                <button
+                  className="btn btn-primary d-flex align-items-center gap-2"
+                  onClick={() => setShowAskForm(true)}
+                >
+                  <MessageSquare size={16} />
+                  Fazer pergunta
+                </button>
+              </div>
+
+              {questions.length ? (
+                <div className="d-flex flex-column gap-3">
+                  {questions.map(q => <QuestionCard key={q.id} question={q} onClick={() => viewQuestion(q)} />)}
+                </div>
+              ) : (
+                <div className="text-center py-5 text-muted">
+                  <MessageSquare size={48} className="mb-3" />
+                  <p className="mb-3">Ainda não fizeste nenhuma pergunta.</p>
+                  <button
+                    className="btn btn-primary d-flex align-items-center gap-2 mx-auto"
+                    onClick={() => setShowAskForm(true)}
+                  >
+                    <MessageSquare size={16} />
+                    Fazer primeira pergunta
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : null}
+
+          {tab !== 'mentoria' && tab !== 'questions' ? (
             <div className="text-center py-5 text-muted">
               <div className="mb-2">Esta tab continua igual à tua versão antiga.</div>
               <div className="small">Se quiseres, eu também converto Meetings/Questions/Progress para este layout novo.</div>
@@ -933,6 +1094,116 @@ export default function MentoringStudent() {
           </div>
         </ModalShell>
       ) : null}
+
+      {/* Ask Question Modal */}
+      {showAskForm ? (
+        <ModalShell
+          title="Fazer uma Pergunta"
+          icon={MessageSquare}
+          onClose={() => setShowAskForm(false)}
+          footer={
+            <>
+              <button className="btn btn-outline-secondary" onClick={() => setShowAskForm(false)} disabled={busy}>
+                Cancelar
+              </button>
+              <button className="btn btn-primary" onClick={askQuestion} disabled={busy || !newQuestion.trim()}>
+                {busy ? 'A enviar...' : 'Enviar Pergunta'}
+              </button>
+            </>
+          }
+          size="modal-lg"
+        >
+          <form onSubmit={askQuestion}>
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Pergunta</label>
+              <input
+                type="text"
+                className="form-control"
+                value={newQuestion}
+                onChange={(e) => setNewQuestion(e.target.value)}
+                placeholder="Escreva a sua pergunta..."
+                required
+              />
+            </div>
+
+            <div className="mb-0">
+              <label className="form-label fw-semibold">Detalhes adicionais (opcional)</label>
+              <textarea
+                className="form-control"
+                rows={4}
+                value={newQuestionDetail}
+                onChange={(e) => setNewQuestionDetail(e.target.value)}
+                placeholder="Forneça mais contexto ou detalhes sobre a sua pergunta..."
+              />
+            </div>
+          </form>
+        </ModalShell>
+      ) : null}
+
+      {/* View Question Modal */}
+      {selectedQuestion ? (
+        <ModalShell
+          title="Detalhes da Pergunta"
+          icon={MessageSquare}
+          onClose={() => setSelectedQuestion(null)}
+          footer={<button className="btn btn-outline-secondary" onClick={() => setSelectedQuestion(null)}>Fechar</button>}
+          size="modal-lg"
+        >
+          <div className="mb-4">
+            <div className="d-flex align-items-center gap-2 mb-3">
+              <div className={`rounded-3 d-flex align-items-center justify-content-center ${
+                selectedQuestion.respondida ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning'
+              }`} style={{ width: 40, height: 40 }}>
+                <MessageSquare size={20} />
+              </div>
+              <div>
+                <span className="badge bg-primary">Pergunta</span>
+                <div className="text-muted small mt-1">
+                  <Clock size={14} className="me-1" />
+                  Enviada em {fmtDate(selectedQuestion.createdAt)}
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-body-tertiary rounded-3 mb-3">
+              <h6 className="fw-semibold mb-2">Pergunta</h6>
+              <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.pergunta}</p>
+            </div>
+
+            {selectedQuestion.detalhe && (
+              <div className="p-3 bg-body-tertiary rounded-3 mb-3">
+                <h6 className="fw-semibold mb-2">Detalhes adicionais</h6>
+                <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.detalhe}</p>
+              </div>
+            )}
+          </div>
+
+          {selectedQuestion.respondida ? (
+            <div>
+              <div className="d-flex align-items-center gap-2 mb-3">
+                <CheckCircle size={20} className="text-success" />
+                <span className="fw-semibold text-success">Resposta do Professor</span>
+                {selectedQuestion.respondidaEm && (
+                  <span className="text-muted small ms-auto">
+                    Respondida em {fmtDate(selectedQuestion.respondidaEm)}
+                  </span>
+                )}
+              </div>
+
+              <div className="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
+                <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.resposta}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="text-center py-4 text-muted">
+              <div className="rounded-circle bg-warning bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3">
+                <Clock size={32} className="text-warning" />
+              </div>
+              <p className="mb-0">Aguardando resposta do professor.</p>
+            </div>
+          )}
+        </ModalShell>
+      ) : null}
     </div>
   )
 }
@@ -946,42 +1217,50 @@ function DocPreviewModal({ doc, onClose, onDownload }) {
   const canGview = !!url && !isPdf
   const src = !url ? '' : isPdf ? url : `https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`
 
+  const handleBackdropClick = (e) => {
+    if (e.target === e.currentTarget) {
+      onClose()
+    }
+  }
+
   return (
-    <div className="modal fade show d-block" tabIndex={-1} role="dialog" aria-modal="true">
-      <div className="modal-dialog modal-dialog-centered modal-xl" style={{ maxWidth: 1100 }} role="document">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h5 className="modal-title d-flex align-items-center gap-2">
-              <FileText size={18} className="text-primary" />
-              {doc?.filename || doc?.original?.filename || 'Documento'}
-            </h5>
-            <button type="button" className="btn-close" onClick={onClose} />
-          </div>
+    <>
+      <div className="modal-backdrop fade show" onClick={onClose} />
+      <div className="modal fade show d-block" tabIndex={-1} role="dialog" aria-modal="true" onClick={handleBackdropClick}>
+        <div className="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable" style={{ maxWidth: 1100 }} role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title d-flex align-items-center gap-2">
+                <FileText size={18} className="text-primary" />
+                {doc?.filename || doc?.original?.filename || 'Documento'}
+              </h5>
+              <button type="button" className="btn-close" onClick={onClose} />
+            </div>
 
-          <div className="modal-body">
-            {!url ? (
-              <div className="alert alert-warning">Sem pré-visualização disponível.</div>
-            ) : (
-              <iframe title="preview" src={src} style={{ width: '100%', height: '70vh', minHeight: 420, border: '1px solid #ddd', borderRadius: 10 }} />
-            )}
+            <div className="modal-body">
+              {!url ? (
+                <div className="alert alert-warning">Sem pré-visualização disponível.</div>
+              ) : (
+                <iframe title="preview" src={src} style={{ width: '100%', height: '70vh', minHeight: 420, border: '1px solid #ddd', borderRadius: 10 }} />
+              )}
 
-            {url && canGview ? <div className="text-muted small mt-2">Nota: para alguns ficheiros Word, o preview usa Google Viewer.</div> : null}
-          </div>
+              {url && canGview ? <div className="text-muted small mt-2">Nota: para alguns ficheiros Word, o preview usa Google Viewer.</div> : null}
+            </div>
 
-          <div className="modal-footer">
-            {url ? (
-              <a className="btn btn-primary" href={url} target="_blank" rel="noreferrer" onClick={onDownload}>
-                <Download size={16} className="me-2" />
-                Baixar
-              </a>
-            ) : null}
-            <button type="button" className="btn btn-outline-secondary" onClick={onClose}>
-              Fechar
-            </button>
+            <div className="modal-footer">
+              {url ? (
+                <a className="btn btn-primary" href={url} target="_blank" rel="noreferrer" onClick={onDownload}>
+                  <Download size={16} className="me-2" />
+                  Baixar
+                </a>
+              ) : null}
+              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>
+                Fechar
+              </button>
+            </div>
           </div>
         </div>
       </div>
-      <div className="modal-backdrop fade show" onClick={onClose} />
-    </div>
+    </>
   )
 }
