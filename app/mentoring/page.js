@@ -141,6 +141,16 @@ export default function MentoringStudent() {
   const [showHistory, setShowHistory] = useState(null) // 'programa' | secondaryType
   const [showUpload, setShowUpload] = useState(null) // 'programa' | secondaryType
 
+  /** -------- Edit Mentorship -------- */
+  const [editingMentorship, setEditingMentorship] = useState(false)
+  const [editForm, setEditForm] = useState({
+    titulo: '',
+    email: '',
+    tipoKey: '',
+    anoInicioCurso: '',
+    anoInicioMentoria: '',
+  })
+
   /** -------- Upload form (modal) -------- */
   const uploadFileRef = useRef(null)
   const [uploadNote, setUploadNote] = useState('')
@@ -441,6 +451,50 @@ export default function MentoringStudent() {
       } catch {
         // ignore
       }
+    }
+  }
+
+  /** -------------------- Edit Mentorship -------------------- */
+  function startEditingMentorship() {
+    if (!mentorship) return
+    setEditForm({
+      titulo: mentorship.titulo || '',
+      email: mentorship.email || '',
+      tipoKey: mentorship.tipoKey || '',
+      anoInicioCurso: mentorship.anoInicioCurso || '',
+      anoInicioMentoria: mentorship.anoInicioMentoria || '',
+    })
+    setEditingMentorship(true)
+  }
+
+  function cancelEditingMentorship() {
+    setEditingMentorship(false)
+    setEditForm({
+      titulo: '',
+      email: '',
+      tipoKey: '',
+      anoInicioCurso: '',
+      anoInicioMentoria: '',
+    })
+  }
+
+  async function saveMentorship() {
+    if (!selectedMentorshipId) return
+    setErro('')
+    setInfo('')
+    setBusy(true)
+    try {
+      const res = await axios.patch(`/api/mentoring/mentorships/${selectedMentorshipId}`, editForm)
+      const updated = res.data?.mentorship
+      if (updated) {
+        setMentorships(prev => prev.map(m => m.id === selectedMentorshipId ? { ...m, ...updated } : m))
+        setInfo('Mentoria actualizada.')
+      }
+      setEditingMentorship(false)
+    } catch (err) {
+      setErro(err?.response?.data?.error || 'Erro ao actualizar mentoria.')
+    } finally {
+      setBusy(false)
     }
   }
 
@@ -823,22 +877,114 @@ export default function MentoringStudent() {
           <div className="p-4 rounded-4 text-white mb-4 shadow-sm" style={{ background: 'linear-gradient(90deg, #0d6efd, #6610f2)' }}>
             <div className="d-flex align-items-start justify-content-between gap-3">
               <div className="flex-grow-1">
-                <span className="badge text-bg-light text-dark mb-2">{meta.label}</span>
+                {editingMentorship ? (
+                  <select
+                    className="form-select form-select-sm mb-2"
+                    value={editForm.tipoKey}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, tipoKey: e.target.value }))}
+                    style={{ width: 'auto', display: 'inline-block' }}
+                  >
+                    {TIPO_OPCOES.map((t) => (
+                      <option key={t.key} value={t.key}>
+                        {t.label}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <span className="badge text-bg-light text-dark mb-2">{meta.label}</span>
+                )}
 
-                <h5 className="fw-semibold mb-2" title={mentorship.titulo}>
-                  {truncate(mentorship.titulo || 'Sem título', 100)}
-                </h5>
+                {editingMentorship ? (
+                  <input
+                    type="text"
+                    className="form-control form-control-sm mb-2"
+                    value={editForm.titulo}
+                    onChange={(e) => setEditForm(prev => ({ ...prev, titulo: e.target.value }))}
+                    placeholder="Título"
+                  />
+                ) : (
+                  <h5 className="fw-semibold mb-2" title={mentorship.titulo}>
+                    {truncate(mentorship.titulo || 'Sem título', 100)}
+                  </h5>
+                )}
 
                 <div className="d-flex flex-wrap gap-3 small" style={{ color: 'rgba(255,255,255,.85)' }}>
-                  <span>📧 {mentorship.email || '-'}</span>
-                  <span>📅 Curso: {mentorship.anoInicioCurso || '-'}</span>
-                  <span>🎯 Mentoria: {mentorship.anoInicioMentoria || '-'}</span>
+                  {editingMentorship ? (
+                    <>
+                      <div className="d-flex align-items-center gap-2">
+                        <span>📧</span>
+                        <input
+                          type="email"
+                          className="form-control form-control-sm"
+                          value={editForm.email}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
+                          placeholder="Email"
+                          style={{ width: 150 }}
+                        />
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <span>📅</span>
+                        <input
+                          type="number"
+                          className="form-control form-control-sm"
+                          value={editForm.anoInicioCurso}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, anoInicioCurso: e.target.value }))}
+                          placeholder="Ano curso"
+                          style={{ width: 100 }}
+                        />
+                      </div>
+                      <div className="d-flex align-items-center gap-2">
+                        <span>🎯</span>
+                        <input
+                          type="number"
+                          className="form-control form-control-sm"
+                          value={editForm.anoInicioMentoria}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, anoInicioMentoria: e.target.value }))}
+                          placeholder="Ano mentoria"
+                          style={{ width: 100 }}
+                        />
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <span>📧 {mentorship.email || '-'}</span>
+                      <span>📅 Curso: {mentorship.anoInicioCurso || '-'}</span>
+                      <span>🎯 Mentoria: {mentorship.anoInicioMentoria || '-'}</span>
+                    </>
+                  )}
                 </div>
               </div>
 
-              <button type="button" className="btn btn-outline-light btn-sm">
-                <Edit2 size={18} />
-              </button>
+              <div className="d-flex gap-2">
+                {editingMentorship ? (
+                  <>
+                    <button
+                      type="button"
+                      className="btn btn-success btn-sm"
+                      onClick={saveMentorship}
+                      disabled={busy}
+                    >
+                      {busy ? 'Salvando...' : 'Salvar'}
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-outline-light btn-sm"
+                      onClick={cancelEditingMentorship}
+                      disabled={busy}
+                    >
+                      Cancelar
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    type="button"
+                    className="btn btn-outline-light btn-sm"
+                    onClick={startEditingMentorship}
+                  >
+                    <Edit2 size={18} />
+                  </button>
+                )}
+              </div>
             </div>
           </div>
         ) : null}
