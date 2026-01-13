@@ -19,6 +19,7 @@ import {
   Edit2,
   ChevronRight,
   File,
+  UserCheck,
 } from 'lucide-react'
 
 /** -------------------- Constants / Helpers -------------------- */
@@ -661,65 +662,90 @@ export default function MentoringStudent() {
   /** -------------------- Login UI -------------------- */
   if (!user) {
     return (
-      <div className="container py-5" style={{ maxWidth: 920 }}>
-        <div className="d-flex align-items-center justify-content-between mb-3">
-          <div>
-            <h2 className="mb-1">Mentoria</h2>
-            <div className="text-muted">Acesso do aluno</div>
-          </div>
-          <span className="badge text-bg-light">LMS</span>
-        </div>
-
-        {erro ? <div className="alert alert-danger">{erro}</div> : null}
-        {info ? <div className="alert alert-success">{info}</div> : null}
-
-        <div className="card border-0 shadow-sm p-4">
-          <div className="d-flex gap-2 mb-3">
-            <button
-              className={`btn ${!isSignup ? 'btn-primary' : 'btn-outline-primary'}`}
-              type="button"
-              onClick={() => setIsSignup(false)}
-            >
-              Entrar
-            </button>
-            <button
-              className={`btn ${isSignup ? 'btn-primary' : 'btn-outline-primary'}`}
-              type="button"
-              onClick={() => setIsSignup(true)}
-            >
-              Criar conta
-            </button>
+      <div className="d-flex justify-content-center position-relative py-5 min-vh-100">
+        <div className="container" style={{ maxWidth: 920 }}>
+          <div className="d-flex align-items-center justify-content-between mb-3">
+            <div>
+              <h2 className="mb-1">Mentoria</h2>
+              <div className="text-muted">Acesso do aluno</div>
+            </div>
+            <span className="badge text-bg-light">LMS</span>
           </div>
 
-          <form onSubmit={handleAuth}>
-            {isSignup ? (
-              <div className="row g-3">
-                <div className="col-md-7">
-                  <label className="form-label">Nome completo</label>
-                  <input className="form-control" value={nomeCompleto} onChange={(e) => setNomeCompleto(e.target.value)} />
-                </div>
-                <div className="col-md-5">
-                  <label className="form-label">Curso</label>
-                  <input className="form-control" value={curso} onChange={(e) => setCurso(e.target.value)} />
-                </div>
-              </div>
-            ) : null}
+          {erro ? <div className="alert alert-danger">{erro}</div> : null}
+          {info ? <div className="alert alert-success">{info}</div> : null}
 
-            <div className="row g-3 mt-1">
-              <div className="col-md-6">
-                <label className="form-label">Telefone</label>
-                <input className="form-control" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
-              </div>
-              <div className="col-md-6">
-                <label className="form-label">Palavra-passe</label>
-                <input className="form-control" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
-              </div>
+          <div className="card border-0 shadow-sm p-4">
+            <div className="d-flex gap-2 mb-3">
+              <button
+                className={`btn ${!isSignup ? 'btn-primary' : 'btn-outline-primary'}`}
+                type="button"
+                onClick={() => setIsSignup(false)}
+              >
+                Entrar
+              </button>
+              <button
+                className={`btn ${isSignup ? 'btn-primary' : 'btn-outline-primary'}`}
+                type="button"
+                onClick={() => setIsSignup(true)}
+              >
+                Criar conta
+              </button>
             </div>
 
-            <button className="btn btn-primary mt-3" disabled={loadingAuth}>
-              {loadingAuth ? 'A processar...' : isSignup ? 'Criar conta' : 'Entrar'}
-            </button>
-          </form>
+            <form onSubmit={handleAuth}>
+              {isSignup ? (
+                <div className="row g-3">
+                  <div className="col-md-7">
+                    <label className="form-label">Nome completo</label>
+                    <input className="form-control" value={nomeCompleto} onChange={(e) => setNomeCompleto(e.target.value)} />
+                  </div>
+                  <div className="col-md-5">
+                    <label className="form-label">Curso</label>
+                    <input className="form-control" value={curso} onChange={(e) => setCurso(e.target.value)} />
+                  </div>
+                </div>
+              ) : null}
+
+              <div className="row g-3 mt-1">
+                <div className="col-md-6">
+                  <label className="form-label">Telefone</label>
+                  <input className="form-control" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+                </div>
+                <div className="col-md-6">
+                  <label className="form-label">Palavra-passe</label>
+                  <input className="form-control" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+                </div>
+              </div>
+
+              <button className="btn btn-primary mt-3" disabled={loadingAuth}>
+                {loadingAuth ? 'A processar...' : isSignup ? 'Criar conta' : 'Entrar'}
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div className="position-absolute top-0 end-0 mt-3 me-3">
+          <a
+            href="/mentoring/admin"
+            className="btn btn-outline-primary d-flex align-items-center gap-2 shadow-sm fw-semibold"
+            style={{
+              background: 'linear-gradient(135deg, rgba(102,16,242,.1), rgba(13,110,253,.1))',
+              border: '2px solid #6610f2',
+              transition: 'all 0.3s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, #6610f2, #0d6efd)'
+              e.target.style.color = 'white'
+            }}
+            onMouseLeave={(e) => {
+              e.target.style.background = 'linear-gradient(135deg, rgba(102,16,242,.1), rgba(13,110,253,.1))'
+              e.target.style.color = '#6610f2'
+            }}
+          >
+            <UserCheck size={16} />
+            Portal do Professor
+          </a>
         </div>
       </div>
     )
