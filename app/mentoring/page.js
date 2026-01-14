@@ -83,10 +83,10 @@ function normalizeDoc(d) {
 /**
  * Bootstrap modal shell without Bootstrap JS (we control show/hide via React)
  */
-function ModalShell({ title, icon: Icon, onClose, children, footer, size = 'modal-lg' }) {
+function ModalShell({ title, icon: Icon, onClose, children, footer, size = 'modal-lg', closable = true, mandatory = false }) {
   return (
     <>
-      <div className="modal-backdrop fade show" onClick={onClose} style={{ cursor: 'pointer' }} />
+      <div className="modal-backdrop fade show" onClick={closable ? onClose : undefined} style={{ cursor: closable ? 'pointer' : 'default' }} />
       <div className="modal fade show d-block" tabIndex={-1} role="dialog" aria-modal="true">
         <div className={`modal-dialog modal-dialog-centered modal-dialog-scrollable ${size}`}>
           <div className="modal-content border-0 shadow">
@@ -95,9 +95,11 @@ function ModalShell({ title, icon: Icon, onClose, children, footer, size = 'moda
                 {Icon ? <Icon size={20} className="text-primary" /> : null}
                 <h5 className="modal-title mb-0">{title}</h5>
               </div>
-              <button type="button" className="btn btn-outline-secondary btn-sm" onClick={onClose}>
-                <X size={18} />
-              </button>
+              {closable && !mandatory && (
+                <button type="button" className="btn btn-outline-secondary btn-sm" onClick={onClose}>
+                  <X size={18} />
+                </button>
+              )}
             </div>
             <div className="modal-body">{children}</div>
             {footer ? <div className="modal-footer">{footer}</div> : null}
@@ -152,6 +154,16 @@ export default function MentoringStudent() {
     anoInicioMentoria: '',
   })
 
+  /** -------- Create Mentorship -------- */
+  const [showCreateMentorship, setShowCreateMentorship] = useState(false)
+  const [createForm, setCreateForm] = useState({
+    tipoKey: 'mestrado',
+    titulo: '',
+    anoInicioCurso: '',
+    anoInicioMentoria: '',
+    email: '',
+  })
+
   /** -------- Upload form (modal) -------- */
   const uploadFileRef = useRef(null)
   const [uploadNote, setUploadNote] = useState('')
@@ -198,6 +210,13 @@ export default function MentoringStudent() {
     carregarMentorias()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id])
+
+  /** -------------------- Show create modal if no mentorships -------------------- */
+  useEffect(() => {
+    if (user?.id && mentorships.length === 0 && !showCreateMentorship) {
+      setShowCreateMentorship(true)
+    }
+  }, [user?.id, mentorships.length, showCreateMentorship])
 
   /** -------------------- Persist selected mentorship -------------------- */
   useEffect(() => {
@@ -540,6 +559,41 @@ export default function MentoringStudent() {
       setEditingMentorship(false)
     } catch (err) {
       setErro(err?.response?.data?.error || 'Erro ao actualizar mentoria.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  async function createMentorship(e) {
+    e.preventDefault()
+    if (!createForm.titulo.trim() || !createForm.anoInicioCurso || !createForm.anoInicioMentoria) {
+      setErro('Preencha todos os campos obrigatórios.')
+      return
+    }
+    setErro('')
+    setInfo('')
+    setBusy(true)
+    try {
+      const res = await axios.post('/api/mentoring/mentorships', {
+        alunoId: user.id,
+        ...createForm,
+      })
+      const newMentorship = res.data?.mentorship
+      if (newMentorship) {
+        setMentorships(prev => [newMentorship, ...prev])
+        setSelectedMentorshipId(newMentorship.id)
+        setInfo('Mentoria criada.')
+        setShowCreateMentorship(false)
+        setCreateForm({
+          tipoKey: 'mestrado',
+          titulo: '',
+          anoInicioCurso: '',
+          anoInicioMentoria: '',
+          email: '',
+        })
+      }
+    } catch (err) {
+      setErro(err?.response?.data?.error || 'Erro ao criar mentoria.')
     } finally {
       setBusy(false)
     }
@@ -948,16 +1002,27 @@ export default function MentoringStudent() {
 
             <div className="d-flex align-items-center gap-2">
               {/* mentorship switch */}
-              <div className="input-group d-none d-md-flex" style={{ minWidth: 360 }}>
-                <span className="input-group-text">Mentoria</span>
-                <select className="form-select" value={selectedMentorshipId} onChange={(e) => setSelectedMentorshipId(e.target.value)}>
-                  {mentorships.map((m) => (
-                    <option key={m.id} value={m.id}>
-                      {tipoMeta(m.tipoKey).label} — {m.titulo ? m.titulo : 'Sem título'}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              {mentorships.length > 0 && (
+                <div className="d-none d-md-flex">
+                  <div className="input-group" style={{ minWidth: 360 }}>
+                    <span className="input-group-text">Mentoria</span>
+                    <select className="form-select" value={selectedMentorshipId} onChange={(e) => setSelectedMentorshipId(e.target.value)}>
+                      {mentorships.map((m) => (
+                        <option key={m.id} value={m.id}>
+                          {tipoMeta(m.tipoKey).label} — {m.titulo ? m.titulo : 'Sem título'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <button
+                    type="button"
+                    className="btn btn-outline-primary ms-2"
+                    onClick={() => setShowCreateMentorship(true)}
+                  >
+                    + Nova
+                  </button>
+                </div>
+              )}
 
               <button type="button" className="btn btn-light position-relative" onClick={() => setShowNotifModal(true)}>
                 <Bell size={18} />
@@ -992,6 +1057,8 @@ export default function MentoringStudent() {
         {/* Alerts */}
         {erro ? <div className="alert alert-danger">{erro}</div> : null}
         {info ? <div className="alert alert-success">{info}</div> : null}
+
+
 
         {/* Mentorship card */}
         {mentorship ? (
@@ -1571,6 +1638,97 @@ export default function MentoringStudent() {
                 onChange={(e) => setNewMeetingDatetime(e.target.value)}
               />
               <div className="form-text">Podes deixar em branco se preferires que o professor defina a data.</div>
+            </div>
+          </form>
+        </ModalShell>
+      ) : null}
+
+      {/* Create Mentorship Modal */}
+      {showCreateMentorship ? (
+        <ModalShell
+          title="Criar Nova Mentoria"
+          icon={FileText}
+          onClose={() => setShowCreateMentorship(false)}
+          footer={
+            <>
+              {mentorships.length > 0 && (
+                <button className="btn btn-outline-secondary" onClick={() => setShowCreateMentorship(false)} disabled={busy}>
+                  Cancelar
+                </button>
+              )}
+              <button className="btn btn-primary" onClick={createMentorship} disabled={busy || !createForm.titulo.trim()}>
+                {busy ? 'Criando...' : 'Criar Mentoria'}
+              </button>
+            </>
+          }
+          size="modal-lg"
+          closable={mentorships.length > 0}
+          mandatory={mentorships.length === 0}
+        >
+          <form onSubmit={createMentorship}>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Tipo de Mentoria</label>
+                <select
+                  className="form-select"
+                  value={createForm.tipoKey}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, tipoKey: e.target.value }))}
+                  required
+                >
+                  {TIPO_OPCOES.map((t) => (
+                    <option key={t.key} value={t.key}>
+                      {t.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Título do Trabalho corrente</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={createForm.titulo}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, titulo: e.target.value }))}
+                  placeholder="Ex: Contribuição do Sector Diamantífero..."
+                  required
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Ano do Curso</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={createForm.anoInicioCurso}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, anoInicioCurso: e.target.value }))}
+                  placeholder="Ex: 2024"
+                  min="1900"
+                  max="2100"
+                  required
+                />
+              </div>
+              <div className="col-md-6">
+                <label className="form-label fw-semibold">Ano da Mentoria</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={createForm.anoInicioMentoria}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, anoInicioMentoria: e.target.value }))}
+                  placeholder="Ex: 2026"
+                  min="1900"
+                  max="2100"
+                  required
+                />
+              </div>
+              <div className="col-12">
+                <label className="form-label fw-semibold">Email (opcional)</label>
+                <input
+                  type="email"
+                  className="form-control"
+                  value={createForm.email}
+                  onChange={(e) => setCreateForm(prev => ({ ...prev, email: e.target.value }))}
+                  placeholder="seu.email@exemplo.com"
+                />
+              </div>
             </div>
           </form>
         </ModalShell>

@@ -37,42 +37,6 @@ export async function GET(request) {
       .sort({ updatedAt: -1, createdAt: -1 })
       .toArray()
 
-    // Se for a primeira vez (ou sistema antigo), criamos uma mentoria padrão
-    // para não quebrar o fluxo e migramos docs antigos (sem mentorshipId).
-    if (mentorships.length === 0) {
-      const now = new Date()
-      const defaultDoc = {
-        alunoId: alunoOid,
-        email: '',
-        tipoKey: 'licenciatura',
-        anoInicioCurso: null,
-        anoInicioMentoria: null,
-        titulo: '',
-        teacherQueueStatus: 'pending',
-        teacherQueueUpdatedAt: now,
-        createdAt: now,
-        updatedAt: now
-      }
-
-      const ins = await col.insertOne(defaultDoc)
-      mentorships = [{ ...defaultDoc, _id: ins.insertedId }]
-
-      // Migra documentos antigos para esta mentoria
-      try {
-        await db.collection('mentoring_documents').updateMany(
-          { alunoId: alunoOid, mentorshipId: { $exists: false } },
-          { $set: { mentorshipId: ins.insertedId, updatedAt: now } }
-        )
-
-        await db.collection('perguntas').updateMany(
-          { alunoId: alunoOid, mentorshipId: { $exists: false } },
-          { $set: { mentorshipId: ins.insertedId, updatedAt: now } }
-        )
-      } catch (e) {
-        console.warn('Migração leve (mentoria padrão) falhou:', e)
-      }
-    }
-
     const out = mentorships.map(m => ({
       id: m._id.toString(),
       alunoId: m.alunoId?.toString(),
