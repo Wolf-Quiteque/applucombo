@@ -124,6 +124,7 @@ export default function MentoringStudent() {
   const [selectedMentorshipId, setSelectedMentorshipId] = useState('')
   const [documents, setDocuments] = useState([])
   const [questions, setQuestions] = useState([])
+  const [meetings, setMeetings] = useState([])
 
   /** -------- UI -------- */
   const [tab, setTab] = useState('mentoria')
@@ -160,6 +161,11 @@ export default function MentoringStudent() {
   const [newQuestionDetail, setNewQuestionDetail] = useState('')
   const [showAskForm, setShowAskForm] = useState(false)
   const [selectedQuestion, setSelectedQuestion] = useState(null) // for viewing full question
+
+  /** -------- Meetings form -------- */
+  const [newMeetingTopic, setNewMeetingTopic] = useState('')
+  const [newMeetingDatetime, setNewMeetingDatetime] = useState('')
+  const [showCreateMeeting, setShowCreateMeeting] = useState(false)
 
   /** -------- Derived -------- */
   const mentorship = useMemo(
@@ -200,12 +206,13 @@ export default function MentoringStudent() {
     window.localStorage.setItem('mentoringSelectedMentorshipId', selectedMentorshipId)
   }, [selectedMentorshipId])
 
-  /** -------------------- Load docs + questions + notifications when mentorship changes -------------------- */
+  /** -------------------- Load docs + questions + meetings + notifications when mentorship changes -------------------- */
   useEffect(() => {
     if (!user?.id || !selectedMentorshipId) return
 
     carregarDocs()
     carregarQuestions()
+    carregarMeetings()
     carregarNotificacoes()
 
     const t = setInterval(() => {
@@ -261,6 +268,16 @@ export default function MentoringStudent() {
       const res = await axios.get(`/api/mentoring/questions?alunoId=${user.id}&mentorshipId=${selectedMentorshipId}`)
       const list = res.data?.perguntas || []
       setQuestions(list)
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  async function carregarMeetings() {
+    try {
+      const res = await axios.get(`/api/mentoring/meetings?mentorshipId=${selectedMentorshipId}`)
+      const list = res.data?.meetings || []
+      setMeetings(list)
     } catch (e) {
       console.error(e)
     }
@@ -454,6 +471,36 @@ export default function MentoringStudent() {
     }
   }
 
+  /** -------------------- Meetings logic -------------------- */
+  async function createMeeting(e) {
+    e.preventDefault()
+    if (!newMeetingTopic.trim()) return
+
+    setErro('')
+    setInfo('')
+    setBusy(true)
+    try {
+      await axios.post('/api/mentoring/meetings', {
+        mentorshipId: selectedMentorshipId,
+        alunoId: user.id,
+        requestedBy: 'student',
+        topic: newMeetingTopic.trim(),
+        datetime: newMeetingDatetime || null,
+      })
+
+      setInfo('Reunião solicitada ao professor.')
+      setNewMeetingTopic('')
+      setNewMeetingDatetime('')
+      setShowCreateMeeting(false)
+      await carregarMeetings()
+      await carregarNotificacoes()
+    } catch (err) {
+      setErro(err?.response?.data?.error || 'Erro ao solicitar reunião.')
+    } finally {
+      setBusy(false)
+    }
+  }
+
   /** -------------------- Edit Mentorship -------------------- */
   function startEditingMentorship() {
     if (!mentorship) return
@@ -563,6 +610,80 @@ export default function MentoringStudent() {
           )}
         </div>
       </button>
+    )
+  }
+
+  /** -------------------- MeetingCard -------------------- */
+  function MeetingCard({ meeting }) {
+    const isPending = meeting.status === 'pending'
+    const isAccepted = meeting.status === 'accepted'
+    const isRejected = meeting.status === 'rejected'
+    const hasNew = meeting.studentUnread
+
+    return (
+      <div className="card border-0 shadow-sm">
+        <div className="card-body">
+          <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
+            <div className="d-flex align-items-start gap-3 flex-1 min-w-0">
+              <div className={`rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 ${
+                isAccepted ? 'bg-success bg-opacity-10 text-success' : isPending ? 'bg-warning bg-opacity-10 text-warning' : 'bg-danger bg-opacity-10 text-danger'
+              }`} style={{ width: 40, height: 40 }}>
+                <Calendar size={20} />
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="d-flex align-items-center gap-2 mb-1">
+                  <span className="fw-semibold text-truncate" title={meeting.topic}>
+                    {truncate(meeting.topic || 'Reunião', 60)}
+                  </span>
+                  {hasNew && <span className="badge bg-danger text-white">Novo</span>}
+                </div>
+
+                <div className="d-flex align-items-center gap-2 small text-muted">
+                  <Clock size={14} />
+                  <span>{meeting.datetime ? fmtDate(meeting.datetime) : 'Data por definir'}</span>
+                  <span>•</span>
+                  <span>Pedido por: {meeting.requestedBy === 'teacher' ? 'Professor' : 'Você'}</span>
+                </div>
+
+                <div className="mt-2">
+                  <span className={`badge ${
+                    isAccepted ? 'bg-success' : isPending ? 'bg-warning text-dark' : 'bg-danger'
+                  }`}>
+                    {isAccepted ? 'Aceite' : isPending ? 'Pendente' : 'Rejeitada'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <ChevronRight size={18} className="text-muted flex-shrink-0" />
+          </div>
+
+          {isAccepted && meeting.acceptedAt && (
+            <div className="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
+              <div className="d-flex align-items-center gap-2 small fw-semibold text-success mb-1">
+                <CheckCircle size={14} />
+                Aceite pelo professor
+              </div>
+              <p className="small text-body mb-0">
+                Aceite em {fmtDate(meeting.acceptedAt)}
+              </p>
+            </div>
+          )}
+
+          {isRejected && meeting.rejectedAt && (
+            <div className="p-3 bg-danger bg-opacity-10 rounded-3 border border-danger border-opacity-25">
+              <div className="d-flex align-items-center gap-2 small fw-semibold text-danger mb-1">
+                <X size={14} />
+                Rejeitada pelo professor
+              </div>
+              <p className="small text-body mb-0">
+                Rejeitada em {fmtDate(meeting.rejectedAt)}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
     )
   }
 
@@ -1094,6 +1215,39 @@ export default function MentoringStudent() {
             </div>
           ) : null}
 
+          {tab === 'meetings' ? (
+            <div>
+              <div className="d-flex justify-content-between align-items-center mb-4">
+                <h5 className="mb-0">Reuniões</h5>
+                <button
+                  className="btn btn-primary d-flex align-items-center gap-2"
+                  onClick={() => setShowCreateMeeting(true)}
+                >
+                  <Calendar size={16} />
+                  Solicitar reunião
+                </button>
+              </div>
+
+              {meetings.length ? (
+                <div className="d-flex flex-column gap-3">
+                  {meetings.map(m => <MeetingCard key={m.id} meeting={m} />)}
+                </div>
+              ) : (
+                <div className="text-center py-5 text-muted">
+                  <Calendar size={48} className="mb-3" />
+                  <p className="mb-3">Ainda não solicitaste nenhuma reunião.</p>
+                  <button
+                    className="btn btn-primary d-flex align-items-center gap-2 mx-auto"
+                    onClick={() => setShowCreateMeeting(true)}
+                  >
+                    <Calendar size={16} />
+                    Solicitar primeira reunião
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : null}
+
           {tab === 'questions' ? (
             <div>
               <div className="d-flex justify-content-between align-items-center mb-4">
@@ -1127,10 +1281,10 @@ export default function MentoringStudent() {
             </div>
           ) : null}
 
-          {tab !== 'mentoria' && tab !== 'questions' ? (
+          {tab !== 'mentoria' && tab !== 'meetings' && tab !== 'questions' ? (
             <div className="text-center py-5 text-muted">
               <div className="mb-2">Esta tab continua igual à tua versão antiga.</div>
-              <div className="small">Se quiseres, eu também converto Meetings/Questions/Progress para este layout novo.</div>
+              <div className="small">Se quiseres, eu também converto Progress para este layout novo.</div>
             </div>
           ) : null}
         </div>
@@ -1374,6 +1528,51 @@ export default function MentoringStudent() {
               <p className="mb-0">Aguardando resposta do professor.</p>
             </div>
           )}
+        </ModalShell>
+      ) : null}
+
+      {/* Create Meeting Modal */}
+      {showCreateMeeting ? (
+        <ModalShell
+          title="Solicitar Reunião"
+          icon={Calendar}
+          onClose={() => setShowCreateMeeting(false)}
+          footer={
+            <>
+              <button className="btn btn-outline-secondary" onClick={() => setShowCreateMeeting(false)} disabled={busy}>
+                Cancelar
+              </button>
+              <button className="btn btn-primary" onClick={createMeeting} disabled={busy || !newMeetingTopic.trim()}>
+                {busy ? 'A solicitar...' : 'Solicitar Reunião'}
+              </button>
+            </>
+          }
+          size="modal-md"
+        >
+          <form onSubmit={createMeeting}>
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Tópico da reunião</label>
+              <input
+                type="text"
+                className="form-control"
+                value={newMeetingTopic}
+                onChange={(e) => setNewMeetingTopic(e.target.value)}
+                placeholder="Ex: Revisão do capítulo 3, Discussão sobre tese..."
+                required
+              />
+            </div>
+
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Data e hora sugerida (opcional)</label>
+              <input
+                type="datetime-local"
+                className="form-control"
+                value={newMeetingDatetime}
+                onChange={(e) => setNewMeetingDatetime(e.target.value)}
+              />
+              <div className="form-text">Podes deixar em branco se preferires que o professor defina a data.</div>
+            </div>
+          </form>
         </ModalShell>
       ) : null}
     </div>
