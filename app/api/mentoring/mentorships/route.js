@@ -15,7 +15,7 @@ function oid(id) {
   }
 }
 
-// GET /api/mentoring/mentorships?alunoId=...
+// GET /api/mentoring/mentorships?alunoId=...skldjfsldkjlskdj
 export async function GET(request) {
   try {
     const { searchParams } = new URL(request.url)
