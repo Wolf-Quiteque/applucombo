@@ -982,287 +982,135 @@ export default function MentoringStudent() {
 
   /** -------------------- Main UI (new dashboard) -------------------- */
   return (
-    <div className="min-vh-100 bg-body-tertiary">
-      {/* Top header */}
-      <div className="bg-white border-bottom sticky-top">
-        <div className="container py-2">
-          <div className="d-flex align-items-center justify-content-between" style={{ minHeight: 56 }}>
+    <div className="min-vh-100 bg-light">
+
+      {/* ---- TOP HEADER ---- */}
+      <div className="bg-white border-bottom sticky-top shadow-sm">
+        <div className="container">
+          <div className="d-flex align-items-center justify-content-between py-2" style={{ minHeight: 54 }}>
             <div className="d-flex align-items-center gap-3">
               <div
-                className="rounded-3 text-white fw-bold d-flex align-items-center justify-content-center"
-                style={{ width: 40, height: 40, background: 'linear-gradient(135deg, #0d6efd, #6610f2)' }}
+                className="rounded-3 text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
+                style={{ width: 38, height: 38, background: 'linear-gradient(135deg, #0d6efd, #6610f2)', fontSize: 15 }}
               >
                 {firstName?.[0] || 'A'}
               </div>
               <div>
-                <div className="fw-semibold">Olá, {firstName}</div>
-                <div className="text-muted small">{user?.curso || ''}</div>
+                <div className="fw-semibold lh-1">Olá, {firstName}</div>
+                <div className="text-muted" style={{ fontSize: 12 }}>{user?.curso || 'Portal de Mentoria'}</div>
               </div>
             </div>
-
             <div className="d-flex align-items-center gap-2">
-              {/* mentorship switch */}
-              {mentorships.length > 0 && (
-                <div className="d-none d-md-flex">
-                  <div className="input-group" style={{ minWidth: 360 }}>
-                    <span className="input-group-text">Mentoria</span>
-                    <select className="form-select" value={selectedMentorshipId} onChange={(e) => setSelectedMentorshipId(e.target.value)}>
-                      {mentorships.map((m) => (
-                        <option key={m.id} value={m.id}>
-                          {tipoMeta(m.tipoKey).label} — {m.titulo ? m.titulo : 'Sem título'}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <button
-                    type="button"
-                    className="btn btn-outline-primary ms-2"
-                    onClick={() => setShowCreateMentorship(true)}
-                  >
-                    + Nova
-                  </button>
-                </div>
-              )}
-
-              <button type="button" className="btn btn-light position-relative" onClick={() => setShowNotifModal(true)}>
-                <Bell size={18} />
-                {notifCount > 0 ? (
-                  <span
-                    className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle"
-                    style={{ width: 10, height: 10 }}
-                  />
-                ) : null}
+              <button type="button" className="btn btn-sm btn-light position-relative" onClick={() => setShowNotifModal(true)}>
+                <Bell size={17} />
+                {notifCount > 0 && (
+                  <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style={{ width: 10, height: 10 }} />
+                )}
               </button>
-
-              <button type="button" className="btn btn-light" onClick={logout}>
-                <LogOut size={18} />
+              <button type="button" className="btn btn-sm btn-light d-flex align-items-center gap-2" onClick={logout}>
+                <LogOut size={16} />
+                <span className="d-none d-sm-inline">Sair</span>
               </button>
             </div>
-          </div>
-
-          {/* mobile mentorship switch */}
-          <div className="d-md-none mt-2">
-            <select className="form-select" value={selectedMentorshipId} onChange={(e) => setSelectedMentorshipId(e.target.value)}>
-              {mentorships.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {tipoMeta(m.tipoKey).label} — {m.titulo ? m.titulo : 'Sem título'}
-                </option>
-              ))}
-            </select>
           </div>
         </div>
       </div>
 
-      <div className="container py-4">
-        {/* Alerts */}
-        {erro ? <div className="alert alert-danger">{erro}</div> : null}
-        {info ? <div className="alert alert-success">{info}</div> : null}
-
-
-
-        {/* Mentorship card */}
-        {mentorship ? (
-          <div className="p-4 rounded-4 text-white mb-4 shadow-sm" style={{ background: 'linear-gradient(90deg, #0d6efd, #6610f2)' }}>
-            <div className="d-flex align-items-start justify-content-between gap-3">
-              <div className="flex-grow-1">
-                {editingMentorship ? (
+      {/* ---- MENTORSHIP CONTEXT BAR ---- */}
+      {mentorships.length > 0 && (
+        <div className="bg-white border-bottom">
+          <div className="container">
+            <div className="d-flex align-items-center justify-content-between py-2 gap-3">
+              <div className="d-flex align-items-center gap-2 min-w-0 flex-grow-1">
+                {mentorship && (
+                  <>
+                    <span className="badge bg-primary" style={{ fontSize: 11 }}>{meta.label}</span>
+                    <span className="fw-medium text-truncate" style={{ fontSize: 14 }} title={mentorship.titulo}>
+                      {mentorship.titulo ? truncate(mentorship.titulo, 70) : 'Sem título'}
+                    </span>
+                  </>
+                )}
+              </div>
+              <div className="d-flex align-items-center gap-2 flex-shrink-0">
+                {mentorships.length > 1 && (
                   <select
-                    className="form-select form-select-sm mb-2"
-                    value={editForm.tipoKey}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, tipoKey: e.target.value }))}
-                    style={{ width: 'auto', display: 'inline-block' }}
+                    className="form-select form-select-sm"
+                    style={{ minWidth: 160, maxWidth: 260 }}
+                    value={selectedMentorshipId}
+                    onChange={e => setSelectedMentorshipId(e.target.value)}
                   >
-                    {TIPO_OPCOES.map((t) => (
-                      <option key={t.key} value={t.key}>
-                        {t.label}
+                    {mentorships.map(m => (
+                      <option key={m.id} value={m.id}>
+                        {tipoMeta(m.tipoKey).label} — {m.titulo ? truncate(m.titulo, 28) : 'Sem título'}
                       </option>
                     ))}
                   </select>
-                ) : (
-                  <span className="badge text-bg-light text-dark mb-2">{meta.label}</span>
                 )}
-
-                {editingMentorship ? (
-                  <input
-                    type="text"
-                    className="form-control form-control-sm mb-2"
-                    value={editForm.titulo}
-                    onChange={(e) => setEditForm(prev => ({ ...prev, titulo: e.target.value }))}
-                    placeholder="Título"
-                  />
-                ) : (
-                  <h5 className="fw-semibold mb-2" title={mentorship.titulo}>
-                    {truncate(mentorship.titulo || 'Sem título', 100)}
-                  </h5>
-                )}
-
-                <div className="d-flex flex-wrap gap-3 small" style={{ color: 'rgba(255,255,255,.85)' }}>
-                  {editingMentorship ? (
-                    <>
-                      <div className="d-flex align-items-center gap-2">
-                        <span>📧</span>
-                        <input
-                          type="email"
-                          className="form-control form-control-sm"
-                          value={editForm.email}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, email: e.target.value }))}
-                          placeholder="Email"
-                          style={{ width: 150 }}
-                        />
-                      </div>
-                      <div className="d-flex align-items-center gap-2">
-                        <span>📅</span>
-                        <input
-                          type="number"
-                          className="form-control form-control-sm"
-                          value={editForm.anoInicioCurso}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, anoInicioCurso: e.target.value }))}
-                          placeholder="Ano curso"
-                          style={{ width: 100 }}
-                        />
-                      </div>
-                      <div className="d-flex align-items-center gap-2">
-                        <span>🎯</span>
-                        <input
-                          type="number"
-                          className="form-control form-control-sm"
-                          value={editForm.anoInicioMentoria}
-                          onChange={(e) => setEditForm(prev => ({ ...prev, anoInicioMentoria: e.target.value }))}
-                          placeholder="Ano mentoria"
-                          style={{ width: 100 }}
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <span>📧 {mentorship.email || '-'}</span>
-                      <span>📅 Curso: {mentorship.anoInicioCurso || '-'}</span>
-                      <span>🎯 Mentoria: {mentorship.anoInicioMentoria || '-'}</span>
-                    </>
-                  )}
-                </div>
-              </div>
-
-              <div className="d-flex gap-2">
-                {editingMentorship ? (
-                  <>
-                    <button
-                      type="button"
-                      className="btn btn-success btn-sm"
-                      onClick={saveMentorship}
-                      disabled={busy}
-                    >
-                      {busy ? 'Salvando...' : 'Salvar'}
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-outline-light btn-sm"
-                      onClick={cancelEditingMentorship}
-                      disabled={busy}
-                    >
-                      Cancelar
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    type="button"
-                    className="btn btn-outline-light btn-sm"
-                    onClick={startEditingMentorship}
-                  >
-                    <Edit2 size={18} />
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        ) : null}
-
-        {/* Welcome / Boas-vindas */}
-<div className="card border-0 shadow-sm mb-4">
-  <div
-    className="card-body p-4 rounded-4"
-    style={{
-      background: 'linear-gradient(90deg, rgba(13,110,253,.08), rgba(102,16,242,.08))',
-    }}
-  >
-    <div className="d-flex align-items-start gap-3">
-      <div
-        className="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0"
-        style={{ width: 44, height: 44, background: 'rgba(13,110,253,.12)' }}
-      >
-        <TrendingUp size={20} className="text-primary" />
-      </div>
-
-      <div className="flex-grow-1">
-        <div className="d-flex flex-wrap align-items-center gap-2">
-          <h4 className="mb-0 fw-semibold">Bem-vindo(a), {firstName} 👋</h4>
-          {mentorship?.anoInicioMentoria ? (
-            <span className="badge text-bg-light border">
-              Mentoria desde {mentorship.anoInicioMentoria}
-            </span>
-          ) : null}
-        </div>
-
-        <p className="text-muted mt-2 mb-3">
-          Este é o teu espaço de acompanhamento académico. Aqui serás orientado(a) pelo
-          <strong> Dr. Lucombo Luveia</strong>, com foco em clareza, rigor e evolução consistente — passo a passo.
-        </p>
-
-        <div className="row g-3">
-          <div className="col-12 col-lg-4">
-            <div className="p-3 bg-white rounded-4 border h-100">
-              <div className="fw-semibold mb-1">📄 Submissões organizadas</div>
-              <div className="text-muted small">
-                Envia versões do teu <strong>Programa</strong> e da tua <strong>{meta.secondaryLabel}</strong>, sempre com nota do que mudou.
-              </div>
-            </div>
-          </div>
-
-          <div className="col-12 col-lg-4">
-            <div className="p-3 bg-white rounded-4 border h-100">
-              <div className="fw-semibold mb-1">✅ Feedback e acompanhamento</div>
-              <div className="text-muted small">
-                Recebe comentários do professor, acompanha “visto” e mantém o teu progresso sempre claro.
-              </div>
-            </div>
-          </div>
-
-          <div className="col-12 col-lg-4">
-            <div className="p-3 bg-white rounded-4 border h-100">
-              <div className="fw-semibold mb-1">🔔 Notificações em tempo real</div>
-              <div className="text-muted small">
-                Quando houver resposta, reunião ou atualização, vais ver aqui de forma rápida e simples.
+                <button
+                  type="button"
+                  className="btn btn-sm btn-outline-primary"
+                  onClick={() => setShowCreateMentorship(true)}
+                >+ Nova</button>
               </div>
             </div>
           </div>
         </div>
+      )}
 
-        {!latestPrograma ? (
-          <div className="alert alert-primary mt-3 mb-0">
-            <strong>Dica para começar:</strong> envia o teu <strong>Programa</strong> (mesmo que seja uma versão inicial).
-            O Dr. Lucombo Luveia vai orientar os próximos passos a partir daí.
+      <div className="container py-4">
+        {/* Alerts */}
+        {erro && <div className="alert alert-danger alert-dismissible mb-4"><button type="button" className="btn-close" onClick={() => setErro('')}></button>{erro}</div>}
+        {info && <div className="alert alert-success alert-dismissible mb-4"><button type="button" className="btn-close" onClick={() => setInfo('')}></button>{info}</div>}
+
+        {/* ---- COMPACT MENTORSHIP BANNER ---- */}
+        {mentorship ? (
+          <div className="d-flex align-items-start gap-3 p-3 bg-white rounded-3 border mb-4">
+            <div className="flex-grow-1 min-w-0">
+              <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
+                <span className="badge text-bg-light border">{meta.label}</span>
+                <span className="fw-semibold" style={{ fontSize: 15 }}>{mentorship.titulo || 'Sem título'}</span>
+              </div>
+              <div className="d-flex align-items-center gap-3 flex-wrap text-muted" style={{ fontSize: 13 }}>
+                {mentorship.email && <span>{mentorship.email}</span>}
+                {mentorship.anoInicioCurso && <span>Curso: {mentorship.anoInicioCurso}</span>}
+                {mentorship.anoInicioMentoria && <span>Mentoria desde {mentorship.anoInicioMentoria}</span>}
+              </div>
+            </div>
+            <button
+              type="button"
+              className="btn btn-sm btn-outline-secondary flex-shrink-0"
+              onClick={startEditingMentorship}
+            >
+              <Edit2 size={13} className="me-1" />Editar
+            </button>
           </div>
         ) : null}
-      </div>
-    </div>
-  </div>
-</div>
 
+        {/* First-time tip */}
+        {!latestPrograma && mentorship ? (
+          <div className="alert alert-primary mb-4" style={{ fontSize: 14 }}>
+            <strong>Por onde começar:</strong> Envie o seu <strong>Programa</strong> no separador Documentos. O Dr. Lucombo Luveia irá orientar os próximos passos.
+          </div>
+        ) : null}
 
-        {/* Tabs */}
-        <ul className="nav nav-tabs bg-white rounded-top-4 px-2 border-bottom" style={{ overflowX: 'auto' }}>
+        {/* ---- TABS ---- */}
+        <ul className="nav nav-tabs">
           {[
-            { id: 'mentoria', label: 'Mentoria', icon: FileText },
+            { id: 'mentoria', label: 'Documentos', icon: FileText },
             { id: 'meetings', label: 'Reuniões', icon: Calendar },
             { id: 'questions', label: 'Perguntas', icon: MessageSquare },
             { id: 'progress', label: 'Progresso', icon: TrendingUp },
-          ].map((t) => {
+          ].map(t => {
             const Icon = t.icon
-            const active = tab === t.id
             return (
               <li className="nav-item" key={t.id}>
-                <button type="button" className={`nav-link d-flex align-items-center gap-2 ${active ? 'active' : ''}`} onClick={() => setTab(t.id)}>
-                  <Icon size={16} />
+                <button
+                  type="button"
+                  className={`nav-link d-flex align-items-center gap-2 ${tab === t.id ? 'active' : ''}`}
+                  onClick={() => setTab(t.id)}
+                  style={{ fontSize: 14 }}
+                >
+                  <Icon size={15} />
                   {t.label}
                 </button>
               </li>
@@ -1270,7 +1118,9 @@ export default function MentoringStudent() {
           })}
         </ul>
 
-        <div className="bg-white rounded-bottom-4 p-3 border border-top-0">
+        <div className="bg-white border border-top-0 rounded-bottom-3 p-4">
+
+          {/* DOCUMENTOS */}
           {tab === 'mentoria' ? (
             <div className="row g-3">
               <div className="col-12 col-lg-6">
@@ -1282,82 +1132,68 @@ export default function MentoringStudent() {
             </div>
           ) : null}
 
+          {/* REUNIÕES */}
           {tab === 'meetings' ? (
             <div>
               <div className="d-flex justify-content-between align-items-center mb-4">
-                <h5 className="mb-0">Reuniões</h5>
-                <button
-                  className="btn btn-primary d-flex align-items-center gap-2"
-                  onClick={() => setShowCreateMeeting(true)}
-                >
-                  <Calendar size={16} />
-                  Solicitar reunião
+                <h5 className="mb-0 fw-semibold">Reuniões</h5>
+                <button className="btn btn-sm btn-primary d-flex align-items-center gap-2" onClick={() => setShowCreateMeeting(true)}>
+                  <Calendar size={15} />Solicitar Reunião
                 </button>
               </div>
-
               {meetings.length ? (
                 <div className="d-flex flex-column gap-3">
                   {meetings.map(m => <MeetingCard key={m.id} meeting={m} />)}
                 </div>
               ) : (
                 <div className="text-center py-5 text-muted">
-                  <Calendar size={48} className="mb-3" />
-                  <p className="mb-3">Ainda não solicitaste nenhuma reunião.</p>
-                  <button
-                    className="btn btn-primary d-flex align-items-center gap-2 mx-auto"
-                    onClick={() => setShowCreateMeeting(true)}
-                  >
-                    <Calendar size={16} />
-                    Solicitar primeira reunião
+                  <Calendar size={40} className="mb-3" />
+                  <p className="mb-3" style={{ fontSize: 14 }}>Ainda não solicitaste nenhuma reunião.</p>
+                  <button className="btn btn-sm btn-primary d-inline-flex align-items-center gap-2" onClick={() => setShowCreateMeeting(true)}>
+                    <Calendar size={15} />Solicitar primeira reunião
                   </button>
                 </div>
               )}
             </div>
           ) : null}
 
+          {/* PERGUNTAS */}
           {tab === 'questions' ? (
             <div>
               <div className="d-flex justify-content-between align-items-center mb-4">
-                <h5 className="mb-0">Perguntas ao Professor</h5>
-                <button
-                  className="btn btn-primary d-flex align-items-center gap-2"
-                  onClick={() => setShowAskForm(true)}
-                >
-                  <MessageSquare size={16} />
-                  Fazer pergunta
+                <h5 className="mb-0 fw-semibold">Perguntas ao Professor</h5>
+                <button className="btn btn-sm btn-primary d-flex align-items-center gap-2" onClick={() => setShowAskForm(true)}>
+                  <MessageSquare size={15} />Fazer Pergunta
                 </button>
               </div>
-
               {questions.length ? (
                 <div className="d-flex flex-column gap-3">
                   {questions.map(q => <QuestionCard key={q.id} question={q} onClick={() => viewQuestion(q)} />)}
                 </div>
               ) : (
                 <div className="text-center py-5 text-muted">
-                  <MessageSquare size={48} className="mb-3" />
-                  <p className="mb-3">Ainda não fizeste nenhuma pergunta.</p>
-                  <button
-                    className="btn btn-primary d-flex align-items-center gap-2 mx-auto"
-                    onClick={() => setShowAskForm(true)}
-                  >
-                    <MessageSquare size={16} />
-                    Fazer primeira pergunta
+                  <MessageSquare size={40} className="mb-3" />
+                  <p className="mb-3" style={{ fontSize: 14 }}>Ainda não fizeste nenhuma pergunta.</p>
+                  <button className="btn btn-sm btn-primary d-inline-flex align-items-center gap-2" onClick={() => setShowAskForm(true)}>
+                    <MessageSquare size={15} />Fazer primeira pergunta
                   </button>
                 </div>
               )}
             </div>
           ) : null}
 
-          {tab !== 'mentoria' && tab !== 'meetings' && tab !== 'questions' ? (
+          {/* PROGRESSO */}
+          {tab === 'progress' ? (
             <div className="text-center py-5 text-muted">
-              <div className="mb-2">Esta tab continua igual à tua versão antiga.</div>
-              <div className="small">Se quiseres, eu também converto Progress para este layout novo.</div>
+              <TrendingUp size={40} className="mb-3" />
+              <p className="mb-0" style={{ fontSize: 14 }}>O progresso da tua mentoria é registado pelo professor e ficará visível aqui.</p>
             </div>
           ) : null}
+
         </div>
       </div>
 
-      {/* Notifications Modal */}
+      {/* ---- NOTIFICATIONS MODAL ---- */}
       {showNotifModal ? (
         <ModalShell
           title="Notificações"
@@ -1374,18 +1210,14 @@ export default function MentoringStudent() {
                   type="button"
                   className="btn btn-light text-start"
                   onClick={() => {
-                    // mapping like your old modal
                     if (n.type === 'document') setTab('mentoria')
                     if (n.type === 'meeting') setTab('meetings')
                     if (n.type === 'question') setTab('questions')
-                    if (n.type === 'progress') setTab('progress')
                     setShowNotifModal(false)
                   }}
                 >
                   <div className="d-flex align-items-center justify-content-between">
-                    <div className="fw-semibold" style={{ fontSize: 14 }}>
-                      {n.title}
-                    </div>
+                    <div className="fw-semibold" style={{ fontSize: 14 }}>{n.title}</div>
                     <div className="text-muted small">{fmtDate(n.createdAt)}</div>
                   </div>
                   <div className="text-muted small">{n.message}</div>
@@ -1393,12 +1225,12 @@ export default function MentoringStudent() {
               ))}
             </div>
           ) : (
-            <div className="text-muted">Sem novidades.</div>
+            <div className="text-muted text-center py-3">Sem novidades.</div>
           )}
         </ModalShell>
       ) : null}
 
-      {/* Doc Viewer Modal */}
+      {/* ---- DOC VIEWER ---- */}
       {selectedDoc ? (
         <DocPreviewModal
           doc={selectedDoc}
@@ -1407,18 +1239,18 @@ export default function MentoringStudent() {
         />
       ) : null}
 
-      {/* History Modal */}
+      {/* ---- HISTORY ---- */}
       {showHistory ? (
         <ModalShell
-          title={`Histórico - ${showHistory === 'programa' ? 'Programa' : meta.secondaryLabel}`}
+          title={`Histórico — ${showHistory === 'programa' ? 'Programa' : meta.secondaryLabel}`}
           icon={History}
           onClose={() => setShowHistory(null)}
           footer={<button className="btn btn-outline-secondary" onClick={() => setShowHistory(null)}>Fechar</button>}
         >
           <div className="list-group">
             {(byType[showHistory] || [])
-              .filter((d) => (d.kind || 'submission') === 'submission')
-              .map((doc) => (
+              .filter(d => (d.kind || 'submission') === 'submission')
+              .map(doc => (
                 <button
                   key={doc.id}
                   type="button"
@@ -1432,18 +1264,14 @@ export default function MentoringStudent() {
                       <File size={20} className="text-primary" />
                     )}
                   </div>
-
                   <div className="flex-grow-1 min-w-0">
-                    <div className="fw-semibold text-truncate" title={doc.filename}>
-                      {truncate(doc.filename, 55)}
-                    </div>
-                    <div className="d-flex align-items-center gap-2 text-muted small mt-1">
+                    <div className="fw-semibold text-truncate" title={doc.filename}>{truncate(doc.filename, 55)}</div>
+                    <div className="d-flex align-items-center gap-2 text-muted mt-1" style={{ fontSize: 12 }}>
                       <span className="badge text-bg-secondary">v{doc.version || 1}</span>
                       <span>{fmtDate(doc.uploadedAt)}</span>
-                      {doc.studentUnread ? <span className="badge text-bg-danger ms-1">novo</span> : null}
+                      {doc.studentUnread ? <span className="badge text-bg-danger">novo</span> : null}
                     </div>
                   </div>
-
                   <ChevronRight size={18} className="text-muted" />
                 </button>
               ))}
@@ -1451,7 +1279,7 @@ export default function MentoringStudent() {
         </ModalShell>
       ) : null}
 
-      {/* Upload Modal */}
+      {/* ---- UPLOAD ---- */}
       {showUpload ? (
         <ModalShell
           title={`Enviar ${showUpload === 'programa' ? 'Programa' : meta.secondaryLabel}`}
@@ -1459,9 +1287,7 @@ export default function MentoringStudent() {
           onClose={() => setShowUpload(null)}
           footer={
             <>
-              <button className="btn btn-outline-secondary" onClick={() => setShowUpload(null)} disabled={busy}>
-                Cancelar
-              </button>
+              <button className="btn btn-outline-secondary" onClick={() => setShowUpload(null)} disabled={busy}>Cancelar</button>
               <button className="btn btn-primary" onClick={() => uploadDoc({ type: showUpload })} disabled={busy}>
                 {busy ? 'A enviar...' : 'Enviar'}
               </button>
@@ -1474,21 +1300,20 @@ export default function MentoringStudent() {
             <input ref={uploadFileRef} type="file" className="form-control" accept=".pdf,.doc,.docx" />
             <div className="form-text">PDF ou Word (.pdf, .doc, .docx)</div>
           </div>
-
           <div className="mb-0">
             <label className="form-label fw-semibold">Nota (opcional)</label>
             <textarea
               className="form-control"
               rows={4}
               value={uploadNote}
-              onChange={(e) => setUploadNote(e.target.value)}
+              onChange={e => setUploadNote(e.target.value)}
               placeholder="Descreva o que mudou nesta versão..."
             />
           </div>
         </ModalShell>
       ) : null}
 
-      {/* Ask Question Modal */}
+      {/* ---- ASK QUESTION ---- */}
       {showAskForm ? (
         <ModalShell
           title="Fazer uma Pergunta"
@@ -1496,9 +1321,7 @@ export default function MentoringStudent() {
           onClose={() => setShowAskForm(false)}
           footer={
             <>
-              <button className="btn btn-outline-secondary" onClick={() => setShowAskForm(false)} disabled={busy}>
-                Cancelar
-              </button>
+              <button className="btn btn-outline-secondary" onClick={() => setShowAskForm(false)} disabled={busy}>Cancelar</button>
               <button className="btn btn-primary" onClick={askQuestion} disabled={busy || !newQuestion.trim()}>
                 {busy ? 'A enviar...' : 'Enviar Pergunta'}
               </button>
@@ -1513,19 +1336,18 @@ export default function MentoringStudent() {
                 type="text"
                 className="form-control"
                 value={newQuestion}
-                onChange={(e) => setNewQuestion(e.target.value)}
+                onChange={e => setNewQuestion(e.target.value)}
                 placeholder="Escreva a sua pergunta..."
                 required
               />
             </div>
-
             <div className="mb-0">
               <label className="form-label fw-semibold">Detalhes adicionais (opcional)</label>
               <textarea
                 className="form-control"
                 rows={4}
                 value={newQuestionDetail}
-                onChange={(e) => setNewQuestionDetail(e.target.value)}
+                onChange={e => setNewQuestionDetail(e.target.value)}
                 placeholder="Forneça mais contexto ou detalhes sobre a sua pergunta..."
               />
             </div>
@@ -1533,7 +1355,7 @@ export default function MentoringStudent() {
         </ModalShell>
       ) : null}
 
-      {/* View Question Modal */}
+      {/* ---- VIEW QUESTION ---- */}
       {selectedQuestion ? (
         <ModalShell
           title="Detalhes da Pergunta"
@@ -1544,25 +1366,18 @@ export default function MentoringStudent() {
         >
           <div className="mb-4">
             <div className="d-flex align-items-center gap-2 mb-3">
-              <div className={`rounded-3 d-flex align-items-center justify-content-center ${
-                selectedQuestion.respondida ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning'
-              }`} style={{ width: 40, height: 40 }}>
+              <div className={`rounded-3 d-flex align-items-center justify-content-center ${selectedQuestion.respondida ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning'}`} style={{ width: 40, height: 40 }}>
                 <MessageSquare size={20} />
               </div>
               <div>
                 <span className="badge bg-primary">Pergunta</span>
-                <div className="text-muted small mt-1">
-                  <Clock size={14} className="me-1" />
-                  Enviada em {fmtDate(selectedQuestion.createdAt)}
-                </div>
+                <div className="text-muted small mt-1"><Clock size={14} className="me-1" />Enviada em {fmtDate(selectedQuestion.createdAt)}</div>
               </div>
             </div>
-
             <div className="p-3 bg-body-tertiary rounded-3 mb-3">
               <h6 className="fw-semibold mb-2">Pergunta</h6>
               <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.pergunta}</p>
             </div>
-
             {selectedQuestion.detalhe && (
               <div className="p-3 bg-body-tertiary rounded-3 mb-3">
                 <h6 className="fw-semibold mb-2">Detalhes adicionais</h6>
@@ -1570,35 +1385,29 @@ export default function MentoringStudent() {
               </div>
             )}
           </div>
-
           {selectedQuestion.respondida ? (
             <div>
               <div className="d-flex align-items-center gap-2 mb-3">
                 <CheckCircle size={20} className="text-success" />
                 <span className="fw-semibold text-success">Resposta do Professor</span>
                 {selectedQuestion.respondidaEm && (
-                  <span className="text-muted small ms-auto">
-                    Respondida em {fmtDate(selectedQuestion.respondidaEm)}
-                  </span>
+                  <span className="text-muted small ms-auto">Respondida em {fmtDate(selectedQuestion.respondidaEm)}</span>
                 )}
               </div>
-
               <div className="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
                 <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.resposta}</p>
               </div>
             </div>
           ) : (
             <div className="text-center py-4 text-muted">
-              <div className="rounded-circle bg-warning bg-opacity-10 d-inline-flex align-items-center justify-content-center mb-3">
-                <Clock size={32} className="text-warning" />
-              </div>
+              <Clock size={32} className="text-warning mb-3" />
               <p className="mb-0">Aguardando resposta do professor.</p>
             </div>
           )}
         </ModalShell>
       ) : null}
 
-      {/* Create Meeting Modal */}
+      {/* ---- CREATE MEETING ---- */}
       {showCreateMeeting ? (
         <ModalShell
           title="Solicitar Reunião"
@@ -1606,9 +1415,7 @@ export default function MentoringStudent() {
           onClose={() => setShowCreateMeeting(false)}
           footer={
             <>
-              <button className="btn btn-outline-secondary" onClick={() => setShowCreateMeeting(false)} disabled={busy}>
-                Cancelar
-              </button>
+              <button className="btn btn-outline-secondary" onClick={() => setShowCreateMeeting(false)} disabled={busy}>Cancelar</button>
               <button className="btn btn-primary" onClick={createMeeting} disabled={busy || !newMeetingTopic.trim()}>
                 {busy ? 'A solicitar...' : 'Solicitar Reunião'}
               </button>
@@ -1623,19 +1430,18 @@ export default function MentoringStudent() {
                 type="text"
                 className="form-control"
                 value={newMeetingTopic}
-                onChange={(e) => setNewMeetingTopic(e.target.value)}
+                onChange={e => setNewMeetingTopic(e.target.value)}
                 placeholder="Ex: Revisão do capítulo 3, Discussão sobre tese..."
                 required
               />
             </div>
-
             <div className="mb-3">
               <label className="form-label fw-semibold">Data e hora sugerida (opcional)</label>
               <input
                 type="datetime-local"
                 className="form-control"
                 value={newMeetingDatetime}
-                onChange={(e) => setNewMeetingDatetime(e.target.value)}
+                onChange={e => setNewMeetingDatetime(e.target.value)}
               />
               <div className="form-text">Podes deixar em branco se preferires que o professor defina a data.</div>
             </div>
@@ -1643,7 +1449,7 @@ export default function MentoringStudent() {
         </ModalShell>
       ) : null}
 
-      {/* Create Mentorship Modal */}
+      {/* ---- CREATE MENTORSHIP ---- */}
       {showCreateMentorship ? (
         <ModalShell
           title="Criar Nova Mentoria"
@@ -1652,9 +1458,7 @@ export default function MentoringStudent() {
           footer={
             <>
               {mentorships.length > 0 && (
-                <button className="btn btn-outline-secondary" onClick={() => setShowCreateMentorship(false)} disabled={busy}>
-                  Cancelar
-                </button>
+                <button className="btn btn-outline-secondary" onClick={() => setShowCreateMentorship(false)} disabled={busy}>Cancelar</button>
               )}
               <button className="btn btn-primary" onClick={createMentorship} disabled={busy || !createForm.titulo.trim()}>
                 {busy ? 'Criando...' : 'Criar Mentoria'}
@@ -1669,73 +1473,78 @@ export default function MentoringStudent() {
             <div className="row g-3">
               <div className="col-md-6">
                 <label className="form-label fw-semibold">Tipo de Mentoria</label>
-                <select
-                  className="form-select"
-                  value={createForm.tipoKey}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, tipoKey: e.target.value }))}
-                  required
-                >
-                  {TIPO_OPCOES.map((t) => (
-                    <option key={t.key} value={t.key}>
-                      {t.label}
-                    </option>
-                  ))}
+                <select className="form-select" value={createForm.tipoKey} onChange={e => setCreateForm(prev => ({ ...prev, tipoKey: e.target.value }))} required>
+                  {TIPO_OPCOES.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}
                 </select>
               </div>
               <div className="col-md-6">
-                <label className="form-label fw-semibold">Título do Trabalho corrente</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={createForm.titulo}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, titulo: e.target.value }))}
-                  placeholder="Ex: Contribuição do Sector Diamantífero..."
-                  required
-                />
+                <label className="form-label fw-semibold">Título do Trabalho</label>
+                <input type="text" className="form-control" value={createForm.titulo} onChange={e => setCreateForm(prev => ({ ...prev, titulo: e.target.value }))} placeholder="Ex: Contribuição do Sector Diamantífero..." required />
               </div>
               <div className="col-md-6">
                 <label className="form-label fw-semibold">Ano do Curso</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={createForm.anoInicioCurso}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, anoInicioCurso: e.target.value }))}
-                  placeholder="Ex: 2024"
-                  min="1900"
-                  max="2100"
-                  required
-                />
+                <input type="number" className="form-control" value={createForm.anoInicioCurso} onChange={e => setCreateForm(prev => ({ ...prev, anoInicioCurso: e.target.value }))} placeholder="Ex: 2024" min="1900" max="2100" required />
               </div>
               <div className="col-md-6">
                 <label className="form-label fw-semibold">Ano da Mentoria</label>
-                <input
-                  type="number"
-                  className="form-control"
-                  value={createForm.anoInicioMentoria}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, anoInicioMentoria: e.target.value }))}
-                  placeholder="Ex: 2026"
-                  min="1900"
-                  max="2100"
-                  required
-                />
+                <input type="number" className="form-control" value={createForm.anoInicioMentoria} onChange={e => setCreateForm(prev => ({ ...prev, anoInicioMentoria: e.target.value }))} placeholder="Ex: 2026" min="1900" max="2100" required />
               </div>
               <div className="col-12">
                 <label className="form-label fw-semibold">Email (opcional)</label>
-                <input
-                  type="email"
-                  className="form-control"
-                  value={createForm.email}
-                  onChange={(e) => setCreateForm(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder="seu.email@exemplo.com"
-                />
+                <input type="email" className="form-control" value={createForm.email} onChange={e => setCreateForm(prev => ({ ...prev, email: e.target.value }))} placeholder="seu.email@exemplo.com" />
               </div>
             </div>
           </form>
         </ModalShell>
       ) : null}
+
+      {/* ---- EDIT MENTORSHIP ---- */}
+      {editingMentorship ? (
+        <ModalShell
+          title="Editar Mentoria"
+          icon={Edit2}
+          onClose={cancelEditingMentorship}
+          footer={
+            <>
+              <button className="btn btn-outline-secondary" onClick={cancelEditingMentorship} disabled={busy}>Cancelar</button>
+              <button className="btn btn-primary" onClick={saveMentorship} disabled={busy}>
+                {busy ? 'A guardar...' : 'Guardar'}
+              </button>
+            </>
+          }
+          size="modal-lg"
+        >
+          <div className="row g-3">
+            <div className="col-md-6">
+              <label className="form-label fw-semibold">Tipo de Mentoria</label>
+              <select className="form-select" value={editForm.tipoKey} onChange={e => setEditForm(prev => ({ ...prev, tipoKey: e.target.value }))}>
+                {TIPO_OPCOES.map(t => <option key={t.key} value={t.key}>{t.label}</option>)}
+              </select>
+            </div>
+            <div className="col-md-6">
+              <label className="form-label fw-semibold">Título do Trabalho</label>
+              <input type="text" className="form-control" value={editForm.titulo} onChange={e => setEditForm(prev => ({ ...prev, titulo: e.target.value }))} placeholder="Título" />
+            </div>
+            <div className="col-md-6">
+              <label className="form-label fw-semibold">Email</label>
+              <input type="email" className="form-control" value={editForm.email} onChange={e => setEditForm(prev => ({ ...prev, email: e.target.value }))} placeholder="Email" />
+            </div>
+            <div className="col-md-3">
+              <label className="form-label fw-semibold">Ano do Curso</label>
+              <input type="number" className="form-control" value={editForm.anoInicioCurso} onChange={e => setEditForm(prev => ({ ...prev, anoInicioCurso: e.target.value }))} placeholder="Ex: 2024" />
+            </div>
+            <div className="col-md-3">
+              <label className="form-label fw-semibold">Ano da Mentoria</label>
+              <input type="number" className="form-control" value={editForm.anoInicioMentoria} onChange={e => setEditForm(prev => ({ ...prev, anoInicioMentoria: e.target.value }))} placeholder="Ex: 2026" />
+            </div>
+          </div>
+        </ModalShell>
+      ) : null}
+
     </div>
   )
 }
+
 
 /** -------------------- Document Preview (same logic as old: PDF or Google Viewer) -------------------- */
 function DocPreviewModal({ doc, onClose, onDownload }) {

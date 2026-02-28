@@ -585,160 +585,73 @@ export default function TeacherDashboard() {
     const hasNew = (m.pendingCounts?.total || 0) > 0
     return (
       <button
+        type="button"
         onClick={onClick}
-        className={`w-100 p-4 rounded-3 text-left transition-all ${
-          active
-            ? 'bg-primary text-white shadow-lg border-0'
-            : 'bg-white hover:bg-light border border-gray-200 hover:shadow-sm'
-        }`}
-        style={{ height: '120px', minHeight: '120px' }}
+        style={{
+          display: 'block',
+          width: '100%',
+          padding: '12px 16px',
+          textAlign: 'left',
+          background: active ? '#eef3ff' : 'transparent',
+          border: 'none',
+          borderBottom: '1px solid #dee2e6',
+          borderLeft: `3px solid ${active ? '#0d6efd' : 'transparent'}`,
+          transition: 'background 0.12s, border-left-color 0.12s',
+          cursor: 'pointer',
+        }}
+        onMouseEnter={e => { if (!active) e.currentTarget.style.background = '#f8f9fa' }}
+        onMouseLeave={e => { if (!active) e.currentTarget.style.background = active ? '#eef3ff' : 'transparent' }}
       >
-        <div className="d-flex align-items-start gap-3 h-100">
+        <div className="d-flex align-items-center gap-3">
           <div
-            className={`rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 ${
-              active
-                ? 'bg-white text-primary border border-white border-2'
-                : 'bg-primary text-white'
-            }`}
-            style={{ width: '56px', height: '56px', fontSize: '18px', fontWeight: '600' }}
+            className={`rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 fw-semibold ${active ? 'bg-primary text-white' : 'bg-primary bg-opacity-10 text-primary'}`}
+            style={{ width: 40, height: 40, fontSize: 14 }}
           >
             {initials(m.aluno?.nomeCompleto)}
           </div>
-          <div className="flex-1 min-w-0 d-flex flex-column justify-content-between">
-            <div>
-              <div className="d-flex align-items-center gap-2 mb-2">
-                <span className="fw-semibold text-truncate fs-6" title={m.aluno?.nomeCompleto}>
-                  {m.aluno?.nomeCompleto}
-                </span>
-                {hasNew && (
-                  <span className={`badge ${active ? 'bg-white text-primary' : 'bg-danger text-white'} px-2 py-1`}>
-                    {m.pendingCounts.total}
-                  </span>
-                )}
-              </div>
-              <p className={`small mb-1 ${active ? 'text-white-75' : 'text-muted'} text-truncate`}>
-                {getMentoriaConfig(m.tipoKey).label}
-              </p>
+          <div className="flex-grow-1 min-w-0">
+            <div className="d-flex align-items-center gap-2 mb-1">
+              <span className="fw-semibold text-truncate" style={{ fontSize: 14 }}>{m.aluno?.nomeCompleto}</span>
+              {hasNew && (
+                <span className="badge bg-danger rounded-pill flex-shrink-0" style={{ fontSize: 10 }}>{m.pendingCounts.total}</span>
+              )}
             </div>
-            <p className={`text-xs text-truncate ${active ? 'text-white-75' : 'text-muted'}`} title={m.titulo}>
-              {truncate(m.titulo, 40)}
-            </p>
+            <div className="d-flex align-items-center gap-2 flex-wrap">
+              <span className="badge text-bg-light border" style={{ fontSize: 10 }}>{getMentoriaConfig(m.tipoKey).label}</span>
+              {m.titulo && (
+                <span className="text-muted text-truncate" style={{ fontSize: 12, maxWidth: 140 }}>{truncate(m.titulo, 28)}</span>
+              )}
+            </div>
           </div>
         </div>
       </button>
     )
   }
 
-  const DocumentCard = ({ doc }) => {
-    return (
-      <div className="bg-white border rounded-xl p-4 hover:shadow-sm transition-all mb-3">
-        <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
-          <div className="d-flex align-items-start gap-3 flex-1 min-w-0">
-            <div className="p-2 bg-danger bg-opacity-10 rounded-lg">
-              <FileText className="text-danger" size={20} />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="d-flex align-items-center gap-2">
-                <span className="font-medium text-truncate" title={doc.original?.filename}>
-                  {truncate(doc.original?.filename, 30)}
-                </span>
-                {doc.teacherUnread && <span className="badge bg-danger text-white">Novo</span>}
-              </div>
-              <p className="small text-muted mt-1">
-                Versão {doc.version || 1} · {fmtDate(doc.createdAt)}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="row g-2 mb-3">
-          <div className="col-md-6">
-            <div className="p-2 bg-primary bg-opacity-10 rounded-lg">
-              <p className="small text-primary fw-medium mb-1">Nota do aluno</p>
-              <p className="small text-muted">
-                {doc.studentNote || <span className="text-muted">Sem nota</span>}
-              </p>
-            </div>
-          </div>
-          <div className="col-md-6">
-            <div className="p-2 bg-success bg-opacity-10 rounded-lg">
-              <p className="small text-success fw-medium mb-1">Seu feedback</p>
-              <p className="small text-muted">
-                {doc.teacherNote || <span className="text-muted">Sem feedback</span>}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="d-flex gap-2">
-          <button
-            onClick={() => openPreview(doc)}
-            className="btn btn-primary flex-1 d-flex align-items-center justify-content-center gap-2"
-          >
-            <Eye size={16} />
-            Ver
-          </button>
-          <button
-            onClick={() => setShowCorrection({ parentId: doc.id, type: doc.type, filename: doc.original?.filename })}
-            className="btn btn-success d-flex align-items-center justify-content-center gap-2"
-          >
-            <Send size={16} />
-            Correção
-          </button>
-          {doc.original?.url ? (
-            <a
-              href={doc.original.url}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => trackDocDownload(doc.id)}
-              className="btn btn-outline-secondary d-flex align-items-center justify-content-center"
-            >
-              <Download size={16} />
-            </a>
-          ) : null}
-        </div>
-
-        <div className="d-flex gap-2 mt-2">
-          <button
-            onClick={() => setShowHistory(doc.type)}
-            className="btn btn-outline-primary flex-1 d-flex align-items-center justify-content-center gap-2"
-          >
-            <History size={16} />
-            Ver histórico
-          </button>
-        </div>
-      </div>
-    )
-  }
-
   const ResourceCard = ({ doc }) => {
     return (
-      <div className="bg-white border rounded-xl p-3 hover:shadow-sm transition-all mb-2">
-        <div className="d-flex align-items-center justify-content-between">
-          <div className="d-flex align-items-center gap-3">
-            <div className="p-2 bg-info bg-opacity-10 rounded-lg">
-              <BookOpen size={16} className="text-info" />
-            </div>
-            <div>
-              <p className="mb-0 fw-medium">{doc.original?.filename}</p>
-              <p className="small text-muted mb-0">{fmtDate(doc.createdAt)}</p>
-            </div>
+      <div className="d-flex align-items-center justify-content-between p-2 border rounded-3 mb-2">
+        <div className="d-flex align-items-center gap-2 min-w-0 flex-grow-1">
+          <div className="p-2 bg-primary bg-opacity-10 rounded-3 flex-shrink-0">
+            <BookOpen size={14} className="text-primary" />
           </div>
-          <div className="d-flex gap-2">
-            {doc.original?.url ? (
-              <a
-                href={doc.original.url}
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => trackDocDownload(doc.id)}
-                className="btn btn-sm btn-outline-primary"
-              >
-                <Download size={14} />
-              </a>
-            ) : null}
+          <div className="min-w-0">
+            <div className="fw-medium text-truncate" style={{ fontSize: 13 }}>{doc.original?.filename}</div>
+            <div className="text-muted" style={{ fontSize: 11 }}>{fmtDate(doc.createdAt)}</div>
+            {doc.note ? <div className="text-muted" style={{ fontSize: 11 }}>{doc.note}</div> : null}
           </div>
         </div>
-        {doc.note ? <p className="small text-muted mt-2 mb-0">{doc.note}</p> : null}
+        {doc.original?.url ? (
+          <a
+            href={doc.original.url}
+            target="_blank"
+            rel="noreferrer"
+            onClick={() => trackDocDownload(doc.id)}
+            className="btn btn-sm btn-outline-secondary flex-shrink-0 ms-2"
+          >
+            <Download size={13} />
+          </a>
+        ) : null}
       </div>
     )
   }
@@ -746,76 +659,49 @@ export default function TeacherDashboard() {
   const QuestionCard = ({ question }) => {
     return (
       <div className="mb-4">
-        {/* Student Question Bubble */}
         <div className="d-flex align-items-start gap-3 mb-3">
-          <div className="flex-shrink-0">
-            <div
-              className="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white"
-              style={{ width: '40px', height: '40px' }}
-            >
-              {initials(selectedMentorship?.aluno?.nomeCompleto || 'A')}
-            </div>
+          <div className="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white flex-shrink-0 fw-semibold" style={{ width: 36, height: 36, fontSize: 13 }}>
+            {initials(selectedMentorship?.aluno?.nomeCompleto || 'A')}
           </div>
-          <div className="flex-1">
-            <div className="bg-light rounded-3 p-3 position-relative">
-              <div className="d-flex align-items-center justify-content-between mb-2">
-                <span className="fw-semibold small text-primary">
+          <div className="flex-grow-1">
+            <div className="bg-light rounded-3 p-3">
+              <div className="d-flex align-items-center justify-content-between mb-1 gap-2 flex-wrap">
+                <span className="fw-semibold text-primary" style={{ fontSize: 13 }}>
                   {selectedMentorship?.aluno?.nomeCompleto || 'Aluno'}
                 </span>
                 <div className="d-flex align-items-center gap-2">
-                  {question.teacherUnread && <span className="badge bg-danger text-white small">Novo</span>}
-                  <span className="small text-muted">{fmtDate(question.createdAt)}</span>
+                  {question.teacherUnread && <span className="badge bg-danger" style={{ fontSize: 10 }}>Novo</span>}
+                  <span className="text-muted" style={{ fontSize: 11 }}>{fmtDate(question.createdAt)}</span>
                 </div>
               </div>
-              <p className="mb-1 fw-medium">{question.pergunta}</p>
-              {question.detalhe && <p className="small text-muted mb-0">{question.detalhe}</p>}
+              <p className="mb-1 fw-medium" style={{ fontSize: 14 }}>{question.pergunta}</p>
+              {question.detalhe && <p className="text-muted mb-0" style={{ fontSize: 13 }}>{question.detalhe}</p>}
             </div>
           </div>
         </div>
 
-        {/* Teacher Response Bubble */}
         {question.resposta && (
           <div className="d-flex align-items-start gap-3 mb-3 justify-content-end">
-            <div className="flex-1 d-flex justify-content-end">
-              <div className="bg-primary text-white rounded-3 p-3 position-relative" style={{ maxWidth: '80%' }}>
-                <div className="d-flex align-items-center justify-content-between mb-2">
-                  <span className="small fw-semibold">Você</span>
-                  <span className="small opacity-75">{fmtDate(question.respondidaEm || question.updatedAt)}</span>
+            <div className="d-flex justify-content-end flex-grow-1">
+              <div className="bg-primary text-white rounded-3 p-3" style={{ maxWidth: '80%' }}>
+                <div className="d-flex align-items-center justify-content-between mb-1 gap-2">
+                  <span className="fw-semibold" style={{ fontSize: 12 }}>Você</span>
+                  <span style={{ fontSize: 11, opacity: 0.75 }}>{fmtDate(question.respondidaEm || question.updatedAt)}</span>
                 </div>
-                <p className="mb-0">{question.resposta}</p>
+                <p className="mb-0" style={{ fontSize: 14 }}>{question.resposta}</p>
               </div>
             </div>
-            <div className="flex-shrink-0">
-              <div
-                className="rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white"
-                style={{ width: '40px', height: '40px' }}
-              >
-                P
-              </div>
-            </div>
+            <div className="rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white flex-shrink-0 fw-semibold" style={{ width: 36, height: 36, fontSize: 13 }}>P</div>
           </div>
         )}
 
-        {/* Action Buttons */}
         {!question.resposta && (
           <div className="d-flex gap-2 justify-content-end">
-            <button
-              onClick={() => markQuestionRead(question)}
-              className="btn btn-sm btn-outline-secondary"
-              title="Marcar como lida"
-            >
-              <Check size={14} className="me-1" />
-              Lida
+            <button onClick={() => markQuestionRead(question)} className="btn btn-sm btn-outline-secondary">
+              <Check size={13} className="me-1" />Lida
             </button>
-            <button
-              onClick={() => {
-                setShowReply(question)
-                setReplyText('')
-              }}
-              className="btn btn-sm btn-primary"
-            >
-              <MessageSquare size={14} className="me-1" />
-              Responder
+            <button onClick={() => { setShowReply(question); setReplyText('') }} className="btn btn-sm btn-primary">
+              <MessageSquare size={13} className="me-1" />Responder
             </button>
           </div>
         )}
@@ -826,62 +712,48 @@ export default function TeacherDashboard() {
   const MeetingCard = ({ meeting, inAllView = false }) => {
     const isPending = meeting.status === 'pending'
     const isAccepted = meeting.status === 'accepted'
-
+    const statusClass = isAccepted ? 'bg-success' : isPending ? 'bg-warning text-dark' : 'bg-danger'
+    const statusLabel = isAccepted ? 'Aceite' : isPending ? 'Pendente' : 'Rejeitada'
+    const iconColor = isAccepted ? 'text-success' : isPending ? 'text-warning' : 'text-danger'
+    const iconBg = isAccepted ? 'bg-success bg-opacity-10' : isPending ? 'bg-warning bg-opacity-10' : 'bg-danger bg-opacity-10'
     return (
-      <div className="bg-white border rounded-xl p-4 mb-3">
-        <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
-          <div className="d-flex align-items-start gap-3 flex-1">
-            <div className={`p-2 rounded-lg ${isAccepted ? 'bg-success bg-opacity-10' : isPending ? 'bg-warning bg-opacity-10' : 'bg-danger bg-opacity-10'}`}>
-              <Calendar size={20} className={isAccepted ? 'text-success' : isPending ? 'text-warning' : 'text-danger'} />
+      <div className="border rounded-3 p-3">
+        <div className="d-flex align-items-start gap-3">
+          <div className={`rounded-3 p-2 flex-shrink-0 ${iconBg}`}>
+            <Calendar size={18} className={iconColor} />
+          </div>
+          <div className="flex-grow-1 min-w-0">
+            <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
+              <span className="fw-semibold" style={{ fontSize: 14 }}>{meeting.topic || 'Reunião'}</span>
+              <span className={`badge ${statusClass}`} style={{ fontSize: 10 }}>{statusLabel}</span>
             </div>
-            <div className="flex-1">
-              <div className="d-flex align-items-center gap-2 mb-1">
-                <span className="fw-semibold">{meeting.topic || 'Reunião'}</span>
-                <span className={`badge ${isAccepted ? 'bg-success' : isPending ? 'bg-warning' : 'bg-danger'}`}>
-                  {meeting.status}
-                </span>
-              </div>
-              {inAllView ? <p className="small text-muted mb-1">{meeting.aluno?.nomeCompleto || 'Aluno'}</p> : null}
-              <p className="small text-muted mb-1">{meeting.datetime ? fmtDate(meeting.datetime) : 'Data por definir'}</p>
-              <p className="text-xs text-muted">Pedido por: {meeting.requestedBy === 'teacher' ? 'Você' : 'Aluno'}</p>
-            </div>
+            {inAllView && <div className="text-muted" style={{ fontSize: 12 }}>{meeting.aluno?.nomeCompleto || 'Aluno'}</div>}
+            <div className="text-muted" style={{ fontSize: 12 }}>{meeting.datetime ? fmtDate(meeting.datetime) : 'Data por definir'}</div>
+            <div className="text-muted" style={{ fontSize: 11 }}>Pedido por: {meeting.requestedBy === 'teacher' ? 'Você' : 'Aluno'}</div>
           </div>
         </div>
-
-        {isPending ? (
-          <div className="d-flex gap-2">
-            <button
-              onClick={() => updateMeeting(meeting.id, 'accept')}
-              className="btn btn-success flex-1 d-flex align-items-center justify-content-center gap-2"
-            >
-              <Check size={16} />
-              Aceitar
+        {isPending && (
+          <div className="d-flex gap-2 mt-3">
+            <button onClick={() => updateMeeting(meeting.id, 'accept')} className="btn btn-sm btn-success flex-grow-1 d-flex align-items-center justify-content-center gap-1">
+              <Check size={13} />Aceitar
             </button>
-            <button
-              onClick={() => updateMeeting(meeting.id, 'reject')}
-              className="btn btn-danger flex-1 d-flex align-items-center justify-content-center gap-2"
-            >
-              <XCircle size={16} />
-              Rejeitar
+            <button onClick={() => updateMeeting(meeting.id, 'reject')} className="btn btn-sm btn-danger flex-grow-1 d-flex align-items-center justify-content-center gap-1">
+              <XCircle size={13} />Rejeitar
             </button>
           </div>
-        ) : null}
+        )}
       </div>
     )
   }
 
   const ProgressNoteCard = ({ note }) => {
     return (
-      <div className="bg-white border rounded-xl p-4 mb-3">
-        <div className="d-flex align-items-center justify-content-between mb-2">
-          <div className="d-flex align-items-center gap-2">
-            <div className="p-1 bg-primary bg-opacity-10 rounded">
-              <Clock size={14} className="text-primary" />
-            </div>
-            <span className="small text-muted">{fmtDate(note.createdAt)}</span>
-          </div>
+      <div className="border rounded-3 p-3 mb-2">
+        <div className="d-flex align-items-center gap-2 mb-2">
+          <Clock size={13} className="text-muted" />
+          <span className="text-muted" style={{ fontSize: 12 }}>{fmtDate(note.createdAt)}</span>
         </div>
-        <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{note.note}</p>
+        <p className="mb-0" style={{ whiteSpace: 'pre-wrap', fontSize: 14 }}>{note.note}</p>
       </div>
     )
   }
@@ -929,541 +801,536 @@ export default function TeacherDashboard() {
   }
 
   // =========================
-  // MAIN DASHBOARD UI (your new UI)
+  // MAIN DASHBOARD UI
   // =========================
   return (
     <div className="min-vh-100 bg-light">
-      {/* Header */}
-      <nav className="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
-        <div className="container-fluid">
-          <div className="d-flex align-items-center">
-            <div className="rounded-circle bg-primary d-flex align-items-center justify-content-center me-3" style={{ width: '40px', height: '40px' }}>
-              <span className="text-white fw-bold">P</span>
+
+      {/* ---- TOP NAV ---- */}
+      <nav className="navbar navbar-light bg-white border-bottom sticky-top shadow-sm py-2">
+        <div className="container-fluid px-3 px-md-4">
+          <div className="d-flex align-items-center gap-3">
+            <div className="rounded-circle bg-primary d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 36, height: 36 }}>
+              <span className="text-white fw-bold" style={{ fontSize: 14 }}>P</span>
             </div>
             <div>
-              <h5 className="mb-0 fw-semibold">Painel do Professor</h5>
-              <p className="text-muted small mb-0">Gestão de Mentorias</p>
+              <div className="fw-semibold lh-1">Painel de Mentoria</div>
+              <div className="text-muted" style={{ fontSize: 12 }}>Prof. Lucombo Luveia</div>
             </div>
           </div>
-
           <div className="d-flex align-items-center gap-2">
-            <button onClick={() => setShowMeetingModal(true)} className="btn btn-primary d-flex align-items-center gap-2">
-              <Plus size={16} />
-              <span className="d-none d-md-inline">Nova Reunião</span>
+            <button
+              onClick={() => setTab('all-meetings')}
+              className={`btn btn-sm d-flex align-items-center gap-2 ${tab === 'all-meetings' ? 'btn-primary' : 'btn-outline-secondary'}`}
+            >
+              <Users size={15} />
+              <span className="d-none d-sm-inline">Reuniões Globais</span>
             </button>
-
-            <button className="btn btn-outline-secondary position-relative" onClick={() => setShowNotifSidebar(true)}>
+            <button onClick={() => setShowMeetingModal(true)} className="btn btn-sm btn-outline-primary d-flex align-items-center gap-2">
+              <Plus size={15} />
+              <span className="d-none d-sm-inline">Nova Reunião</span>
+            </button>
+            <button className="btn btn-sm btn-outline-secondary position-relative" onClick={() => setShowNotifSidebar(true)}>
               <Bell size={16} />
-              {activeNotifItems.length > 0 ? (
-                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              {activeNotifItems.length > 0 && (
+                <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style={{ fontSize: 10 }}>
                   {activeNotifItems.length}
                 </span>
-              ) : null}
+              )}
             </button>
-
-            <button className="btn btn-outline-dark d-flex align-items-center gap-2" onClick={logout}>
-              <LogOut size={16} />
-              <span className="d-none d-md-inline">Sair</span>
+            <button className="btn btn-sm btn-outline-dark d-flex align-items-center gap-2" onClick={logout}>
+              <LogOut size={15} />
+              <span className="d-none d-sm-inline">Sair</span>
             </button>
           </div>
         </div>
       </nav>
 
-      <div className="container-fluid py-4">
+      {/* ---- MAIN LAYOUT ---- */}
+      <div className="container-fluid py-3 px-3 px-md-4">
         <div className="row g-3">
-          {/* Sidebar */}
-          <div className="col-lg-4">
-            <div className="card">
-              <div className="card-body">
+
+          {/* ---- SIDEBAR ---- */}
+          <div className="col-xl-3 col-lg-4">
+            <div className="card border-0 shadow-sm">
+              <div className="card-header bg-white border-bottom py-3">
                 <div className="d-flex align-items-center justify-content-between mb-3">
-                  <h5 className="card-title mb-0">Alunos</h5>
-                  <span className="badge bg-primary">{filteredMentorships.length}</span>
+                  <span className="fw-semibold">Alunos</span>
+                  <span className="badge bg-primary rounded-pill">{filteredMentorships.length}</span>
                 </div>
-
-                {loadingMentorships ? <div className="text-muted small mb-2">a actualizar...</div> : null}
-
-                <div className="btn-group w-100 mb-3" role="group">
-                  <button onClick={() => setListMode('pending')} className={`btn btn-sm ${listMode === 'pending' ? 'btn-primary' : 'btn-outline-primary'}`}>
-                    Pendentes
-                  </button>
-                  <button onClick={() => setListMode('done')} className={`btn btn-sm ${listMode === 'done' ? 'btn-primary' : 'btn-outline-primary'}`}>
-                    Concluídas
-                  </button>
-                  <button onClick={() => setListMode('all')} className={`btn btn-sm ${listMode === 'all' ? 'btn-primary' : 'btn-outline-primary'}`}>
-                    Todos
-                  </button>
+                <div className="d-flex gap-1 mb-3 flex-wrap">
+                  {[
+                    { mode: 'pending', label: 'Pendentes' },
+                    { mode: 'done', label: 'Concluídas' },
+                    { mode: 'all', label: 'Todos' },
+                  ].map(({ mode, label }) => (
+                    <button
+                      key={mode}
+                      onClick={() => { setListMode(mode); setCurrentStudentPage(1) }}
+                      className={`btn btn-sm rounded-pill ${listMode === mode ? 'btn-primary' : 'btn-outline-secondary'}`}
+                    >
+                      {label}
+                    </button>
+                  ))}
                 </div>
-
-                <div className="input-group mb-3">
+                <div className="input-group input-group-sm">
                   <span className="input-group-text bg-transparent border-end-0">
-                    <Search size={16} className="text-muted" />
+                    <Search size={14} className="text-muted" />
                   </span>
                   <input
                     type="text"
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Pesquisar..."
+                    onChange={e => setSearch(e.target.value)}
+                    placeholder="Pesquisar aluno..."
                     className="form-control border-start-0"
+                    style={{ boxShadow: 'none' }}
                   />
                 </div>
+              </div>
 
-                <div style={{ maxHeight: 'calc(100vh - 400px)', overflowY: 'auto' }}>
-                  {paginatedMentorships.length ? (
-                    <div className="d-flex flex-column gap-3">
-                      {paginatedMentorships.map(m => (
-                        <StudentCard
-                          key={m.id}
-                          m={m}
-                          active={m.id === selectedMentorshipId}
-                          onClick={() => setSelectedMentorshipId(m.id)}
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-4 text-muted">Nenhum aluno encontrado</div>
-                  )}
-                </div>
+              {loadingMentorships && (
+                <div className="text-muted text-center py-2 border-bottom" style={{ fontSize: 12 }}>a actualizar…</div>
+              )}
 
-                {/* Pagination */}
-                {totalStudentPages > 1 && (
-                  <div className="d-flex justify-content-center align-items-center gap-2 mt-3">
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      disabled={currentStudentPage === 1}
-                      onClick={() => setCurrentStudentPage(prev => Math.max(1, prev - 1))}
-                    >
-                      Anterior
-                    </button>
-                    <span className="small text-muted">
-                      Página {currentStudentPage} de {totalStudentPages}
-                    </span>
-                    <button
-                      className="btn btn-sm btn-outline-primary"
-                      disabled={currentStudentPage === totalStudentPages}
-                      onClick={() => setCurrentStudentPage(prev => Math.min(totalStudentPages, prev + 1))}
-                    >
-                      Próxima
-                    </button>
-                  </div>
+              <div className="card-body p-0" style={{ overflowY: 'auto', maxHeight: 'calc(100vh - 295px)' }}>
+                {paginatedMentorships.length ? (
+                  paginatedMentorships.map(m => (
+                    <StudentCard
+                      key={m.id}
+                      m={m}
+                      active={m.id === selectedMentorshipId}
+                      onClick={() => {
+                        setSelectedMentorshipId(m.id)
+                        if (tab === 'all-meetings') setTab('mentoria')
+                      }}
+                    />
+                  ))
+                ) : (
+                  <div className="text-center py-5 text-muted" style={{ fontSize: 13 }}>Nenhum aluno encontrado</div>
                 )}
               </div>
+
+              {totalStudentPages > 1 && (
+                <div className="card-footer bg-white d-flex justify-content-center align-items-center gap-2 py-2">
+                  <button
+                    className="btn btn-sm btn-outline-secondary"
+                    disabled={currentStudentPage === 1}
+                    onClick={() => setCurrentStudentPage(prev => Math.max(1, prev - 1))}
+                  >‹</button>
+                  <span className="text-muted" style={{ fontSize: 12 }}>{currentStudentPage} / {totalStudentPages}</span>
+                  <button
+                    className="btn btn-sm btn-outline-secondary"
+                    disabled={currentStudentPage === totalStudentPages}
+                    onClick={() => setCurrentStudentPage(prev => Math.min(totalStudentPages, prev + 1))}
+                  >›</button>
+                </div>
+              )}
             </div>
           </div>
 
-          {/* Main */}
-          <div className="col-lg-8">
-            {!selectedMentorship && tab !== 'all-meetings' ? (
-              <div className="card">
-                <div className="card-body text-center py-5">
-                  <Users size={48} className="text-muted mb-3" />
-                  <h5 className="text-muted">Selecione um aluno</h5>
-                  <p className="text-muted mb-0">Escolha um aluno da lista para ver os detalhes</p>
+          {/* ---- MAIN PANEL ---- */}
+          <div className="col-xl-9 col-lg-8">
+
+            {/* GLOBAL MEETINGS */}
+            {tab === 'all-meetings' ? (
+              <div className="card border-0 shadow-sm">
+                <div className="card-header bg-white d-flex align-items-center justify-content-between py-3">
+                  <div className="d-flex align-items-center gap-3">
+                    <button className="btn btn-sm btn-outline-secondary" onClick={() => setTab('mentoria')}>← Voltar</button>
+                    <div>
+                      <div className="fw-semibold">Todas as Reuniões</div>
+                      <div className="text-muted" style={{ fontSize: 12 }}>Vista global — todos os alunos</div>
+                    </div>
+                  </div>
+                  <span className="badge bg-primary rounded-pill">{allMeetings.length}</span>
+                </div>
+                <div className="card-body">
+                  {busyAllMeetings && <div className="text-center py-3 text-muted" style={{ fontSize: 13 }}>A carregar reuniões…</div>}
+                  {allMeetings.length ? (
+                    <div className="d-flex flex-column gap-3">
+                      {allMeetings.map(m => <MeetingCard key={m.id} meeting={m} inAllView />)}
+                    </div>
+                  ) : !busyAllMeetings ? (
+                    <div className="text-center py-5 text-muted">
+                      <Calendar size={40} className="mb-3" />
+                      <p className="mb-0" style={{ fontSize: 14 }}>Nenhuma reunião registada</p>
+                    </div>
+                  ) : null}
                 </div>
               </div>
+
+            ) : !selectedMentorship ? (
+              <div className="card border-0 shadow-sm">
+                <div className="card-body text-center py-5">
+                  <Users size={48} className="text-muted mb-3" />
+                  <h5 className="text-muted fw-semibold">Selecione um aluno</h5>
+                  <p className="text-muted mb-0" style={{ fontSize: 14 }}>Escolha um aluno da lista à esquerda para ver os detalhes</p>
+                </div>
+              </div>
+
             ) : (
               <div>
-                {selectedMentorship && tab !== 'all-meetings' ? (
-                  <div className="card bg-primary text-white mb-3">
-                    <div className="card-body">
-                      <div className="d-flex align-items-start justify-content-between">
-                        <div className="d-flex align-items-center gap-4">
-                          <div className="rounded-circle d-flex align-items-center justify-content-center bg-white bg-opacity-20" style={{ width: '64px', height: '64px' }}>
-                            <span className="fs-5 fw-bold">{initials(selectedMentorship.aluno?.nomeCompleto)}</span>
-                          </div>
-                          <div>
-                            <h4 className="mb-1">{selectedMentorship.aluno?.nomeCompleto}</h4>
-                            <div className="d-flex flex-wrap gap-3 small text-white-75">
-                              <span><Phone size={14} className="me-1" /> {selectedMentorship.aluno?.telefone || '-'}</span>
-                              <span><Book size={14} className="me-1" /> {selectedMentorship.aluno?.curso || '-'}</span>
-                            </div>
-                            <div className="mt-2">
-                              <span className="badge bg-black bg-opacity-20">{getMentoriaConfig(selectedMentorship.tipoKey).label}</span>
-                            </div>
-                          </div>
+                {/* Student header */}
+                <div className="card border-0 shadow-sm mb-3">
+                  <div className="card-body py-3">
+                    <div className="d-flex align-items-start gap-3">
+                      <div
+                        className="rounded-circle d-flex align-items-center justify-content-center flex-shrink-0 bg-primary text-white fw-bold"
+                        style={{ width: 48, height: 48, fontSize: 16 }}
+                      >
+                        {initials(selectedMentorship.aluno?.nomeCompleto)}
+                      </div>
+                      <div className="flex-grow-1 min-w-0">
+                        <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
+                          <span className="fw-semibold">{selectedMentorship.aluno?.nomeCompleto}</span>
+                          <span className="badge text-bg-light border" style={{ fontSize: 11 }}>
+                            {getMentoriaConfig(selectedMentorship.tipoKey).label}
+                          </span>
+                          <span
+                            className={`badge ${isDoneStatus(selectedMentorship.teacherQueueStatus) ? 'bg-success' : 'bg-warning text-dark'}`}
+                            style={{ fontSize: 11 }}
+                          >
+                            {isDoneStatus(selectedMentorship.teacherQueueStatus) ? 'Concluída' : 'Em andamento'}
+                          </span>
                         </div>
-
+                        <div className="d-flex align-items-center gap-3 flex-wrap" style={{ fontSize: 13, color: '#6c757d' }}>
+                          {selectedMentorship.aluno?.telefone && <span><Phone size={12} className="me-1" />{selectedMentorship.aluno.telefone}</span>}
+                          {selectedMentorship.aluno?.curso && <span><Book size={12} className="me-1" />{selectedMentorship.aluno.curso}</span>}
+                          {selectedMentorship.titulo && (
+                            <span className="text-truncate" style={{ maxWidth: 280 }} title={selectedMentorship.titulo}>
+                              {truncate(selectedMentorship.titulo, 55)}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex-shrink-0">
                         {!isDoneStatus(selectedMentorship.teacherQueueStatus) ? (
-                          <button className="btn btn-outline-light" onClick={() => markMentorshipQueue('done')}>
-                            Marcar Concluída
+                          <button className="btn btn-sm btn-outline-success" onClick={() => markMentorshipQueue('done')}>
+                            <Check size={13} className="me-1" />Concluir
                           </button>
                         ) : (
-                          <button className="btn btn-outline-warning" onClick={() => markMentorshipQueue('pending')}>
-                            Voltar para pendente
+                          <button className="btn btn-sm btn-outline-warning" onClick={() => markMentorshipQueue('pending')}>
+                            Reabrir
                           </button>
                         )}
                       </div>
-
-                      {selectedMentorship.titulo ? (
-                        <div className="mt-4 pt-4 border-top border-white border-opacity-20">
-                          <p className="text-white-75 small mb-1">Título do trabalho</p>
-                          <p className="fw-medium mb-0">{selectedMentorship.titulo}</p>
-                        </div>
-                      ) : null}
                     </div>
                   </div>
-                ) : null}
 
-                {/* Tabs */}
-                <div className="card mb-3">
-                  <div className="card-body p-0">
-                    <ul className="nav nav-tabs" role="tablist">
+                  {/* Tab bar */}
+                  <div className="border-top px-3">
+                    <ul className="nav nav-tabs border-0">
                       {[
-                        { id: 'mentoria', label: 'Mentoria', icon: FileText },
+                        { id: 'mentoria', label: 'Documentos', icon: FileText },
                         { id: 'questions', label: 'Perguntas', icon: MessageSquare, count: pendingCounts.questions },
                         { id: 'meetings', label: 'Reuniões', icon: Calendar, count: pendingCounts.meetings },
                         { id: 'progress', label: 'Progresso', icon: TrendingUp },
-                        { id: 'all-meetings', label: 'Todas Reuniões', icon: Users, global: true }
                       ].map(t => (
                         <li className="nav-item" key={t.id}>
-                          <button onClick={() => setTab(t.id)} className={`nav-link ${tab === t.id ? 'active' : ''}`}>
-                            <t.icon size={16} className="me-2" />
+                          <button
+                            type="button"
+                            onClick={() => setTab(t.id)}
+                            className={`nav-link d-flex align-items-center gap-2 ${tab === t.id ? 'active' : ''}`}
+                            style={{ fontSize: 14 }}
+                          >
+                            <t.icon size={14} />
                             {t.label}
-                            {t.count > 0 && !t.global ? <span className="badge bg-danger ms-2">{t.count}</span> : null}
+                            {t.count > 0 ? <span className="badge bg-danger rounded-pill" style={{ fontSize: 10 }}>{t.count}</span> : null}
                           </button>
                         </li>
                       ))}
                     </ul>
+                  </div>
+                </div>
 
-                    <div className="tab-content p-4">
-                      {busyPanel ? <div className="alert alert-info">A carregar dados…</div> : null}
+                {/* Tab content */}
+                {busyPanel && (
+                  <div className="text-center py-3 text-muted border rounded-3 bg-white mb-3" style={{ fontSize: 13 }}>A carregar dados…</div>
+                )}
 
-                      {/* Mentoria */}
-                      {tab === 'mentoria' && selectedMentorship ? (
-                        <div>
-                          <div className="d-flex flex-wrap gap-2 mb-4">
-                            {docTypes.map(type => (
+                {/* DOCUMENTOS */}
+                {tab === 'mentoria' && selectedMentorship ? (
+                  <div>
+                    <div className="d-flex gap-2 mb-3 flex-wrap">
+                      {docTypes.map(type => (
+                        <button
+                          key={type}
+                          onClick={() => setDocTab(type)}
+                          className={`btn btn-sm rounded-pill ${docTab === type ? 'btn-primary' : 'btn-outline-secondary'}`}
+                        >
+                          {getDocLabel(type, selectedMentorship.tipoKey)}
+                        </button>
+                      ))}
+                    </div>
+
+                    <div className="card border-0 shadow-sm mb-3">
+                      <div className="card-header bg-white py-2 d-flex align-items-center gap-2">
+                        <FileText size={15} className="text-primary" />
+                        <span className="fw-semibold" style={{ fontSize: 14 }}>{getDocLabel(docTab, selectedMentorship.tipoKey)} do Aluno</span>
+                        {docsGrouped[docTab]?.submissions?.[0]?.teacherUnread && (
+                          <span className="badge bg-danger ms-1" style={{ fontSize: 10 }}>Novo</span>
+                        )}
+                      </div>
+                      {docsGrouped[docTab]?.submissions?.length ? (
+                        <div className="card-body">
+                          <div className="d-flex align-items-start gap-3">
+                            <div className="flex-grow-1 min-w-0">
+                              <div className="d-flex align-items-center gap-2 mb-1 flex-wrap">
+                                <span className="fw-semibold" style={{ fontSize: 14 }} title={docsGrouped[docTab].submissions[0].original?.filename}>
+                                  {truncate(docsGrouped[docTab].submissions[0].original?.filename, 45)}
+                                </span>
+                                <span className="badge text-bg-secondary" style={{ fontSize: 10 }}>v{docsGrouped[docTab].submissions[0].version || 1}</span>
+                              </div>
+                              <div className="text-muted mb-2" style={{ fontSize: 12 }}>{fmtDate(docsGrouped[docTab].submissions[0].createdAt)}</div>
+                              {docsGrouped[docTab].submissions[0].studentNote ? (
+                                <div className="p-2 bg-light rounded-2 mb-2" style={{ fontSize: 13 }}>
+                                  <strong>Nota:</strong> {docsGrouped[docTab].submissions[0].studentNote}
+                                </div>
+                              ) : null}
+                              {docsGrouped[docTab].submissions[0].teacherNote ? (
+                                <div className="p-2 rounded-2 border border-success border-opacity-25 mb-2" style={{ background: 'rgba(25,135,84,.07)', fontSize: 13 }}>
+                                  <span className="text-success fw-semibold">Feedback anterior:</span> {docsGrouped[docTab].submissions[0].teacherNote}
+                                </div>
+                              ) : null}
+                            </div>
+                            <div className="d-flex flex-column gap-2 flex-shrink-0">
+                              <button onClick={() => openPreview(docsGrouped[docTab].submissions[0])} className="btn btn-sm btn-primary d-flex align-items-center gap-1">
+                                <Eye size={13} /> Ver
+                              </button>
                               <button
-                                key={type}
-                                onClick={() => setDocTab(type)}
-                                className={`btn ${docTab === type ? 'btn-primary' : 'btn-outline-primary'}`}
+                                onClick={() => setShowCorrection({
+                                  parentId: docsGrouped[docTab].submissions[0].id,
+                                  type: docsGrouped[docTab].submissions[0].type,
+                                  filename: docsGrouped[docTab].submissions[0].original?.filename
+                                })}
+                                className="btn btn-sm btn-outline-success d-flex align-items-center gap-1"
                               >
-                                {getDocLabel(type, selectedMentorship.tipoKey)}
+                                <Send size={13} /> Correção
                               </button>
-                            ))}
+                              <button onClick={() => setShowHistory(docTab)} className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+                                <History size={13} /> Histórico
+                              </button>
+                              {docsGrouped[docTab].submissions[0].original?.url ? (
+                                <a
+                                  href={docsGrouped[docTab].submissions[0].original.url}
+                                  target="_blank" rel="noreferrer"
+                                  onClick={() => trackDocDownload(docsGrouped[docTab].submissions[0].id)}
+                                  className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1"
+                                >
+                                  <Download size={13} />
+                                </a>
+                              ) : null}
+                            </div>
                           </div>
 
-                          {/* Prominent Program Display */}
-                          {docsGrouped[docTab]?.submissions?.length ? (
-                            <div className="card shadow-sm mb-4">
-                              <div className="card-body">
-                                <div className="d-flex align-items-center justify-content-between mb-4">
-                                  <h5 className="card-title mb-0">
-                                    <FileText size={20} className="me-2 text-primary" />
-                                    {getDocLabel(docTab, selectedMentorship.tipoKey)} Enviado
-                                  </h5>
-                                  {docsGrouped[docTab].submissions[0].teacherUnread && (
-                                    <span className="badge bg-danger">Novo</span>
-                                  )}
-                                </div>
-
-                                <div className="row g-3 mb-4">
-                                  <div className="col-md-8">
-                                    <div className="p-3 bg-light rounded">
-                                      <div className="d-flex align-items-center gap-3 mb-2">
-                                        <div className="p-2 bg-white rounded shadow-sm">
-                                          <FileText size={24} className="text-danger" />
-                                        </div>
-                                        <div>
-                                          <h6 className="mb-1">{docsGrouped[docTab].submissions[0].original?.filename}</h6>
-                                          <p className="small text-muted mb-0">
-                                            Versão {docsGrouped[docTab].submissions[0].version || 1} · {fmtDate(docsGrouped[docTab].submissions[0].createdAt)}
-                                          </p>
-                                        </div>
-                                      </div>
-                                      {docsGrouped[docTab].submissions[0].studentNote && (
-                                        <p className="small text-muted mt-2">
-                                          <strong>Nota do aluno:</strong> {docsGrouped[docTab].submissions[0].studentNote}
-                                        </p>
-                                      )}
-                                    </div>
-                                  </div>
-                                  <div className="col-md-4">
-                                    <div className="d-grid gap-2">
-                                      <button
-                                        onClick={() => openPreview(docsGrouped[docTab].submissions[0])}
-                                        className="btn btn-primary d-flex align-items-center justify-content-center gap-2"
-                                      >
-                                        <Eye size={16} />
-                                        Pré-visualizar
-                                      </button>
-                                      <button
-                                        onClick={() => setShowCorrection({
-                                          parentId: docsGrouped[docTab].submissions[0].id,
-                                          type: docsGrouped[docTab].submissions[0].type,
-                                          filename: docsGrouped[docTab].submissions[0].original?.filename
-                                        })}
-                                        className="btn btn-success d-flex align-items-center justify-content-center gap-2"
-                                      >
-                                        <Send size={16} />
-                                        Enviar Correção
-                                      </button>
-                                      <button
-                                        onClick={() => setShowHistory(docTab)}
-                                        className="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2"
-                                      >
-                                        <History size={16} />
-                                        Ver histórico
-                                      </button>
-                                      {docsGrouped[docTab].submissions[0].original?.url && (
-                                        <a
-                                          href={docsGrouped[docTab].submissions[0].original.url}
-                                          target="_blank"
-                                          rel="noreferrer"
-                                          onClick={() => trackDocDownload(docsGrouped[docTab].submissions[0].id)}
-                                          className="btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2"
-                                        >
-                                          <Download size={16} />
-                                          Descarregar
-                                        </a>
-                                      )}
-                                    </div>
-                                  </div>
-                                </div>
-
-                                {/* Teacher Feedback */}
-                                {docsGrouped[docTab].submissions[0].teacherNote && (
-                                  <div className="alert alert-success">
-                                    <h6 className="alert-heading mb-2">
-                                      <MessageSquare size={16} className="me-2" />
-                                      Seu Feedback Anterior
-                                    </h6>
-                                    <p className="mb-0">{docsGrouped[docTab].submissions[0].teacherNote}</p>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="card border-dashed border-2 mb-4">
-                              <div className="card-body text-center py-5">
-                                <FileText size={48} className="text-muted mb-3" />
-                                <h5 className="text-muted">Nenhum documento enviado</h5>
-                                <p className="text-muted mb-0">O aluno ainda não enviou o {getDocLabel(docTab, selectedMentorship.tipoKey).toLowerCase()}</p>
-                              </div>
-                            </div>
-                          )}
-
-                          <div className="mb-4">
-                            <div className="d-flex justify-content-between align-items-center mb-3">
-                              <h6 className="mb-0">
-                                <BookOpen size={18} className="me-2" />
-                                Recursos de Apoio ({docsGrouped[docTab]?.resources?.length || 0})
-                              </h6>
-                              <button onClick={() => setShowResourceModal(true)} className="btn btn-sm btn-outline-primary">
-                                <Plus size={14} className="me-1" />
-                                Adicionar Recurso
-                              </button>
-                            </div>
-
-                            {docsGrouped[docTab]?.resources?.length ? (
-                              docsGrouped[docTab].resources.map(doc => <ResourceCard key={doc.id} doc={doc} />)
-                            ) : (
-                              <div className="text-center py-4 text-muted border rounded">
-                                <BookOpen size={32} className="mb-2" />
-                                <p className="mb-0">Nenhum recurso disponível</p>
-                              </div>
-                            )}
-                          </div>
-
-                          {/* New Feedback */}
-                          <div className="card">
-                            <div className="card-body">
-                              <h6 className="card-title mb-3">
-                                <MessageSquare size={18} className="me-2" />
-                                Enviar Feedback
-                              </h6>
-                              <div className="mb-3">
-                                <label className="form-label">Mensagem para o aluno</label>
+                          {/* Send feedback */}
+                          <div className="mt-3 pt-3 border-top">
+                            <div className="d-flex gap-2 align-items-end">
+                              <div className="flex-grow-1">
+                                <label className="form-label mb-1" style={{ fontSize: 12, color: '#6c757d' }}>Enviar feedback ao aluno</label>
                                 <textarea
-                                  className="form-control"
-                                  rows={3}
+                                  className="form-control form-control-sm"
+                                  rows={2}
                                   value={feedbackText}
-                                  onChange={(e) => setFeedbackText(e.target.value)}
-                                  placeholder="Escreva o seu feedback sobre o trabalho..."
+                                  onChange={e => setFeedbackText(e.target.value)}
+                                  placeholder="Escreva o seu feedback..."
                                 />
                               </div>
                               <button
                                 onClick={handleSendFeedback}
-                                className="btn btn-primary"
+                                className="btn btn-sm btn-primary flex-shrink-0 d-flex align-items-center gap-1"
                                 disabled={!feedbackText.trim()}
                               >
-                                <Send size={16} className="me-2" />
-                                Enviar Feedback
+                                <Send size={13} /> Enviar
                               </button>
                             </div>
                           </div>
                         </div>
-                      ) : null}
-
-                      {/* Questions */}
-                      {tab === 'questions' && selectedMentorship ? (
-                        <div>
-                          <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h5>Perguntas do Aluno</h5>
-                            <span className="badge bg-primary">{questions.length} pergunta(s)</span>
-                          </div>
-
-                          {questions.length ? (
-                            questions.map(q => <QuestionCard key={q.id} question={q} />)
-                          ) : (
-                            <div className="text-center py-5 text-muted">
-                              <MessageSquare size={48} className="mb-3" />
-                              <p className="mb-0">Nenhuma pergunta por responder</p>
-                            </div>
-                          )}
+                      ) : (
+                        <div className="card-body text-center py-4 text-muted">
+                          <FileText size={36} className="mb-2" />
+                          <p className="mb-0" style={{ fontSize: 13 }}>O aluno ainda não enviou o {getDocLabel(docTab, selectedMentorship.tipoKey).toLowerCase()}</p>
                         </div>
-                      ) : null}
+                      )}
+                    </div>
 
-                      {/* Meetings */}
-                      {tab === 'meetings' && selectedMentorship ? (
-                        <div>
-                          <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h5>Reuniões</h5>
-                            <span className="badge bg-primary">{meetings.length} reunião(ões)</span>
-                          </div>
-
-                          {meetings.length ? (
-                            meetings.map(m => <MeetingCard key={m.id} meeting={m} />)
-                          ) : (
-                            <div className="text-center py-5 text-muted">
-                              <Calendar size={48} className="mb-3" />
-                              <p className="mb-0">Nenhuma reunião agendada</p>
-                            </div>
-                          )}
+                    <div className="card border-0 shadow-sm">
+                      <div className="card-header bg-white d-flex align-items-center justify-content-between py-2">
+                        <div className="d-flex align-items-center gap-2" style={{ fontSize: 14 }}>
+                          <BookOpen size={14} className="text-primary" />
+                          <span className="fw-semibold">Recursos de Apoio</span>
+                          <span className="text-muted">({docsGrouped[docTab]?.resources?.length || 0})</span>
                         </div>
-                      ) : null}
-
-                      {/* Progress */}
-                      {tab === 'progress' && selectedMentorship ? (
-                        <div>
-                          <div className="card mb-4">
-                            <div className="card-body">
-                              <h6 className="card-title mb-3">
-                                <Edit2 size={18} className="me-2" />
-                                Nova Nota de Progresso
-                              </h6>
-                              <div className="mb-3">
-                                <textarea
-                                  className="form-control"
-                                  rows={3}
-                                  value={progressNote}
-                                  onChange={(e) => setProgressNote(e.target.value)}
-                                  placeholder="Registe observações sobre o progresso do aluno..."
-                                />
-                              </div>
-                              <button
-                                onClick={handleAddProgressNote}
-                                className="btn btn-primary"
-                                disabled={!progressNote.trim()}
-                              >
-                                <Plus size={16} className="me-2" />
-                                Adicionar Nota
-                              </button>
-                            </div>
-                          </div>
-
-                          <h5 className="mb-3">Histórico de Progresso</h5>
-
-                          {progress.length ? (
-                            progress.map(note => <ProgressNoteCard key={note.id} note={note} />)
-                          ) : (
-                            <div className="text-center py-5 text-muted">
-                              <TrendingUp size={48} className="mb-3" />
-                              <p className="mb-0">Nenhuma nota de progresso registada</p>
-                            </div>
-                          )}
-                        </div>
-                      ) : null}
-
-                      {/* All meetings (only works if you fill allMeetings from an endpoint) */}
-                      {tab === 'all-meetings' ? (
-                        <div>
-                          <div className="d-flex justify-content-between align-items-center mb-4">
-                            <h5>Todas as Reuniões</h5>
-                            <span className="badge bg-primary">{allMeetings.length} reunião(ões)</span>
-                          </div>
-
-                          {busyAllMeetings ? <div className="alert alert-info">A carregar todas as reuniões…</div> : null}
-
-                          {allMeetings.length ? (
-                            allMeetings.map(m => <MeetingCard key={m.id} meeting={m} inAllView />)
-                          ) : (
-                            <div className="text-center py-5 text-muted">
-                              <Users size={48} className="mb-3" />
-                              <p className="mb-0">Nenhuma reunião encontrada</p>
-                            </div>
-                          )}
-                        </div>
-                      ) : null}
+                        <button onClick={() => setShowResourceModal(true)} className="btn btn-sm btn-outline-primary">
+                          <Plus size={13} className="me-1" />Adicionar
+                        </button>
+                      </div>
+                      <div className="card-body py-2">
+                        {docsGrouped[docTab]?.resources?.length ? (
+                          docsGrouped[docTab].resources.map(doc => <ResourceCard key={doc.id} doc={doc} />)
+                        ) : (
+                          <div className="text-center py-3 text-muted" style={{ fontSize: 13 }}>Nenhum recurso disponível para este documento</div>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : null}
+
+                {/* PERGUNTAS */}
+                {tab === 'questions' && selectedMentorship ? (
+                  <div className="card border-0 shadow-sm">
+                    <div className="card-header bg-white d-flex align-items-center justify-content-between py-3">
+                      <div className="d-flex align-items-center gap-2 fw-semibold" style={{ fontSize: 14 }}>
+                        <MessageSquare size={15} className="text-primary" />
+                        Perguntas do Aluno
+                      </div>
+                      <span className="badge bg-primary rounded-pill">{questions.length}</span>
+                    </div>
+                    <div className="card-body">
+                      {questions.length ? (
+                        questions.map(q => <QuestionCard key={q.id} question={q} />)
+                      ) : (
+                        <div className="text-center py-5 text-muted">
+                          <MessageSquare size={40} className="mb-3" />
+                          <p className="mb-0" style={{ fontSize: 14 }}>Nenhuma pergunta por responder</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* REUNIÕES */}
+                {tab === 'meetings' && selectedMentorship ? (
+                  <div className="card border-0 shadow-sm">
+                    <div className="card-header bg-white d-flex align-items-center justify-content-between py-3">
+                      <div className="d-flex align-items-center gap-2 fw-semibold" style={{ fontSize: 14 }}>
+                        <Calendar size={15} className="text-primary" />
+                        Reuniões
+                      </div>
+                      <span className="badge bg-primary rounded-pill">{meetings.length}</span>
+                    </div>
+                    <div className="card-body">
+                      {meetings.length ? (
+                        <div className="d-flex flex-column gap-3">
+                          {meetings.map(m => <MeetingCard key={m.id} meeting={m} />)}
+                        </div>
+                      ) : (
+                        <div className="text-center py-5 text-muted">
+                          <Calendar size={40} className="mb-3" />
+                          <p className="mb-0" style={{ fontSize: 14 }}>Nenhuma reunião agendada</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ) : null}
+
+                {/* PROGRESSO */}
+                {tab === 'progress' && selectedMentorship ? (
+                  <div>
+                    <div className="card border-0 shadow-sm mb-3">
+                      <div className="card-body">
+                        <label className="form-label fw-semibold mb-2" style={{ fontSize: 13 }}>
+                          <TrendingUp size={14} className="me-1 text-primary" />
+                          Nova nota de progresso
+                        </label>
+                        <div className="d-flex gap-2 align-items-end">
+                          <textarea
+                            className="form-control"
+                            rows={3}
+                            value={progressNote}
+                            onChange={e => setProgressNote(e.target.value)}
+                            placeholder="Registe observações sobre o progresso do aluno..."
+                          />
+                          <button
+                            onClick={handleAddProgressNote}
+                            className="btn btn-primary flex-shrink-0 d-flex align-items-center gap-1"
+                            disabled={!progressNote.trim()}
+                          >
+                            <Plus size={15} /> Adicionar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="card border-0 shadow-sm">
+                      <div className="card-header bg-white py-2">
+                        <span className="fw-semibold" style={{ fontSize: 14 }}>Histórico de Progresso</span>
+                      </div>
+                      <div className="card-body py-2">
+                        {progress.length ? (
+                          progress.map(note => <ProgressNoteCard key={note.id} note={note} />)
+                        ) : (
+                          <div className="text-center py-4 text-muted">
+                            <TrendingUp size={36} className="mb-2" />
+                            <p className="mb-0" style={{ fontSize: 13 }}>Nenhuma nota de progresso registada</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
               </div>
             )}
           </div>
         </div>
       </div>
 
-      {/* Preview Modal (real preview like old admin: PDF or Google Viewer) */}
+      {/* ---- PREVIEW MODAL ---- */}
       {showPreview ? (
         <PreviewModal
           doc={showPreview}
           onClose={() => setShowPreview(null)}
-          onDownload={async () => {
-            if (showPreview?.id) await trackDocDownload(showPreview.id)
-          }}
+          onDownload={async () => { if (showPreview?.id) await trackDocDownload(showPreview.id) }}
         />
       ) : null}
 
-      {/* Notifications Sidebar */}
+      {/* ---- NOTIFICATIONS SIDEBAR ---- */}
       {showNotifSidebar && (
-        <div className="position-fixed top-0 end-0 bg-white border-start shadow-lg" style={{ width: '400px', height: '100vh', zIndex: 1050, overflowY: 'auto' }}>
-          <div className="p-3 border-bottom">
-            <div className="d-flex align-items-center justify-content-between">
-              <h5 className="mb-0">Notificações</h5>
-              <button className="btn btn-sm btn-outline-secondary" onClick={() => setShowNotifSidebar(false)}>
-                <XCircle size={16} />
-              </button>
-            </div>
+        <div className="position-fixed top-0 end-0 bg-white border-start shadow-lg" style={{ width: '360px', height: '100vh', zIndex: 1050, overflowY: 'auto' }}>
+          <div className="p-3 border-bottom d-flex align-items-center justify-content-between">
+            <span className="fw-semibold">Notificações</span>
+            <button className="btn btn-sm btn-outline-secondary" onClick={() => setShowNotifSidebar(false)}>
+              <XCircle size={16} />
+            </button>
           </div>
           <div className="p-3">
             {activeNotifItems.length === 0 ? (
               <div className="text-center py-4 text-muted">
-                <Bell size={48} className="mb-3" />
-                <p className="mb-0">Sem notificações novas</p>
+                <Bell size={40} className="mb-3" />
+                <p className="mb-0" style={{ fontSize: 13 }}>Sem notificações novas</p>
               </div>
             ) : (
-              <div className="d-flex flex-column gap-3">
+              <div className="d-flex flex-column gap-2">
                 {activeNotifItems.map((n, idx) => (
-                  <div key={idx} className="card border-0 shadow-sm">
+                  <div key={idx} className="card border shadow-sm">
                     <div className="card-body p-3">
-                      <div className="d-flex align-items-start gap-3">
-                        <div className={`p-2 rounded-circle ${n.type === 'document' ? 'bg-danger bg-opacity-10 text-danger' : n.type === 'question' ? 'bg-primary bg-opacity-10 text-primary' : 'bg-warning bg-opacity-10 text-warning'}`}>
-                          {n.type === 'document' ? <FileText size={16} /> : n.type === 'question' ? <MessageSquare size={16} /> : <Calendar size={16} />}
+                      <div className="d-flex align-items-start gap-2">
+                        <div className={`p-2 rounded-circle flex-shrink-0 ${n.type === 'document' ? 'bg-danger bg-opacity-10' : n.type === 'question' ? 'bg-primary bg-opacity-10' : 'bg-warning bg-opacity-10'}`}>
+                          {n.type === 'document' ? <FileText size={14} className="text-danger" /> : n.type === 'question' ? <MessageSquare size={14} className="text-primary" /> : <Calendar size={14} className="text-warning" />}
                         </div>
-                        <div className="flex-1">
-                          <div className="d-flex align-items-start justify-content-between mb-2">
-                            <h6 className="mb-0 fw-semibold">{n.title}</h6>
+                        <div className="flex-grow-1 min-w-0">
+                          <div className="d-flex align-items-start justify-content-between gap-2">
+                            <span className="fw-semibold" style={{ fontSize: 13 }}>{n.title}</span>
                             <button
-                              className="btn btn-sm btn-outline-secondary ms-2"
+                              className="btn btn-sm btn-outline-secondary flex-shrink-0"
+                              style={{ padding: '1px 6px' }}
                               onClick={() => setDismissedNotifs(prev => new Set([...prev, n.refId]))}
                               title="Marcar como vista"
                             >
-                              <Check size={14} />
+                              <Check size={12} />
                             </button>
                           </div>
-                          <p className="small text-muted mb-2">{n.message}</p>
-                          <p className="small text-muted mb-0">{fmtDate(n.createdAt)}</p>
+                          <p className="text-muted mb-1" style={{ fontSize: 12 }}>{n.message}</p>
+                          <p className="text-muted mb-2" style={{ fontSize: 11 }}>{fmtDate(n.createdAt)}</p>
                           <button
-                            className="btn btn-sm btn-outline-primary mt-2"
+                            className="btn btn-sm btn-outline-primary"
                             onClick={() => {
                               setShowNotifSidebar(false)
                               if (n.type === 'document') setTab('mentoria')
                               if (n.type === 'question') setTab('questions')
                               if (n.type === 'meeting') setTab('meetings')
                             }}
-                          >
-                            Ver
-                          </button>
+                          >Ver</button>
                         </div>
                       </div>
                     </div>
@@ -1475,17 +1342,17 @@ export default function TeacherDashboard() {
         </div>
       )}
 
-      {/* Correction Modal */}
+      {/* ---- CORRECTION MODAL ---- */}
       {showCorrection ? (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
+          <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Enviar Correção</h5>
                 <button type="button" className="btn-close" onClick={() => setShowCorrection(null)}></button>
               </div>
               <div className="modal-body">
-                <p className="text-muted mb-3">Documento: <strong>{showCorrection.filename}</strong></p>
+                <p className="text-muted mb-3" style={{ fontSize: 13 }}>Documento: <strong>{showCorrection.filename}</strong></p>
                 <div className="mb-3">
                   <label className="form-label">Ficheiro da correção</label>
                   <input ref={correctionFileRef} type="file" className="form-control" accept=".pdf,.doc,.docx" />
@@ -1496,15 +1363,14 @@ export default function TeacherDashboard() {
                     type="text"
                     className="form-control"
                     value={correctionNote}
-                    onChange={(e) => setCorrectionNote(e.target.value)}
+                    onChange={e => setCorrectionNote(e.target.value)}
                     placeholder="Ex: Corrigi as citações e a estrutura..."
                   />
                 </div>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={handleUploadCorrection}>
-                  <Upload size={16} className="me-2" />
-                  Enviar Correção
+                  <Upload size={16} className="me-2" />Enviar Correção
                 </button>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowCorrection(null)}>Cancelar</button>
               </div>
@@ -1513,10 +1379,10 @@ export default function TeacherDashboard() {
         </div>
       ) : null}
 
-      {/* Reply Modal */}
+      {/* ---- REPLY MODAL ---- */}
       {showReply ? (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
+          <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Responder Pergunta</h5>
@@ -1530,15 +1396,14 @@ export default function TeacherDashboard() {
                     className="form-control"
                     rows={4}
                     value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
+                    onChange={e => setReplyText(e.target.value)}
                     placeholder="Escreva a sua resposta..."
                   />
                 </div>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={handleSendReply}>
-                  <Send size={16} className="me-2" />
-                  Enviar Resposta
+                  <Send size={16} className="me-2" />Enviar Resposta
                 </button>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowReply(null)}>Cancelar</button>
               </div>
@@ -1547,10 +1412,10 @@ export default function TeacherDashboard() {
         </div>
       ) : null}
 
-      {/* Meeting Modal */}
+      {/* ---- MEETING MODAL ---- */}
       {showMeetingModal ? (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
+          <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Criar Nova Reunião</h5>
@@ -1562,37 +1427,23 @@ export default function TeacherDashboard() {
                     className="form-check-input"
                     type="checkbox"
                     checked={meetingForAll}
-                    onChange={(e) => setMeetingForAll(e.target.checked)}
+                    onChange={e => setMeetingForAll(e.target.checked)}
                     id="forAll"
                   />
-                  <label className="form-check-label" htmlFor="forAll">
-                    Criar para todos os alunos
-                  </label>
+                  <label className="form-check-label" htmlFor="forAll">Criar para todos os alunos</label>
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Data e Hora</label>
-                  <input
-                    type="datetime-local"
-                    className="form-control"
-                    value={meetingDatetime}
-                    onChange={(e) => setMeetingDatetime(e.target.value)}
-                  />
+                  <input type="datetime-local" className="form-control" value={meetingDatetime} onChange={e => setMeetingDatetime(e.target.value)} />
                 </div>
                 <div className="mb-3">
                   <label className="form-label">Tópico</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    value={meetingTopic}
-                    onChange={(e) => setMeetingTopic(e.target.value)}
-                    placeholder="Ex: Revisão do Capítulo 3"
-                  />
+                  <input type="text" className="form-control" value={meetingTopic} onChange={e => setMeetingTopic(e.target.value)} placeholder="Ex: Revisão do Capítulo 3" />
                 </div>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={handleCreateMeeting}>
-                  <Calendar size={16} className="me-2" />
-                  Criar Reunião
+                  <Calendar size={16} className="me-2" />Criar Reunião
                 </button>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowMeetingModal(false)}>Cancelar</button>
               </div>
@@ -1601,10 +1452,10 @@ export default function TeacherDashboard() {
         </div>
       ) : null}
 
-      {/* Resource Modal */}
+      {/* ---- RESOURCE MODAL ---- */}
       {showResourceModal ? (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog">
+          <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
                 <h5 className="modal-title">Adicionar Recurso</h5>
@@ -1613,11 +1464,9 @@ export default function TeacherDashboard() {
               <div className="modal-body">
                 <div className="mb-3">
                   <label className="form-label">Tipo de Documento</label>
-                  <select className="form-select" value={resourceType} onChange={(e) => setResourceType(e.target.value)}>
+                  <select className="form-select" value={resourceType} onChange={e => setResourceType(e.target.value)}>
                     {docTypes.map(type => (
-                      <option key={type} value={type}>
-                        {getDocLabel(type, selectedMentorship?.tipoKey)}
-                      </option>
+                      <option key={type} value={type}>{getDocLabel(type, selectedMentorship?.tipoKey)}</option>
                     ))}
                   </select>
                 </div>
@@ -1631,15 +1480,14 @@ export default function TeacherDashboard() {
                     type="text"
                     className="form-control"
                     value={resourceNote}
-                    onChange={(e) => setResourceNote(e.target.value)}
+                    onChange={e => setResourceNote(e.target.value)}
                     placeholder="Ex: Template para estrutura, exemplos, etc..."
                   />
                 </div>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-primary" onClick={handleUploadResource}>
-                  <UploadCloud size={16} className="me-2" />
-                  Enviar Recurso
+                  <UploadCloud size={16} className="me-2" />Enviar Recurso
                 </button>
                 <button type="button" className="btn btn-secondary" onClick={() => setShowResourceModal(false)}>Cancelar</button>
               </div>
@@ -1648,18 +1496,18 @@ export default function TeacherDashboard() {
         </div>
       ) : null}
 
-      {/* History Modal */}
+      {/* ---- HISTORY MODAL ---- */}
       {showHistory ? (
         <div className="modal fade show d-block" tabIndex="-1" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-lg">
+          <div className="modal-dialog modal-dialog-centered modal-lg">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Histórico - {getDocLabel(showHistory, selectedMentorship?.tipoKey)}</h5>
+                <h5 className="modal-title">Histórico — {getDocLabel(showHistory, selectedMentorship?.tipoKey)}</h5>
                 <button type="button" className="btn-close" onClick={() => setShowHistory(null)}></button>
               </div>
               <div className="modal-body">
                 <div className="list-group">
-                  {docsGrouped[showHistory]?.submissions?.map((doc) => (
+                  {docsGrouped[showHistory]?.submissions?.map(doc => (
                     <button
                       key={doc.id}
                       type="button"
@@ -1669,18 +1517,16 @@ export default function TeacherDashboard() {
                       <div className="bg-white border rounded-3 p-2 d-inline-flex align-items-center justify-content-center">
                         <FileText size={20} className="text-danger" />
                       </div>
-
                       <div className="flex-grow-1 min-w-0">
                         <div className="fw-semibold text-truncate" title={doc.original?.filename}>
                           {truncate(doc.original?.filename, 55)}
                         </div>
-                        <div className="d-flex align-items-center gap-2 text-muted small mt-1">
+                        <div className="d-flex align-items-center gap-2 text-muted mt-1" style={{ fontSize: 12 }}>
                           <span className="badge text-bg-secondary">v{doc.version || 1}</span>
                           <span>{fmtDate(doc.createdAt)}</span>
-                          {doc.teacherUnread && <span className="badge text-bg-danger ms-1">Novo</span>}
+                          {doc.teacherUnread && <span className="badge text-bg-danger">Novo</span>}
                         </div>
                       </div>
-
                       <ChevronRight size={18} className="text-muted" />
                     </button>
                   )) || []}
@@ -1695,9 +1541,9 @@ export default function TeacherDashboard() {
       ) : null}
 
     </div>
-
   )
 }
+
 
 function PreviewModal({ doc, onClose, onDownload }) {
   const url = doc?.pdf?.url || doc?.original?.url || ''
