@@ -55,11 +55,6 @@ function truncate(str, max = 45) {
   return str.length > max ? str.slice(0, max) + '...' : str
 }
 
-/**
- * Normaliza o doc do backend para a UI nova:
- * tenta usar doc.original.* / doc.pdf.* se existirem,
- * e cai para campos simples se o backend devolver diferente.
- */
 function normalizeDoc(d) {
   if (!d) return null
   const original = d.original || {}
@@ -80,16 +75,13 @@ function normalizeDoc(d) {
   }
 }
 
-/**
- * Bootstrap modal shell without Bootstrap JS (we control show/hide via React)
- */
 function ModalShell({ title, icon: Icon, onClose, children, footer, size = 'modal-lg', closable = true, mandatory = false }) {
   return (
     <>
       <div className="modal-backdrop fade show" onClick={closable ? onClose : undefined} style={{ cursor: closable ? 'pointer' : 'default' }} />
       <div className="modal fade show d-block" tabIndex={-1} role="dialog" aria-modal="true">
         <div className={`modal-dialog modal-dialog-centered modal-dialog-scrollable ${size}`}>
-          <div className="modal-content border-0 shadow">
+          <div className="modal-content border-0 shadow" style={{ borderRadius: 18 }}>
             <div className="modal-header">
               <div className="d-flex align-items-center gap-2">
                 {Icon ? <Icon size={20} className="text-primary" /> : null}
@@ -140,7 +132,7 @@ export default function MentoringStudent() {
   const [showNotifModal, setShowNotifModal] = useState(false)
 
   /** -------- Modals -------- */
-  const [selectedDoc, setSelectedDoc] = useState(null) // doc viewer
+  const [selectedDoc, setSelectedDoc] = useState(null) // 
   const [showHistory, setShowHistory] = useState(null) // 'programa' | secondaryType
   const [showUpload, setShowUpload] = useState(null) // 'programa' | secondaryType
 
@@ -156,6 +148,7 @@ export default function MentoringStudent() {
 
   /** -------- Create Mentorship -------- */
   const [showCreateMentorship, setShowCreateMentorship] = useState(false)
+  const [mentorshipsLoaded, setMentorshipsLoaded] = useState(false)
   const [createForm, setCreateForm] = useState({
     tipoKey: 'mestrado',
     titulo: '',
@@ -213,10 +206,17 @@ export default function MentoringStudent() {
 
   /** -------------------- Show create modal if no mentorships -------------------- */
   useEffect(() => {
-    if (user?.id && mentorships.length === 0 && !showCreateMentorship) {
+    if (user?.id && mentorshipsLoaded && mentorships.length === 0 && !showCreateMentorship) {
       setShowCreateMentorship(true)
     }
-  }, [user?.id, mentorships.length, showCreateMentorship])
+  }, [user?.id, mentorshipsLoaded, mentorships.length, showCreateMentorship])
+
+  /** -------------------- Auto-dismiss info toast after 2s -------------------- */
+  useEffect(() => {
+    if (!info) return
+    const t = setTimeout(() => setInfo(''), 2000)
+    return () => clearTimeout(t)
+  }, [info])
 
   /** -------------------- Persist selected mentorship -------------------- */
   useEffect(() => {
@@ -257,6 +257,8 @@ export default function MentoringStudent() {
       else setSelectedMentorshipId(list[0]?.id || '')
     } catch (e) {
       console.error(e)
+    } finally {
+      setMentorshipsLoaded(true)
     }
   }
 
@@ -605,61 +607,38 @@ export default function MentoringStudent() {
     const hasNew = question.studentUnread
 
     return (
-      <button
-        type="button"
-        className="card border-0 shadow-sm text-start"
-        onClick={onClick}
-        style={{ cursor: 'pointer' }}
-      >
-        <div className="card-body">
-          <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
-            <div className="d-flex align-items-start gap-3 flex-1 min-w-0">
-              <div className={`rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 ${
-                isAnswered ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning'
-              }`} style={{ width: 40, height: 40 }}>
-                <MessageSquare size={20} />
+      <button type="button" className="modern-card border bg-white text-start w-100 mb-3" onClick={onClick} style={{ cursor: 'pointer' }}>
+        <div className="p-3">
+          <div className="d-flex align-items-start gap-3">
+            <div className={`rounded-3 d-flex align-items-center justify-content-center flex-shrink-0`} style={{ width: 40, height: 40, background: isAnswered ? 'rgba(25,135,84,.08)' : 'rgba(255,193,7,.1)' }}>
+              <MessageSquare size={18} style={{ color: isAnswered ? '#198754' : '#ffc107' }} />
+            </div>
+            <div className="flex-grow-1 min-w-0">
+              <div className="d-flex align-items-center gap-2 mb-1">
+                <span className="fw-semibold text-truncate" title={question.pergunta}>{truncate(question.pergunta, 60)}</span>
+                {hasNew && <span className="badge bg-danger">Novo</span>}
               </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="d-flex align-items-center gap-2 mb-1">
-                  <span className="fw-semibold text-truncate" title={question.pergunta}>
-                    {truncate(question.pergunta, 60)}
-                  </span>
-                  {hasNew && <span className="badge bg-danger text-white">Novo</span>}
-                </div>
-
-                {question.detalhe && (
-                  <p className="text-muted small mb-2 text-truncate" title={question.detalhe}>
-                    {truncate(question.detalhe, 80)}
-                  </p>
+              {question.detalhe && <p className="text-muted mb-2" style={{ fontSize: 13 }}>{truncate(question.detalhe, 80)}</p>}
+              <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: 12 }}>
+                <Clock size={13} />
+                <span>{fmtDate(question.createdAt)}</span>
+                {isAnswered && question.respondidaEm && (
+                  <>
+                    <span className="text-success d-flex align-items-center gap-1"><CheckCircle size={13} /> Respondida</span>
+                  </>
                 )}
-
-                <div className="d-flex align-items-center gap-2 small text-muted">
-                  <Clock size={14} />
-                  <span>{fmtDate(question.createdAt)}</span>
-                  {isAnswered && question.respondidaEm && (
-                    <>
-                      <span>•</span>
-                      <CheckCircle size={14} className="text-success" />
-                      <span>Respondida em {fmtDate(question.respondidaEm)}</span>
-                    </>
-                  )}
-                </div>
               </div>
             </div>
-
-            <ChevronRight size={18} className="text-muted flex-shrink-0" />
+            <ChevronRight size={18} className="text-muted flex-shrink-0 mt-2" />
           </div>
 
           {isAnswered && (
-            <div className="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
-              <div className="d-flex align-items-center gap-2 small fw-semibold text-success mb-1">
-                <CheckCircle size={14} />
-                Resposta do Professor
+            <div className="mt-3 p-3 rounded-3" style={{ background: 'rgba(25,135,84,.06)', border: '1px solid rgba(25,135,84,.15)' }}>
+              <div className="d-flex align-items-center gap-2 mb-1" style={{ fontSize: 12 }}>
+                <CheckCircle size={13} className="text-success" />
+                <span className="fw-semibold text-success">Resposta do Professor</span>
               </div>
-              <p className="small text-body mb-0" style={{ whiteSpace: 'pre-wrap' }}>
-                {truncate(question.resposta, 200)}
-              </p>
+              <p className="mb-0" style={{ fontSize: 13, whiteSpace: 'pre-wrap' }}>{truncate(question.resposta, 200)}</p>
             </div>
           )}
         </div>
@@ -673,67 +652,49 @@ export default function MentoringStudent() {
     const isAccepted = meeting.status === 'accepted'
     const isRejected = meeting.status === 'rejected'
     const hasNew = meeting.studentUnread
+    const iconColor = isAccepted ? '#198754' : isPending ? '#ffc107' : '#dc3545'
 
     return (
-      <div className="card border-0 shadow-sm">
-        <div className="card-body">
-          <div className="d-flex align-items-start justify-content-between gap-3 mb-3">
-            <div className="d-flex align-items-start gap-3 flex-1 min-w-0">
-              <div className={`rounded-3 d-flex align-items-center justify-content-center flex-shrink-0 ${
-                isAccepted ? 'bg-success bg-opacity-10 text-success' : isPending ? 'bg-warning bg-opacity-10 text-warning' : 'bg-danger bg-opacity-10 text-danger'
-              }`} style={{ width: 40, height: 40 }}>
-                <Calendar size={20} />
+      <div className="modern-card border bg-white mb-3">
+        <div className="p-3">
+          <div className="d-flex align-items-start gap-3">
+            <div className="rounded-3 d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 40, height: 40, background: `${iconColor}12` }}>
+              <Calendar size={18} style={{ color: iconColor }} />
+            </div>
+            <div className="flex-grow-1 min-w-0">
+              <div className="d-flex align-items-center gap-2 mb-1">
+                <span className="fw-semibold text-truncate" title={meeting.topic}>{truncate(meeting.topic || 'Reunião', 60)}</span>
+                {hasNew && <span className="badge bg-danger">Novo</span>}
               </div>
-
-              <div className="flex-1 min-w-0">
-                <div className="d-flex align-items-center gap-2 mb-1">
-                  <span className="fw-semibold text-truncate" title={meeting.topic}>
-                    {truncate(meeting.topic || 'Reunião', 60)}
-                  </span>
-                  {hasNew && <span className="badge bg-danger text-white">Novo</span>}
-                </div>
-
-                <div className="d-flex align-items-center gap-2 small text-muted">
-                  <Clock size={14} />
-                  <span>{meeting.datetime ? fmtDate(meeting.datetime) : 'Data por definir'}</span>
-                  <span>•</span>
-                  <span>Pedido por: {meeting.requestedBy === 'teacher' ? 'Professor' : 'Você'}</span>
-                </div>
-
-                <div className="mt-2">
-                  <span className={`badge ${
-                    isAccepted ? 'bg-success' : isPending ? 'bg-warning text-dark' : 'bg-danger'
-                  }`}>
-                    {isAccepted ? 'Aceite' : isPending ? 'Pendente' : 'Rejeitada'}
-                  </span>
-                </div>
+              <div className="d-flex align-items-center gap-2 text-muted" style={{ fontSize: 12 }}>
+                <Clock size={13} />
+                <span>{meeting.datetime ? fmtDate(meeting.datetime) : 'Data por definir'}</span>
+                <span>·</span>
+                <span>Pedido por: {meeting.requestedBy === 'teacher' ? 'Professor' : 'Você'}</span>
+              </div>
+              <div className="mt-2">
+                <span className={`badge ${isAccepted ? 'bg-success' : isPending ? 'bg-warning text-dark' : 'bg-danger'}`} style={{ fontSize: 11 }}>
+                  {isAccepted ? 'Aceite' : isPending ? 'Pendente' : 'Rejeitada'}
+                </span>
               </div>
             </div>
-
-            <ChevronRight size={18} className="text-muted flex-shrink-0" />
           </div>
 
           {isAccepted && meeting.acceptedAt && (
-            <div className="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
-              <div className="d-flex align-items-center gap-2 small fw-semibold text-success mb-1">
-                <CheckCircle size={14} />
-                Aceite pelo professor
+            <div className="mt-3 p-3 rounded-3" style={{ background: 'rgba(25,135,84,.06)', border: '1px solid rgba(25,135,84,.15)' }}>
+              <div className="d-flex align-items-center gap-2" style={{ fontSize: 12 }}>
+                <CheckCircle size={13} className="text-success" />
+                <span className="fw-semibold text-success">Aceite em {fmtDate(meeting.acceptedAt)}</span>
               </div>
-              <p className="small text-body mb-0">
-                Aceite em {fmtDate(meeting.acceptedAt)}
-              </p>
             </div>
           )}
 
           {isRejected && meeting.rejectedAt && (
-            <div className="p-3 bg-danger bg-opacity-10 rounded-3 border border-danger border-opacity-25">
-              <div className="d-flex align-items-center gap-2 small fw-semibold text-danger mb-1">
-                <X size={14} />
-                Rejeitada pelo professor
+            <div className="mt-3 p-3 rounded-3" style={{ background: 'rgba(220,53,69,.06)', border: '1px solid rgba(220,53,69,.15)' }}>
+              <div className="d-flex align-items-center gap-2" style={{ fontSize: 12 }}>
+                <X size={13} className="text-danger" />
+                <span className="fw-semibold text-danger">Rejeitada em {fmtDate(meeting.rejectedAt)}</span>
               </div>
-              <p className="small text-body mb-0">
-                Rejeitada em {fmtDate(meeting.rejectedAt)}
-              </p>
             </div>
           )}
         </div>
@@ -741,145 +702,86 @@ export default function MentoringStudent() {
     )
   }
 
-  /** -------------------- DocCard (new UI but API data) -------------------- */
+  /** -------------------- DocCard -------------------- */
   function DocCard({ type, title, doc }) {
     const hasNew = !!doc?.studentUnread
     const isPdf = !!doc?.contentType?.toLowerCase()?.includes('pdf')
     const Icon = isPdf ? FileText : File
 
     return (
-      <div className="card border-0 shadow-sm h-100">
-        <div
-          className="card-header border-0"
-          style={{
-            background: 'linear-gradient(90deg, rgba(13,110,253,.08), rgba(102,16,242,.08))',
-          }}
-        >
-          <div className="d-flex align-items-start justify-content-between gap-3">
+      <div className="modern-card border bg-white h-100">
+        {/* Header */}
+        <div className="p-3 border-bottom" style={{ background: 'rgba(13,110,253,.03)' }}>
+          <div className="d-flex align-items-center justify-content-between gap-3">
             <div className="d-flex align-items-center gap-3">
-              <div className="bg-white rounded-3 shadow-sm p-2 d-inline-flex align-items-center justify-content-center">
-                <Icon size={20} />
+              <div className="rounded-3 d-flex align-items-center justify-content-center" style={{ width: 40, height: 40, background: 'rgba(13,110,253,.08)' }}>
+                <Icon size={18} className="text-primary" />
               </div>
-
-              <div className="min-w-0">
+              <div>
                 <div className="fw-semibold">{title}</div>
-                <div className="text-muted small">{doc ? `Versão ${doc.version || 1}` : 'Nenhum documento'}</div>
+                <div className="text-muted" style={{ fontSize: 12 }}>{doc ? `Versão ${doc.version || 1}` : 'Nenhum documento'}</div>
               </div>
             </div>
-
-            {hasNew ? <span className="badge text-bg-danger align-self-start">Novo feedback</span> : null}
+            {hasNew && <span className="badge bg-danger">Novo feedback</span>}
           </div>
         </div>
 
-        <div className="card-body">
+        <div className="p-3">
           {doc ? (
             <>
-              <div className="p-3 bg-body-tertiary rounded-3 d-flex gap-3 align-items-start">
-                <FileText size={18} className="text-muted mt-1 flex-shrink-0" />
-                <div className="flex-grow-1 min-w-0">
-                  <div className="fw-semibold text-truncate" title={doc.filename}>
-                    {truncate(doc.filename, 45)}
+              {/* File info */}
+              <div className="p-3 rounded-3 mb-3" style={{ background: '#f8f9fa' }}>
+                <div className="fw-medium text-truncate mb-1" style={{ fontSize: 13 }} title={doc.filename}>{truncate(doc.filename, 45)}</div>
+                <div className="text-muted" style={{ fontSize: 12 }}><Clock size={12} className="me-1" />Enviado: {fmtDate(doc.uploadedAt)}</div>
+              </div>
+
+              {/* Notes */}
+              <div className="row g-2 mb-3">
+                <div className="col-12 col-md-6">
+                  <div className="p-3 rounded-3" style={{ background: 'rgba(13,110,253,.04)', border: '1px solid rgba(13,110,253,.1)', fontSize: 13 }}>
+                    <div className="fw-semibold text-primary mb-1" style={{ fontSize: 12 }}>Sua nota</div>
+                    {doc.studentNote ? doc.studentNote : <span className="text-muted fst-italic">Sem nota</span>}
                   </div>
-                  <div className="text-muted small mt-1">
-                    <Clock size={14} className="me-1" />
-                    Enviado: {fmtDate(doc.uploadedAt)}
+                </div>
+                <div className="col-12 col-md-6">
+                  <div className="p-3 rounded-3" style={{ background: 'rgba(25,135,84,.04)', border: '1px solid rgba(25,135,84,.1)', fontSize: 13 }}>
+                    <div className="fw-semibold text-success mb-1" style={{ fontSize: 12 }}>Feedback professor</div>
+                    {doc.teacherNote ? doc.teacherNote : <span className="text-muted fst-italic">Aguardando</span>}
                   </div>
                 </div>
               </div>
 
-              <div className="row g-3 mt-1">
-                <div className="col-12 col-md-6">
-                  <div className="p-3 rounded-3 border" style={{ background: 'rgba(13,110,253,.07)' }}>
-                    <div className="d-flex align-items-center gap-2 text-primary small fw-semibold mb-1">
-                      <MessageSquare size={14} />
-                      Sua nota
-                    </div>
-                    <div className="small text-body">
-                      {doc.studentNote ? truncate(doc.studentNote, 160) : <span className="text-muted fst-italic">Sem nota</span>}
-                    </div>
-                  </div>
+              {doc.teacherViewedAt && (
+                <div className="d-flex align-items-center gap-2 mb-3 text-muted" style={{ fontSize: 12 }}>
+                  <CheckCircle size={14} className="text-success" />
+                  Visto pelo professor em {fmtDate(doc.teacherViewedAt)}
                 </div>
+              )}
 
-                <div className="col-12 col-md-6">
-                  <div className="p-3 rounded-3 border" style={{ background: 'rgba(25,135,84,.07)' }}>
-                    <div className="d-flex align-items-center gap-2 text-success small fw-semibold mb-1">
-                      <MessageSquare size={14} />
-                      Feedback professor
-                    </div>
-                    <div className="small text-body">
-                      {doc.teacherNote ? truncate(doc.teacherNote, 160) : <span className="text-muted fst-italic">Aguardando</span>}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {doc.teacherViewedAt ? (
-                <div className="mt-3 p-2 bg-body-tertiary rounded-3 d-flex align-items-center gap-2 small text-muted">
-                  <CheckCircle size={16} className="text-success" />
-                  <span>Visto pelo professor em {fmtDate(doc.teacherViewedAt)}</span>
-                </div>
-              ) : null}
-
-              <div className="d-flex gap-2 mt-3">
-                <button
-                  type="button"
-                  className="btn btn-primary d-flex align-items-center justify-content-center gap-2 flex-grow-1"
-                  onClick={() => openDoc(doc)}
-                >
-                  <Eye size={16} />
-                  Visualizar
+              {/* Actions */}
+              <div className="d-flex gap-2 flex-wrap">
+                <button type="button" className="btn btn-primary btn-sm d-flex align-items-center gap-2" onClick={() => openDoc(doc)}>
+                  <Eye size={14} /> Visualizar
                 </button>
-
-                <a
-                  className={`btn btn-outline-secondary d-flex align-items-center justify-content-center gap-2 ${doc.url ? '' : 'disabled'}`}
-                  href={doc.url || '#'}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={() => trackDownload(doc)}
-                  aria-label="Download"
-                >
-                  <Download size={16} />
+                <a className={`btn btn-outline-secondary btn-sm d-flex align-items-center gap-2 ${doc.url ? '' : 'disabled'}`} href={doc.url || '#'} target="_blank" rel="noreferrer" onClick={() => trackDownload(doc)}>
+                  <Download size={14} />
                 </a>
-              </div>
-
-              <div className="d-flex gap-2 mt-2">
-                <button
-                  type="button"
-                  className="btn btn-light d-flex align-items-center justify-content-center gap-2 flex-grow-1"
-                  onClick={() => setShowHistory(type)}
-                >
-                  <History size={16} />
-                  Ver histórico
+                <button type="button" className="btn btn-outline-secondary btn-sm d-flex align-items-center gap-2" onClick={() => setShowHistory(type)}>
+                  <History size={14} /> Histórico
                 </button>
-                <button
-                  type="button"
-                  className="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2 flex-grow-1"
-                  onClick={() => {
-                    setShowUpload(type)
-                    setUploadNote('')
-                    if (uploadFileRef.current) uploadFileRef.current.value = ''
-                  }}
-                >
-                  <Upload size={16} />
-                  Nova versão
+                <button type="button" className="btn btn-outline-primary btn-sm d-flex align-items-center gap-2" onClick={() => { setShowUpload(type); setUploadNote(''); if (uploadFileRef.current) uploadFileRef.current.value = '' }}>
+                  <Upload size={14} /> Nova versão
                 </button>
               </div>
             </>
           ) : (
             <div className="text-center py-4">
-              <div className="rounded-circle bg-body-tertiary d-inline-flex align-items-center justify-content-center mb-3">
-                <div style={{ width: 64, height: 64 }} className="d-flex align-items-center justify-content-center">
-                  <Upload size={28} className="text-muted" />
-                </div>
+              <div className="rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style={{ width: 64, height: 64, background: '#f0f2f5' }}>
+                <Upload size={26} className="text-muted" />
               </div>
-              <div className="text-muted mb-3">Nenhum documento enviado</div>
-              <button
-                type="button"
-                className="btn btn-primary d-inline-flex align-items-center gap-2"
-                onClick={() => setShowUpload(type)}
-              >
-                <Upload size={16} />
-                Enviar {title}
+              <div className="text-muted mb-3" style={{ fontSize: 14 }}>Nenhum documento enviado</div>
+              <button type="button" className="btn btn-primary btn-sm d-inline-flex align-items-center gap-2" onClick={() => setShowUpload(type)}>
+                <Upload size={14} /> Enviar {title}
               </button>
             </div>
           )}
@@ -891,121 +793,82 @@ export default function MentoringStudent() {
   /** -------------------- Login UI -------------------- */
   if (!user) {
     return (
-      <div className="d-flex justify-content-center position-relative py-5 min-vh-100">
-        <div className="container" style={{ maxWidth: 920 }}>
-          <div className="d-flex align-items-center justify-content-between mb-3">
-            <div>
-              <h2 className="mb-1">Mentoria</h2>
-              <div className="text-muted">Acesso do aluno</div>
-            </div>
-            <span className="badge text-bg-light">LMS</span>
+      <div className="min-vh-100 d-flex align-items-center justify-content-center position-relative" style={{ background: '#f5f6f8' }}>
+        <div style={{ width: '100%', maxWidth: 480 }} className="px-3">
+          <div className="text-center mb-4">
+            <h3 className="fw-semibold mb-1">Mentoria</h3>
+            <p className="text-muted mb-0" style={{ fontSize: 14 }}>Acesso do aluno</p>
           </div>
 
-          {erro ? <div className="alert alert-danger">{erro}</div> : null}
-          {info ? <div className="alert alert-success">{info}</div> : null}
+          {erro ? <div className="alert alert-danger" style={{ fontSize: 14 }}>{erro}</div> : null}
+          {info ? <div className="alert alert-success" style={{ fontSize: 14 }}>{info}</div> : null}
 
-          <div className="card border-0 shadow-sm p-4">
-            <div className="d-flex gap-2 mb-3">
-              <button
-                className={`btn ${!isSignup ? 'btn-primary' : 'btn-outline-primary'}`}
-                type="button"
-                onClick={() => setIsSignup(false)}
-              >
-                Entrar
-              </button>
-              <button
-                className={`btn ${isSignup ? 'btn-primary' : 'btn-outline-primary'}`}
-                type="button"
-                onClick={() => setIsSignup(true)}
-              >
-                Criar conta
-              </button>
+          <div className="modern-card bg-white p-4">
+            <div className="d-flex gap-2 mb-4">
+              <button className={`btn flex-grow-1 ${!isSignup ? 'btn-primary' : 'btn-light'}`} type="button" onClick={() => setIsSignup(false)}>Entrar</button>
+              <button className={`btn flex-grow-1 ${isSignup ? 'btn-primary' : 'btn-light'}`} type="button" onClick={() => setIsSignup(true)}>Criar conta</button>
             </div>
 
             <form onSubmit={handleAuth}>
               {isSignup ? (
-                <div className="row g-3">
-                  <div className="col-md-7">
-                    <label className="form-label">Nome completo</label>
+                <div className="row g-3 mb-3">
+                  <div className="col-12">
+                    <label className="form-label" style={{ fontSize: 13 }}>Nome completo</label>
                     <input className="form-control" value={nomeCompleto} onChange={(e) => setNomeCompleto(e.target.value)} />
                   </div>
-                  <div className="col-md-5">
-                    <label className="form-label">Curso</label>
+                  <div className="col-12">
+                    <label className="form-label" style={{ fontSize: 13 }}>Curso</label>
                     <input className="form-control" value={curso} onChange={(e) => setCurso(e.target.value)} />
                   </div>
                 </div>
               ) : null}
 
-              <div className="row g-3 mt-1">
-                <div className="col-md-6">
-                  <label className="form-label">Telefone</label>
-                  <input className="form-control" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
-                </div>
-                <div className="col-md-6">
-                  <label className="form-label">Palavra-passe</label>
-                  <input className="form-control" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
-                </div>
+              <div className="mb-3">
+                <label className="form-label" style={{ fontSize: 13 }}>Telefone</label>
+                <input className="form-control" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+              </div>
+              <div className="mb-4">
+                <label className="form-label" style={{ fontSize: 13 }}>Palavra-passe</label>
+                <input className="form-control" type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
               </div>
 
-              <button className="btn btn-primary mt-3" disabled={loadingAuth}>
+              <button className="btn btn-primary w-100 py-2" disabled={loadingAuth}>
                 {loadingAuth ? 'A processar...' : isSignup ? 'Criar conta' : 'Entrar'}
               </button>
             </form>
           </div>
-        </div>
 
-        <div className="position-absolute top-0 end-0 mt-3 me-3">
-          <a
-            href="/mentoring/admin"
-            className="btn btn-outline-primary d-flex align-items-center gap-2 shadow-sm fw-semibold"
-            style={{
-              background: 'linear-gradient(135deg, rgba(102,16,242,.1), rgba(13,110,253,.1))',
-              border: '2px solid #6610f2',
-              transition: 'all 0.3s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, #6610f2, #0d6efd)'
-              e.target.style.color = 'white'
-            }}
-            onMouseLeave={(e) => {
-              e.target.style.background = 'linear-gradient(135deg, rgba(102,16,242,.1), rgba(13,110,253,.1))'
-              e.target.style.color = '#6610f2'
-            }}
-          >
-            <UserCheck size={16} />
-            Portal do Professor
-          </a>
+          <div className="text-center mt-3">
+            <a href="/mentoring/admin" className="text-muted d-inline-flex align-items-center gap-2" style={{ fontSize: 13, textDecoration: 'none' }}>
+              <UserCheck size={14} /> Portal do Professor
+            </a>
+          </div>
         </div>
       </div>
     )
   }
 
-  /** -------------------- Main UI (new dashboard) -------------------- */
+  /** -------------------- Main Dashboard -------------------- */
   return (
-    <div className="min-vh-100 bg-light">
+    <div className="min-vh-100" style={{ background: '#f5f6f8' }}>
 
       {/* ---- TOP HEADER ---- */}
-      <div className="bg-white border-bottom sticky-top shadow-sm">
+      <div className="bg-white border-bottom sticky-top" style={{ boxShadow: '0 1px 3px rgba(0,0,0,0.06)' }}>
         <div className="container">
-          <div className="d-flex align-items-center justify-content-between py-2" style={{ minHeight: 54 }}>
+          <div className="d-flex align-items-center justify-content-between py-2" style={{ minHeight: 56 }}>
             <div className="d-flex align-items-center gap-3">
-              <div
-                className="rounded-3 text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0"
-                style={{ width: 38, height: 38, background: 'linear-gradient(135deg, #0d6efd, #6610f2)', fontSize: 15 }}
-              >
+              <div className="rounded-3 text-white fw-bold d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 40, height: 40, background: 'linear-gradient(135deg, #0d6efd, #6610f2)', fontSize: 16 }}>
                 {firstName?.[0] || 'A'}
               </div>
               <div>
-                <div className="fw-semibold lh-1">Olá, {firstName}</div>
+                <div className="fw-semibold" style={{ fontSize: 15, lineHeight: 1.2 }}>Olá, {firstName}</div>
                 <div className="text-muted" style={{ fontSize: 12 }}>{user?.curso || 'Portal de Mentoria'}</div>
               </div>
             </div>
             <div className="d-flex align-items-center gap-2">
               <button type="button" className="btn btn-sm btn-light position-relative" onClick={() => setShowNotifModal(true)}>
                 <Bell size={17} />
-                {notifCount > 0 && (
-                  <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style={{ width: 10, height: 10 }} />
-                )}
+                {notifCount > 0 && <span className="position-absolute top-0 start-100 translate-middle p-1 bg-danger border border-light rounded-circle" style={{ width: 10, height: 10 }} />}
               </button>
               <button type="button" className="btn btn-sm btn-light d-flex align-items-center gap-2" onClick={logout}>
                 <LogOut size={16} />
@@ -1016,41 +879,34 @@ export default function MentoringStudent() {
         </div>
       </div>
 
-      {/* ---- MENTORSHIP CONTEXT BAR ---- */}
-      {mentorships.length > 0 && (
+      {/* ---- UNIFIED MENTORSHIP BAR ---- */}
+      {mentorship && (
         <div className="bg-white border-bottom">
-          <div className="container">
-            <div className="d-flex align-items-center justify-content-between py-2 gap-3">
-              <div className="d-flex align-items-center gap-2 min-w-0 flex-grow-1">
-                {mentorship && (
-                  <>
-                    <span className="badge bg-primary" style={{ fontSize: 11 }}>{meta.label}</span>
-                    <span className="fw-medium text-truncate" style={{ fontSize: 14 }} title={mentorship.titulo}>
-                      {mentorship.titulo ? truncate(mentorship.titulo, 70) : 'Sem título'}
-                    </span>
-                  </>
-                )}
+          <div className="container py-3">
+            <div className="d-flex align-items-start justify-content-between gap-3 flex-wrap">
+              <div className="min-w-0">
+                <div className="d-flex align-items-center gap-2 mb-1">
+                  <span className="badge bg-primary" style={{ fontSize: 12 }}>{meta.label}</span>
+                  <h5 className="mb-0 fw-semibold" style={{ fontSize: 16 }}>{mentorship.titulo || 'Sem título'}</h5>
+                </div>
+                <div className="d-flex align-items-center gap-3 flex-wrap text-muted" style={{ fontSize: 13 }}>
+                  {mentorship.email && <span>{mentorship.email}</span>}
+                  {mentorship.anoInicioCurso && <span>Curso: {mentorship.anoInicioCurso}</span>}
+                  {mentorship.anoInicioMentoria && <span>Mentoria desde {mentorship.anoInicioMentoria}</span>}
+                </div>
               </div>
               <div className="d-flex align-items-center gap-2 flex-shrink-0">
                 {mentorships.length > 1 && (
-                  <select
-                    className="form-select form-select-sm"
-                    style={{ minWidth: 160, maxWidth: 260 }}
-                    value={selectedMentorshipId}
-                    onChange={e => setSelectedMentorshipId(e.target.value)}
-                  >
+                  <select className="form-select form-select-sm" style={{ minWidth: 160, maxWidth: 260 }} value={selectedMentorshipId} onChange={e => setSelectedMentorshipId(e.target.value)}>
                     {mentorships.map(m => (
-                      <option key={m.id} value={m.id}>
-                        {tipoMeta(m.tipoKey).label} — {m.titulo ? truncate(m.titulo, 28) : 'Sem título'}
-                      </option>
+                      <option key={m.id} value={m.id}>{tipoMeta(m.tipoKey).label} — {m.titulo ? truncate(m.titulo, 28) : 'Sem título'}</option>
                     ))}
                   </select>
                 )}
-                <button
-                  type="button"
-                  className="btn btn-sm btn-outline-primary"
-                  onClick={() => setShowCreateMentorship(true)}
-                >+ Nova</button>
+                <button type="button" className="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1" onClick={startEditingMentorship}>
+                  <Edit2 size={13} /> Editar
+                </button>
+                <button type="button" className="btn btn-sm btn-outline-primary" onClick={() => setShowCreateMentorship(true)}>+ Nova</button>
               </div>
             </div>
           </div>
@@ -1059,42 +915,90 @@ export default function MentoringStudent() {
 
       <div className="container py-4">
         {/* Alerts */}
-        {erro && <div className="alert alert-danger alert-dismissible mb-4"><button type="button" className="btn-close" onClick={() => setErro('')}></button>{erro}</div>}
-        {info && <div className="alert alert-success alert-dismissible mb-4"><button type="button" className="btn-close" onClick={() => setInfo('')}></button>{info}</div>}
+        {erro && <div className="alert alert-danger alert-dismissible mb-4" style={{ borderRadius: 12 }}><button type="button" className="btn-close" onClick={() => setErro('')}></button>{erro}</div>}
 
-        {/* ---- COMPACT MENTORSHIP BANNER ---- */}
-        {mentorship ? (
-          <div className="d-flex align-items-start gap-3 p-3 bg-white rounded-3 border mb-4">
-            <div className="flex-grow-1 min-w-0">
-              <div className="d-flex align-items-center gap-2 flex-wrap mb-1">
-                <span className="badge text-bg-light border">{meta.label}</span>
-                <span className="fw-semibold" style={{ fontSize: 15 }}>{mentorship.titulo || 'Sem título'}</span>
-              </div>
-              <div className="d-flex align-items-center gap-3 flex-wrap text-muted" style={{ fontSize: 13 }}>
-                {mentorship.email && <span>{mentorship.email}</span>}
-                {mentorship.anoInicioCurso && <span>Curso: {mentorship.anoInicioCurso}</span>}
-                {mentorship.anoInicioMentoria && <span>Mentoria desde {mentorship.anoInicioMentoria}</span>}
-              </div>
+        {/* Toast — auto-dismissed after 2s */}
+        {info && (
+          <div style={{ position: 'fixed', bottom: 28, right: 28, zIndex: 9999, pointerEvents: 'none' }}>
+            <div className="d-flex align-items-center gap-2 text-white shadow-lg px-4 py-3" style={{ background: '#198754', borderRadius: 12, fontSize: 14, minWidth: 220 }}>
+              <CheckCircle size={16} />
+              {info}
             </div>
-            <button
-              type="button"
-              className="btn btn-sm btn-outline-secondary flex-shrink-0"
-              onClick={startEditingMentorship}
-            >
-              <Edit2 size={13} className="me-1" />Editar
-            </button>
           </div>
-        ) : null}
+        )}
+
+        {/* ---- WELCOME CARD ---- */}
+        <div className="modern-card mb-4 text-white" style={{ background: 'linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%)', border: 'none' }}>
+          <div className="p-4">
+            <h5 className="fw-semibold mb-1">Bem-vindo, {firstName}</h5>
+            <p className="mb-0" style={{ fontSize: 14, opacity: 0.85 }}>
+              Acompanhe aqui o progresso da sua mentoria, submeta documentos e comunique com o seu orientador.
+            </p>
+          </div>
+        </div>
+
+        {/* ---- QUICK STATS ROW ---- */}
+        <div className="row g-3 mb-4">
+          {[
+            {
+              icon: FileText,
+              label: 'Documentos',
+              color: '#0d6efd',
+              value: latestPrograma ? `Programa v${latestPrograma.version || 1}` : 'Nenhum',
+              sub: latestSecondary ? `${meta.secondaryLabel} v${latestSecondary.version || 1}` : null,
+              tabId: 'mentoria'
+            },
+            {
+              icon: Calendar,
+              label: 'Reuniões',
+              color: '#198754',
+              value: `${meetings.filter(m => m.status === 'pending').length} pendentes`,
+              sub: `${meetings.filter(m => m.status === 'accepted').length} aceites`,
+              tabId: 'meetings'
+            },
+            {
+              icon: MessageSquare,
+              label: 'Perguntas',
+              color: '#6610f2',
+              value: `${questions.filter(q => q.respondida).length} respondidas`,
+              sub: `${questions.filter(q => !q.respondida).length} por responder`,
+              tabId: 'questions'
+            },
+            {
+              icon: TrendingUp,
+              label: 'Progresso',
+              color: '#fd7e14',
+              value: 'Ver notas',
+              sub: null,
+              tabId: 'progress'
+            }
+          ].map((stat, i) => (
+            <div key={i} className="col-6 col-lg-3">
+              <button type="button" className="modern-card border bg-white h-100 text-start w-100 p-0" onClick={() => setTab(stat.tabId)} style={{ cursor: 'pointer' }}>
+                <div className="p-3">
+                  <div className="d-flex align-items-center gap-2 mb-2">
+                    <div className="rounded-3 d-flex align-items-center justify-content-center" style={{ width: 36, height: 36, background: `${stat.color}12` }}>
+                      <stat.icon size={17} style={{ color: stat.color }} />
+                    </div>
+                    <span className="fw-semibold text-muted" style={{ fontSize: 12 }}>{stat.label}</span>
+                  </div>
+                  <div className="fw-semibold" style={{ fontSize: 14 }}>{stat.value}</div>
+                  {stat.sub && <div className="text-muted" style={{ fontSize: 12 }}>{stat.sub}</div>}
+                </div>
+              </button>
+            </div>
+          ))}
+        </div>
 
         {/* First-time tip */}
         {!latestPrograma && mentorship ? (
-          <div className="alert alert-primary mb-4" style={{ fontSize: 14 }}>
+          <div className="alert alert-primary mb-4" style={{ borderRadius: 12, fontSize: 14 }}>
             <strong>Por onde começar:</strong> Envie o seu <strong>Programa</strong> no separador Documentos. O Dr. Lucombo Luveia irá orientar os próximos passos.
           </div>
         ) : null}
 
-        {/* ---- TABS ---- */}
-        <ul className="nav nav-tabs">
+        {/* ---- TAB BAR (pills) ---- */}
+        <div className="d-flex align-items-center gap-2 mb-4 flex-wrap">
           {[
             { id: 'mentoria', label: 'Documentos', icon: FileText },
             { id: 'meetings', label: 'Reuniões', icon: Calendar },
@@ -1102,95 +1006,86 @@ export default function MentoringStudent() {
             { id: 'progress', label: 'Progresso', icon: TrendingUp },
           ].map(t => {
             const Icon = t.icon
+            const isActive = tab === t.id
             return (
-              <li className="nav-item" key={t.id}>
-                <button
-                  type="button"
-                  className={`nav-link d-flex align-items-center gap-2 ${tab === t.id ? 'active' : ''}`}
-                  onClick={() => setTab(t.id)}
-                  style={{ fontSize: 14 }}
-                >
-                  <Icon size={15} />
-                  {t.label}
-                </button>
-              </li>
+              <button key={t.id} type="button"
+                className={`btn d-flex align-items-center gap-2 ${isActive ? 'btn-primary' : 'btn-light'}`}
+                style={{ borderRadius: 12, fontSize: 14, padding: '8px 20px' }}
+                onClick={() => setTab(t.id)}>
+                <Icon size={16} />
+                {t.label}
+              </button>
             )
           })}
-        </ul>
-
-        <div className="bg-white border border-top-0 rounded-bottom-3 p-4">
-
-          {/* DOCUMENTOS */}
-          {tab === 'mentoria' ? (
-            <div className="row g-3">
-              <div className="col-12 col-lg-6">
-                <DocCard type="programa" title="Programa" doc={latestPrograma} />
-              </div>
-              <div className="col-12 col-lg-6">
-                <DocCard type={meta.secondaryType} title={meta.secondaryLabel} doc={latestSecondary} />
-              </div>
-            </div>
-          ) : null}
-
-          {/* REUNIÕES */}
-          {tab === 'meetings' ? (
-            <div>
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                <h5 className="mb-0 fw-semibold">Reuniões</h5>
-                <button className="btn btn-sm btn-primary d-flex align-items-center gap-2" onClick={() => setShowCreateMeeting(true)}>
-                  <Calendar size={15} />Solicitar Reunião
-                </button>
-              </div>
-              {meetings.length ? (
-                <div className="d-flex flex-column gap-3">
-                  {meetings.map(m => <MeetingCard key={m.id} meeting={m} />)}
-                </div>
-              ) : (
-                <div className="text-center py-5 text-muted">
-                  <Calendar size={40} className="mb-3" />
-                  <p className="mb-3" style={{ fontSize: 14 }}>Ainda não solicitaste nenhuma reunião.</p>
-                  <button className="btn btn-sm btn-primary d-inline-flex align-items-center gap-2" onClick={() => setShowCreateMeeting(true)}>
-                    <Calendar size={15} />Solicitar primeira reunião
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : null}
-
-          {/* PERGUNTAS */}
-          {tab === 'questions' ? (
-            <div>
-              <div className="d-flex justify-content-between align-items-center mb-4">
-                <h5 className="mb-0 fw-semibold">Perguntas ao Professor</h5>
-                <button className="btn btn-sm btn-primary d-flex align-items-center gap-2" onClick={() => setShowAskForm(true)}>
-                  <MessageSquare size={15} />Fazer Pergunta
-                </button>
-              </div>
-              {questions.length ? (
-                <div className="d-flex flex-column gap-3">
-                  {questions.map(q => <QuestionCard key={q.id} question={q} onClick={() => viewQuestion(q)} />)}
-                </div>
-              ) : (
-                <div className="text-center py-5 text-muted">
-                  <MessageSquare size={40} className="mb-3" />
-                  <p className="mb-3" style={{ fontSize: 14 }}>Ainda não fizeste nenhuma pergunta.</p>
-                  <button className="btn btn-sm btn-primary d-inline-flex align-items-center gap-2" onClick={() => setShowAskForm(true)}>
-                    <MessageSquare size={15} />Fazer primeira pergunta
-                  </button>
-                </div>
-              )}
-            </div>
-          ) : null}
-
-          {/* PROGRESSO */}
-          {tab === 'progress' ? (
-            <div className="text-center py-5 text-muted">
-              <TrendingUp size={40} className="mb-3" />
-              <p className="mb-0" style={{ fontSize: 14 }}>O progresso da tua mentoria é registado pelo professor e ficará visível aqui.</p>
-            </div>
-          ) : null}
-
         </div>
+
+        {/* ---- TAB CONTENT ---- */}
+
+        {/* DOCUMENTOS */}
+        {tab === 'mentoria' ? (
+          <div className="row g-4">
+            <div className="col-12 col-lg-6">
+              <DocCard type="programa" title="Programa" doc={latestPrograma} />
+            </div>
+            <div className="col-12 col-lg-6">
+              <DocCard type={meta.secondaryType} title={meta.secondaryLabel} doc={latestSecondary} />
+            </div>
+          </div>
+        ) : null}
+
+        {/* REUNIÕES */}
+        {tab === 'meetings' ? (
+          <div>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h5 className="mb-0 fw-semibold">Reuniões</h5>
+              <button className="btn btn-sm btn-primary d-flex align-items-center gap-2" onClick={() => setShowCreateMeeting(true)}>
+                <Calendar size={15} /> Solicitar Reunião
+              </button>
+            </div>
+            {meetings.length ? (
+              meetings.map(m => <MeetingCard key={m.id} meeting={m} />)
+            ) : (
+              <div className="modern-card bg-white text-center py-5">
+                <Calendar size={44} className="text-muted mb-3" />
+                <p className="text-muted mb-3" style={{ fontSize: 14 }}>Ainda não solicitaste nenhuma reunião.</p>
+                <button className="btn btn-sm btn-primary d-inline-flex align-items-center gap-2" onClick={() => setShowCreateMeeting(true)}>
+                  <Calendar size={15} /> Solicitar primeira reunião
+                </button>
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {/* PERGUNTAS */}
+        {tab === 'questions' ? (
+          <div>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h5 className="mb-0 fw-semibold">Perguntas ao Professor</h5>
+              <button className="btn btn-sm btn-primary d-flex align-items-center gap-2" onClick={() => setShowAskForm(true)}>
+                <MessageSquare size={15} /> Fazer Pergunta
+              </button>
+            </div>
+            {questions.length ? (
+              questions.map(q => <QuestionCard key={q.id} question={q} onClick={() => viewQuestion(q)} />)
+            ) : (
+              <div className="modern-card bg-white text-center py-5">
+                <MessageSquare size={44} className="text-muted mb-3" />
+                <p className="text-muted mb-3" style={{ fontSize: 14 }}>Ainda não fizeste nenhuma pergunta.</p>
+                <button className="btn btn-sm btn-primary d-inline-flex align-items-center gap-2" onClick={() => setShowAskForm(true)}>
+                  <MessageSquare size={15} /> Fazer primeira pergunta
+                </button>
+              </div>
+            )}
+          </div>
+        ) : null}
+
+        {/* PROGRESSO */}
+        {tab === 'progress' ? (
+          <div className="modern-card bg-white text-center py-5">
+            <TrendingUp size={44} className="text-muted mb-3" />
+            <p className="text-muted mb-0" style={{ fontSize: 14 }}>O progresso da tua mentoria é registado pelo professor e ficará visível aqui.</p>
+          </div>
+        ) : null}
       </div>
 
       {/* ---- NOTIFICATIONS MODAL ---- */}
@@ -1205,17 +1100,12 @@ export default function MentoringStudent() {
           {notifItems?.length ? (
             <div className="d-flex flex-column gap-2">
               {notifItems.slice(0, 30).map((n, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  className="btn btn-light text-start"
-                  onClick={() => {
-                    if (n.type === 'document') setTab('mentoria')
-                    if (n.type === 'meeting') setTab('meetings')
-                    if (n.type === 'question') setTab('questions')
-                    setShowNotifModal(false)
-                  }}
-                >
+                <button key={idx} type="button" className="btn btn-light text-start" style={{ borderRadius: 12 }} onClick={() => {
+                  if (n.type === 'document') setTab('mentoria')
+                  if (n.type === 'meeting') setTab('meetings')
+                  if (n.type === 'question') setTab('questions')
+                  setShowNotifModal(false)
+                }}>
                   <div className="d-flex align-items-center justify-content-between">
                     <div className="fw-semibold" style={{ fontSize: 14 }}>{n.title}</div>
                     <div className="text-muted small">{fmtDate(n.createdAt)}</div>
@@ -1225,18 +1115,14 @@ export default function MentoringStudent() {
               ))}
             </div>
           ) : (
-            <div className="text-muted text-center py-3">Sem novidades.</div>
+            <div className="text-muted text-center py-4">Sem novidades.</div>
           )}
         </ModalShell>
       ) : null}
 
       {/* ---- DOC VIEWER ---- */}
       {selectedDoc ? (
-        <DocPreviewModal
-          doc={selectedDoc}
-          onClose={() => setSelectedDoc(null)}
-          onDownload={() => trackDownload(selectedDoc)}
-        />
+        <DocPreviewModal doc={selectedDoc} onClose={() => setSelectedDoc(null)} onDownload={() => trackDownload(selectedDoc)} />
       ) : null}
 
       {/* ---- HISTORY ---- */}
@@ -1251,18 +1137,9 @@ export default function MentoringStudent() {
             {(byType[showHistory] || [])
               .filter(d => (d.kind || 'submission') === 'submission')
               .map(doc => (
-                <button
-                  key={doc.id}
-                  type="button"
-                  className="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3"
-                  onClick={() => openDoc(doc)}
-                >
-                  <div className="bg-white border rounded-3 p-2 d-inline-flex align-items-center justify-content-center">
-                    {(doc.contentType || '').toLowerCase().includes('pdf') ? (
-                      <FileText size={20} className="text-danger" />
-                    ) : (
-                      <File size={20} className="text-primary" />
-                    )}
+                <button key={doc.id} type="button" className="list-group-item list-group-item-action d-flex align-items-center gap-3 py-3" onClick={() => openDoc(doc)}>
+                  <div className="rounded-3 p-2 d-inline-flex align-items-center justify-content-center" style={{ background: 'rgba(220,53,69,.08)' }}>
+                    {(doc.contentType || '').toLowerCase().includes('pdf') ? <FileText size={20} className="text-danger" /> : <File size={20} className="text-primary" />}
                   </div>
                   <div className="flex-grow-1 min-w-0">
                     <div className="fw-semibold text-truncate" title={doc.filename}>{truncate(doc.filename, 55)}</div>
@@ -1302,13 +1179,7 @@ export default function MentoringStudent() {
           </div>
           <div className="mb-0">
             <label className="form-label fw-semibold">Nota (opcional)</label>
-            <textarea
-              className="form-control"
-              rows={4}
-              value={uploadNote}
-              onChange={e => setUploadNote(e.target.value)}
-              placeholder="Descreva o que mudou nesta versão..."
-            />
+            <textarea className="form-control" rows={4} value={uploadNote} onChange={e => setUploadNote(e.target.value)} placeholder="Descreva o que mudou nesta versão..." />
           </div>
         </ModalShell>
       ) : null}
@@ -1332,24 +1203,11 @@ export default function MentoringStudent() {
           <form onSubmit={askQuestion}>
             <div className="mb-3">
               <label className="form-label fw-semibold">Pergunta</label>
-              <input
-                type="text"
-                className="form-control"
-                value={newQuestion}
-                onChange={e => setNewQuestion(e.target.value)}
-                placeholder="Escreva a sua pergunta..."
-                required
-              />
+              <input type="text" className="form-control" value={newQuestion} onChange={e => setNewQuestion(e.target.value)} placeholder="Escreva a sua pergunta..." required />
             </div>
             <div className="mb-0">
               <label className="form-label fw-semibold">Detalhes adicionais (opcional)</label>
-              <textarea
-                className="form-control"
-                rows={4}
-                value={newQuestionDetail}
-                onChange={e => setNewQuestionDetail(e.target.value)}
-                placeholder="Forneça mais contexto ou detalhes sobre a sua pergunta..."
-              />
+              <textarea className="form-control" rows={4} value={newQuestionDetail} onChange={e => setNewQuestionDetail(e.target.value)} placeholder="Forneça mais contexto ou detalhes sobre a sua pergunta..." />
             </div>
           </form>
         </ModalShell>
@@ -1366,20 +1224,20 @@ export default function MentoringStudent() {
         >
           <div className="mb-4">
             <div className="d-flex align-items-center gap-2 mb-3">
-              <div className={`rounded-3 d-flex align-items-center justify-content-center ${selectedQuestion.respondida ? 'bg-success bg-opacity-10 text-success' : 'bg-warning bg-opacity-10 text-warning'}`} style={{ width: 40, height: 40 }}>
-                <MessageSquare size={20} />
+              <div className={`rounded-3 d-flex align-items-center justify-content-center`} style={{ width: 40, height: 40, background: selectedQuestion.respondida ? 'rgba(25,135,84,.08)' : 'rgba(255,193,7,.1)' }}>
+                <MessageSquare size={18} style={{ color: selectedQuestion.respondida ? '#198754' : '#ffc107' }} />
               </div>
               <div>
                 <span className="badge bg-primary">Pergunta</span>
-                <div className="text-muted small mt-1"><Clock size={14} className="me-1" />Enviada em {fmtDate(selectedQuestion.createdAt)}</div>
+                <div className="text-muted" style={{ fontSize: 12 }}><Clock size={12} className="me-1" />Enviada em {fmtDate(selectedQuestion.createdAt)}</div>
               </div>
             </div>
-            <div className="p-3 bg-body-tertiary rounded-3 mb-3">
+            <div className="p-3 rounded-3 mb-3" style={{ background: '#f8f9fa' }}>
               <h6 className="fw-semibold mb-2">Pergunta</h6>
               <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.pergunta}</p>
             </div>
             {selectedQuestion.detalhe && (
-              <div className="p-3 bg-body-tertiary rounded-3 mb-3">
+              <div className="p-3 rounded-3 mb-3" style={{ background: '#f8f9fa' }}>
                 <h6 className="fw-semibold mb-2">Detalhes adicionais</h6>
                 <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.detalhe}</p>
               </div>
@@ -1388,19 +1246,17 @@ export default function MentoringStudent() {
           {selectedQuestion.respondida ? (
             <div>
               <div className="d-flex align-items-center gap-2 mb-3">
-                <CheckCircle size={20} className="text-success" />
+                <CheckCircle size={18} className="text-success" />
                 <span className="fw-semibold text-success">Resposta do Professor</span>
-                {selectedQuestion.respondidaEm && (
-                  <span className="text-muted small ms-auto">Respondida em {fmtDate(selectedQuestion.respondidaEm)}</span>
-                )}
+                {selectedQuestion.respondidaEm && <span className="text-muted ms-auto" style={{ fontSize: 12 }}>Respondida em {fmtDate(selectedQuestion.respondidaEm)}</span>}
               </div>
-              <div className="p-3 bg-success bg-opacity-10 rounded-3 border border-success border-opacity-25">
+              <div className="p-3 rounded-3" style={{ background: 'rgba(25,135,84,.06)', border: '1px solid rgba(25,135,84,.15)' }}>
                 <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.resposta}</p>
               </div>
             </div>
           ) : (
             <div className="text-center py-4 text-muted">
-              <Clock size={32} className="text-warning mb-3" />
+              <Clock size={32} style={{ color: '#ffc107' }} className="mb-3" />
               <p className="mb-0">Aguardando resposta do professor.</p>
             </div>
           )}
@@ -1426,23 +1282,11 @@ export default function MentoringStudent() {
           <form onSubmit={createMeeting}>
             <div className="mb-3">
               <label className="form-label fw-semibold">Tópico da reunião</label>
-              <input
-                type="text"
-                className="form-control"
-                value={newMeetingTopic}
-                onChange={e => setNewMeetingTopic(e.target.value)}
-                placeholder="Ex: Revisão do capítulo 3, Discussão sobre tese..."
-                required
-              />
+              <input type="text" className="form-control" value={newMeetingTopic} onChange={e => setNewMeetingTopic(e.target.value)} placeholder="Ex: Revisão do capítulo 3, Discussão sobre tese..." required />
             </div>
             <div className="mb-3">
               <label className="form-label fw-semibold">Data e hora sugerida (opcional)</label>
-              <input
-                type="datetime-local"
-                className="form-control"
-                value={newMeetingDatetime}
-                onChange={e => setNewMeetingDatetime(e.target.value)}
-              />
+              <input type="datetime-local" className="form-control" value={newMeetingDatetime} onChange={e => setNewMeetingDatetime(e.target.value)} />
               <div className="form-text">Podes deixar em branco se preferires que o professor defina a data.</div>
             </div>
           </form>
@@ -1457,9 +1301,7 @@ export default function MentoringStudent() {
           onClose={() => setShowCreateMentorship(false)}
           footer={
             <>
-              {mentorships.length > 0 && (
-                <button className="btn btn-outline-secondary" onClick={() => setShowCreateMentorship(false)} disabled={busy}>Cancelar</button>
-              )}
+              {mentorships.length > 0 && <button className="btn btn-outline-secondary" onClick={() => setShowCreateMentorship(false)} disabled={busy}>Cancelar</button>}
               <button className="btn btn-primary" onClick={createMentorship} disabled={busy || !createForm.titulo.trim()}>
                 {busy ? 'Criando...' : 'Criar Mentoria'}
               </button>
@@ -1546,7 +1388,7 @@ export default function MentoringStudent() {
 }
 
 
-/** -------------------- Document Preview (same logic as old: PDF or Google Viewer) -------------------- */
+/** -------------------- Document Preview -------------------- */
 function DocPreviewModal({ doc, onClose, onDownload }) {
   const url = doc?.pdf?.url || doc?.url || doc?.original?.url || ''
   const contentType = doc?.pdf?.contentType || doc?.contentType || doc?.original?.contentType || ''
@@ -1566,7 +1408,7 @@ function DocPreviewModal({ doc, onClose, onDownload }) {
       <div className="modal-backdrop fade show" onClick={onClose} />
       <div className="modal fade show d-block" tabIndex={-1} role="dialog" aria-modal="true" onClick={handleBackdropClick}>
         <div className="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable" style={{ maxWidth: 1100 }} role="document">
-          <div className="modal-content">
+          <div className="modal-content" style={{ borderRadius: 18 }}>
             <div className="modal-header">
               <h5 className="modal-title d-flex align-items-center gap-2">
                 <FileText size={18} className="text-primary" />
@@ -1581,20 +1423,16 @@ function DocPreviewModal({ doc, onClose, onDownload }) {
               ) : (
                 <iframe title="preview" src={src} style={{ width: '100%', height: '70vh', minHeight: 420, border: '1px solid #ddd', borderRadius: 10 }} />
               )}
-
               {url && canGview ? <div className="text-muted small mt-2">Nota: para alguns ficheiros Word, o preview usa Google Viewer.</div> : null}
             </div>
 
             <div className="modal-footer">
               {url ? (
                 <a className="btn btn-primary" href={url} target="_blank" rel="noreferrer" onClick={onDownload}>
-                  <Download size={16} className="me-2" />
-                  Baixar
+                  <Download size={16} className="me-2" /> Baixar
                 </a>
               ) : null}
-              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>
-                Fechar
-              </button>
+              <button type="button" className="btn btn-outline-secondary" onClick={onClose}>Fechar</button>
             </div>
           </div>
         </div>
