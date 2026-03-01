@@ -141,6 +141,7 @@ export async function GET(request) {
     const qFilter = {
       alunoId: alunoOid,
       studentUnread: true,
+      respondida: true,
       ...(mentorshipOid ? { mentorshipId: mentorshipOid } : {})
     }
     const unreadQuestions = await db
@@ -155,7 +156,7 @@ export async function GET(request) {
         type: 'question',
         mentorshipId: q.mentorshipId?.toString(),
         title: 'Resposta do professor',
-        message: q.pergunta || 'Pergunta',
+        message: (q.resposta || '').toString().slice(0, 120) || 'O professor respondeu à sua pergunta.',
         createdAt: q.updatedAt || q.respondidaEm || q.createdAt || null,
         refId: q._id.toString()
       })
