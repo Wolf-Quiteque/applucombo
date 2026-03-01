@@ -284,6 +284,25 @@ export default function MentoringStudent() {
     }
   }
 
+  async function markNotifRead(n) {
+    // Optimistically remove from local state immediately
+    setNotifItems(prev => prev.filter(x => x.refId !== n.refId))
+    setNotifCount(prev => Math.max(0, prev - 1))
+    try {
+      if (n.type === 'question') {
+        await axios.patch(`/api/mentoring/questions/${n.refId}`, { action: 'markStudentRead' })
+      } else if (n.type === 'document') {
+        await axios.patch(`/api/mentoring/documents/${n.refId}/event`, { role: 'student', action: 'markRead' })
+      } else if (n.type === 'meeting') {
+        await axios.patch(`/api/mentoring/meetings/${n.refId}`, { action: 'markStudentRead' })
+      } else if (n.type === 'progress') {
+        await axios.patch('/api/mentoring/progress/mark-read', { mentorshipId: selectedMentorshipId })
+      }
+    } catch (e) {
+      console.error('Erro ao marcar notificação como lida:', e)
+    }
+  }
+
   async function carregarQuestions() {
     try {
       const res = await axios.get(`/api/mentoring/questions?alunoId=${user.id}&mentorshipId=${selectedMentorshipId}`)
@@ -1101,9 +1120,11 @@ export default function MentoringStudent() {
             <div className="d-flex flex-column gap-2">
               {notifItems.slice(0, 30).map((n, idx) => (
                 <button key={idx} type="button" className="btn btn-light text-start" style={{ borderRadius: 12 }} onClick={() => {
+                  markNotifRead(n)
                   if (n.type === 'document') setTab('mentoria')
                   if (n.type === 'meeting') setTab('meetings')
                   if (n.type === 'question') setTab('questions')
+                  if (n.type === 'progress') setTab('progress')
                   setShowNotifModal(false)
                 }}>
                   <div className="d-flex align-items-center justify-content-between">

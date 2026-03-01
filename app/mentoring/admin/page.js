@@ -378,6 +378,23 @@ export default function TeacherDashboard() {
     }
   }
 
+  async function dismissNotif(n) {
+    // Optimistically remove from local state immediately
+    setDismissedNotifs(prev => new Set([...prev, n.refId]))
+    setNotifItems(prev => prev.filter(x => x.refId !== n.refId))
+    try {
+      if (n.type === 'question') {
+        await axios.patch(`/api/mentoring/questions/${n.refId}`, { action: 'markTeacherRead' })
+      } else if (n.type === 'document') {
+        await axios.patch(`/api/mentoring/documents/${n.refId}/event`, { role: 'teacher', action: 'markRead' })
+      } else if (n.type === 'meeting') {
+        await axios.patch(`/api/mentoring/meetings/${n.refId}`, { action: 'markTeacherRead' })
+      }
+    } catch (e) {
+      console.error('Erro ao marcar notificação como lida:', e)
+    }
+  }
+
   async function markTeacherEventOnDoc(docId, action) {
     try {
       await axios.patch(`/api/mentoring/admin/documents/${docId}/opened`)
@@ -1258,13 +1275,14 @@ export default function TeacherDashboard() {
                       <div className="flex-grow-1 min-w-0">
                         <div className="d-flex align-items-start justify-content-between gap-2">
                           <span className="fw-semibold" style={{ fontSize: 13 }}>{n.title}</span>
-                          <button className="btn btn-sm btn-outline-secondary flex-shrink-0" style={{ padding: '1px 6px' }} onClick={() => setDismissedNotifs(prev => new Set([...prev, n.refId]))} title="Marcar como vista">
+                          <button className="btn btn-sm btn-outline-secondary flex-shrink-0" style={{ padding: '1px 6px' }} onClick={() => dismissNotif(n)} title="Marcar como vista">
                             <Check size={12} />
                           </button>
                         </div>
                         <p className="text-muted mb-1" style={{ fontSize: 12 }}>{n.message}</p>
                         <p className="text-muted mb-2" style={{ fontSize: 11 }}>{fmtDate(n.createdAt)}</p>
                         <button className="btn btn-sm btn-outline-primary" onClick={() => {
+                          dismissNotif(n)
                           setShowNotifSidebar(false)
                           if (n.type === 'document') setTab('mentoria')
                           if (n.type === 'question') setTab('questions')
