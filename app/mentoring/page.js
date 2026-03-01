@@ -170,6 +170,7 @@ export default function MentoringStudent() {
   /** -------- Meetings form -------- */
   const [newMeetingTopic, setNewMeetingTopic] = useState('')
   const [newMeetingDatetime, setNewMeetingDatetime] = useState('')
+  const [newMeetingDescription, setNewMeetingDescription] = useState('')
   const [showCreateMeeting, setShowCreateMeeting] = useState(false)
 
   /** -------- Derived -------- */
@@ -525,12 +526,14 @@ export default function MentoringStudent() {
         alunoId: user.id,
         requestedBy: 'student',
         topic: newMeetingTopic.trim(),
+        description: newMeetingDescription.trim(),
         datetime: newMeetingDatetime || null,
       })
 
       setInfo('Reunião solicitada ao professor.')
       setNewMeetingTopic('')
       setNewMeetingDatetime('')
+      setNewMeetingDescription('')
       setShowCreateMeeting(false)
       await carregarMeetings()
       await carregarNotificacoes()
@@ -696,6 +699,11 @@ export default function MentoringStudent() {
                   {isAccepted ? 'Aceite' : isPending ? 'Pendente' : 'Rejeitada'}
                 </span>
               </div>
+              {meeting.description && (
+                <div className="mt-2 p-2 rounded-2" style={{ background: 'rgba(13,110,253,.06)', border: '1px solid rgba(13,110,253,.12)', fontSize: 12, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                  {meeting.description}
+                </div>
+              )}
             </div>
           </div>
 
@@ -1309,6 +1317,10 @@ export default function MentoringStudent() {
               <label className="form-label fw-semibold">Data e hora sugerida (opcional)</label>
               <input type="datetime-local" className="form-control" value={newMeetingDatetime} onChange={e => setNewMeetingDatetime(e.target.value)} />
               <div className="form-text">Podes deixar em branco se preferires que o professor defina a data.</div>
+            </div>
+            <div className="mb-3">
+              <label className="form-label fw-semibold">Descrição (opcional)</label>
+              <textarea className="form-control" rows={3} value={newMeetingDescription} onChange={e => setNewMeetingDescription(e.target.value)} placeholder="Ex: Tenho dúvidas sobre a metodologia do capítulo 3 e precisava de esclarecer a estrutura da introdução..." style={{ resize: 'vertical' }} />
             </div>
           </form>
         </ModalShell>

@@ -40,6 +40,7 @@ export async function GET(request) {
       requestedBy: m.requestedBy || 'student',
       datetime: m.datetime || null,
       topic: m.topic || '',
+      description: m.description || '',
       status: m.status || 'pending',
       teacherUnread: !!m.teacherUnread,
       studentUnread: !!m.studentUnread,
@@ -62,7 +63,7 @@ export async function GET(request) {
 export async function POST(request) {
   try {
     const body = await request.json()
-    const { mentorshipId, alunoId, requestedBy, datetime, topic, allMentorships } = body || {}
+    const { mentorshipId, alunoId, requestedBy, datetime, topic, description, allMentorships } = body || {}
 
     const db = await getDb()
 
@@ -83,6 +84,7 @@ export async function POST(request) {
         requestedBy: 'teacher',
         datetime: datetime ? new Date(datetime) : null,
         topic: (topic || '').toString().trim(),
+        description: (description || '').toString().trim(),
         status: 'pending',
         teacherUnread: false,
         studentUnread: true,
@@ -112,6 +114,7 @@ export async function POST(request) {
       requestedBy: reqBy,
       datetime: datetime ? new Date(datetime) : null,
       topic: (topic || '').toString().trim(),
+      description: (description || '').toString().trim(),
       status: 'pending',
       teacherUnread: reqBy === 'student',
       studentUnread: reqBy === 'teacher',
@@ -143,6 +146,7 @@ export async function POST(request) {
           requestedBy: doc.requestedBy,
           datetime: doc.datetime,
           topic: doc.topic,
+          description: doc.description,
           status: doc.status,
           createdAt: doc.createdAt
         }

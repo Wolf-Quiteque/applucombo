@@ -71,6 +71,7 @@ export async function PATCH(request, { params }) {
           requestedBy: m.requestedBy || 'student',
           datetime: m.datetime || null,
           topic: m.topic || '',
+          description: m.description || '',
           status: m.status || 'pending',
           teacherUnread: !!m.teacherUnread,
           studentUnread: !!m.studentUnread,

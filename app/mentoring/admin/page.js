@@ -102,6 +102,7 @@ export default function TeacherDashboard() {
   const [correctionNote, setCorrectionNote] = useState('')
   const [meetingTopic, setMeetingTopic] = useState('')
   const [meetingDatetime, setMeetingDatetime] = useState('')
+  const [meetingDescription, setMeetingDescription] = useState('')
   const [meetingForAll, setMeetingForAll] = useState(false)
   const [resourceNote, setResourceNote] = useState('')
   const [resourceType, setResourceType] = useState('programa')
@@ -546,6 +547,7 @@ export default function TeacherDashboard() {
         requestedBy: 'teacher',
         datetime: meetingDatetime ? new Date(meetingDatetime).toISOString() : null,
         topic: meetingTopic,
+        description: meetingDescription.trim(),
         allMentorships: meetingForAll
       }
 
@@ -559,6 +561,7 @@ export default function TeacherDashboard() {
       setShowMeetingModal(false)
       setMeetingTopic('')
       setMeetingDatetime('')
+      setMeetingDescription('')
       setMeetingForAll(false)
 
       await loadSelectedPanel()
@@ -683,6 +686,11 @@ export default function TeacherDashboard() {
             {inAllView && <div className="text-muted" style={{ fontSize: 12 }}>{meeting.aluno?.nomeCompleto || 'Aluno'}</div>}
             <div className="text-muted" style={{ fontSize: 12 }}>{meeting.datetime ? fmtDate(meeting.datetime) : 'Data por definir'}</div>
             <div className="text-muted" style={{ fontSize: 11 }}>Pedido por: {meeting.requestedBy === 'teacher' ? 'Você' : 'Aluno'}</div>
+            {meeting.description && (
+              <div className="mt-2 p-2 rounded-2" style={{ background: 'rgba(13,110,253,.06)', border: '1px solid rgba(13,110,253,.12)', fontSize: 12, whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>
+                {meeting.description}
+              </div>
+            )}
           </div>
         </div>
         {isPending && (
@@ -1375,6 +1383,11 @@ export default function TeacherDashboard() {
                 <div className="mb-3">
                   <label className="form-label">Tópico</label>
                   <input type="text" className="form-control" value={meetingTopic} onChange={e => setMeetingTopic(e.target.value)} placeholder="Ex: Revisão do Capítulo 3" />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Mensagem / Detalhes <span className="text-muted fw-normal">(opcional)</span></label>
+                  <textarea className="form-control" rows={3} value={meetingDescription} onChange={e => setMeetingDescription(e.target.value)} placeholder="Ex: https://zoom.us/j/123... · Sala 204, Bloco A · Traga o capítulo 3 impresso..." style={{ resize: 'vertical' }} />
+                  <div className="form-text">Link Zoom, localização, materiais necessários, etc.</div>
                 </div>
               </div>
               <div className="modal-footer">
