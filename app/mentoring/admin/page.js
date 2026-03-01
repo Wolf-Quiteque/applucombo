@@ -621,7 +621,7 @@ export default function TeacherDashboard() {
         <div className="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white flex-shrink-0 fw-semibold" style={{ width: 36, height: 36, fontSize: 13 }}>
           {initials(selectedMentorship?.aluno?.nomeCompleto || 'A')}
         </div>
-        <div className="flex-grow-1">
+        <div className="min-w-0" style={{ maxWidth: '75%' }}>
           <div className="rounded-3 p-3" style={{ background: '#f0f2f5' }}>
             <div className="d-flex align-items-center justify-content-between mb-1 gap-2 flex-wrap">
               <span className="fw-semibold text-primary" style={{ fontSize: 13 }}>
@@ -848,7 +848,7 @@ export default function TeacherDashboard() {
               <div className="d-flex align-items-center gap-3">
                 <div className="input-group" style={{ maxWidth: 300 }}>
                   <span className="input-group-text bg-white border-end-0"><Search size={14} className="text-muted" /></span>
-                  <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Pesquisar aluno..." className="form-control border-start-0" style={{ boxShadow: 'none' }} />
+                  <input type="text" value={search} onChange={e => { setSearch(e.target.value); setCurrentStudentPage(1) }} placeholder="Pesquisar aluno..." className="form-control border-start-0" style={{ boxShadow: 'none' }} />
                 </div>
                 <span className="badge bg-primary rounded-pill" style={{ fontSize: 13 }}>{filteredMentorships.length}</span>
               </div>
@@ -914,14 +914,31 @@ export default function TeacherDashboard() {
               </div>
 
               {totalStudentPages > 1 && (
-                <div className="d-flex justify-content-center align-items-center gap-3 py-3 border-top">
-                  <button className="btn btn-sm btn-outline-secondary" disabled={currentStudentPage === 1} onClick={() => setCurrentStudentPage(prev => Math.max(1, prev - 1))}>
-                    <ChevronLeft size={14} />
-                  </button>
-                  <span className="text-muted" style={{ fontSize: 13 }}>{currentStudentPage} de {totalStudentPages}</span>
-                  <button className="btn btn-sm btn-outline-secondary" disabled={currentStudentPage === totalStudentPages} onClick={() => setCurrentStudentPage(prev => Math.min(totalStudentPages, prev + 1))}>
-                    <ChevronRight size={14} />
-                  </button>
+                <div className="d-flex align-items-center justify-content-between px-3 py-3 border-top flex-wrap gap-2">
+                  <span className="text-muted" style={{ fontSize: 12 }}>
+                    A mostrar {(currentStudentPage - 1) * studentsPerPage + 1}–{Math.min(currentStudentPage * studentsPerPage, filteredMentorships.length)} de {filteredMentorships.length} alunos
+                  </span>
+                  <div className="d-flex align-items-center gap-1">
+                    <button className="btn btn-sm btn-outline-secondary" disabled={currentStudentPage === 1} onClick={() => setCurrentStudentPage(prev => Math.max(1, prev - 1))}>
+                      <ChevronLeft size={14} />
+                    </button>
+                    {Array.from({ length: totalStudentPages }, (_, i) => i + 1)
+                      .filter(p => p === 1 || p === totalStudentPages || Math.abs(p - currentStudentPage) <= 1)
+                      .reduce((acc, p, idx, arr) => {
+                        if (idx > 0 && p - arr[idx - 1] > 1) acc.push('...')
+                        acc.push(p)
+                        return acc
+                      }, [])
+                      .map((p, idx) =>
+                        p === '...'
+                          ? <span key={`ellipsis-${idx}`} className="text-muted px-1" style={{ fontSize: 13 }}>…</span>
+                          : <button key={p} className={`btn btn-sm ${p === currentStudentPage ? 'btn-primary' : 'btn-outline-secondary'}`} style={{ minWidth: 32 }} onClick={() => setCurrentStudentPage(p)}>{p}</button>
+                      )
+                    }
+                    <button className="btn btn-sm btn-outline-secondary" disabled={currentStudentPage === totalStudentPages} onClick={() => setCurrentStudentPage(prev => Math.min(totalStudentPages, prev + 1))}>
+                      <ChevronRight size={14} />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

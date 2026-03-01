@@ -1251,37 +1251,36 @@ export default function MentoringStudent() {
           footer={<button className="btn btn-outline-secondary" onClick={() => setSelectedQuestion(null)}>Fechar</button>}
           size="modal-lg"
         >
-          <div className="mb-4">
-            <div className="d-flex align-items-center gap-2 mb-3">
-              <div className={`rounded-3 d-flex align-items-center justify-content-center`} style={{ width: 40, height: 40, background: selectedQuestion.respondida ? 'rgba(25,135,84,.08)' : 'rgba(255,193,7,.1)' }}>
-                <MessageSquare size={18} style={{ color: selectedQuestion.respondida ? '#198754' : '#ffc107' }} />
-              </div>
-              <div>
-                <span className="badge bg-primary">Pergunta</span>
-                <div className="text-muted" style={{ fontSize: 12 }}><Clock size={12} className="me-1" />Enviada em {fmtDate(selectedQuestion.createdAt)}</div>
+          {/* Student bubble — left */}
+          <div className="d-flex align-items-start gap-2 mb-4">
+            <div className="rounded-circle d-flex align-items-center justify-content-center bg-primary text-white flex-shrink-0 fw-semibold" style={{ width: 36, height: 36, fontSize: 13 }}>
+              {(firstName?.[0] || 'A').toUpperCase()}
+            </div>
+            <div style={{ maxWidth: '75%' }}>
+              <div className="rounded-3 p-3" style={{ background: '#f0f2f5' }}>
+                <div className="d-flex align-items-center gap-2 mb-1">
+                  <span className="fw-semibold text-primary" style={{ fontSize: 13 }}>{firstName}</span>
+                  <span className="text-muted" style={{ fontSize: 11 }}>{fmtDate(selectedQuestion.createdAt)}</span>
+                </div>
+                <p className="mb-0 fw-medium" style={{ fontSize: 14, whiteSpace: 'pre-wrap' }}>{selectedQuestion.pergunta}</p>
+                {selectedQuestion.detalhe && <p className="text-muted mb-0 mt-1" style={{ fontSize: 13, whiteSpace: 'pre-wrap' }}>{selectedQuestion.detalhe}</p>}
               </div>
             </div>
-            <div className="p-3 rounded-3 mb-3" style={{ background: '#f8f9fa' }}>
-              <h6 className="fw-semibold mb-2">Pergunta</h6>
-              <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.pergunta}</p>
-            </div>
-            {selectedQuestion.detalhe && (
-              <div className="p-3 rounded-3 mb-3" style={{ background: '#f8f9fa' }}>
-                <h6 className="fw-semibold mb-2">Detalhes adicionais</h6>
-                <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.detalhe}</p>
-              </div>
-            )}
           </div>
+
+          {/* Teacher bubble — right */}
           {selectedQuestion.respondida ? (
-            <div>
-              <div className="d-flex align-items-center gap-2 mb-3">
-                <CheckCircle size={18} className="text-success" />
-                <span className="fw-semibold text-success">Resposta do Professor</span>
-                {selectedQuestion.respondidaEm && <span className="text-muted ms-auto" style={{ fontSize: 12 }}>Respondida em {fmtDate(selectedQuestion.respondidaEm)}</span>}
+            <div className="d-flex align-items-start gap-2 justify-content-end">
+              <div style={{ maxWidth: '75%' }}>
+                <div className="rounded-3 p-3 text-white" style={{ background: '#0d6efd' }}>
+                  <div className="d-flex align-items-center gap-2 mb-1">
+                    <span className="fw-semibold" style={{ fontSize: 13 }}>Professor</span>
+                    <span style={{ fontSize: 11, opacity: 0.75 }}>{fmtDate(selectedQuestion.respondidaEm || selectedQuestion.updatedAt)}</span>
+                  </div>
+                  <p className="mb-0" style={{ fontSize: 14, whiteSpace: 'pre-wrap' }}>{selectedQuestion.resposta}</p>
+                </div>
               </div>
-              <div className="p-3 rounded-3" style={{ background: 'rgba(25,135,84,.06)', border: '1px solid rgba(25,135,84,.15)' }}>
-                <p className="mb-0" style={{ whiteSpace: 'pre-wrap' }}>{selectedQuestion.resposta}</p>
-              </div>
+              <div className="rounded-circle d-flex align-items-center justify-content-center bg-secondary text-white flex-shrink-0 fw-semibold" style={{ width: 36, height: 36, fontSize: 13 }}>P</div>
             </div>
           ) : (
             <div className="text-center py-4 text-muted">
