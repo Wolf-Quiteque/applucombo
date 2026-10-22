@@ -49,10 +49,8 @@
   box-sizing: border-box;
 }
 
-.app h1,
-.app h2,
-.app h3,
-.app p {
+/* :where() = sem especificidade, para as classes abaixo poderem dar margens */
+.app :where(h1, h2, h3, p) {
   margin: 0;
 }
 

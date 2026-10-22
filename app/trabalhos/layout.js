@@ -1,11 +1,17 @@
-import { Roboto } from 'next/font/google'
+import localFont from 'next/font/local'
 import s from './trabalhos.module.css'
 import { Toaster } from './_components/ui'
 
-const roboto = Roboto({
-  subsets: ['latin'],
-  weight: ['400', '500', '700'],
-  variable: '--font-roboto'
+// Roboto guardada no projecto (e não descarregada do Google durante o build):
+// o Google às vezes responde com links que partem o build na Vercel.
+const roboto = localFont({
+  src: [
+    { path: './fonts/roboto-latin-400-normal.woff2', weight: '400', style: 'normal' },
+    { path: './fonts/roboto-latin-500-normal.woff2', weight: '500', style: 'normal' },
+    { path: './fonts/roboto-latin-700-normal.woff2', weight: '700', style: 'normal' }
+  ],
+  variable: '--font-roboto',
+  display: 'swap'
 })
 
 export const metadata = {
