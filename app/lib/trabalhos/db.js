@@ -10,6 +10,7 @@
 //   comentarios: [{ _id, pagina, texto, criadoEm, actualizadoEm }],  // pagina 0 = geral
 //   novoParaProfessor,             // ainda não aberto pelo professor
 //   novoParaAluno,                 // correcção nova/alterada que o aluno ainda não viu
+//   rascunho: { pagina, texto, actualizadoEm },  // comentário a meio (guardado sozinho, só o professor vê)
 //   criadoEm, actualizadoEm, corrigidoEm
 // }
 
@@ -82,6 +83,10 @@ export function serializeTrabalho(t, role) {
     paginas: t.paginas || null,
     status: t.status,
     comentarios,
+    rascunho:
+      role === 'professor' && t.rascunho?.texto
+        ? { pagina: t.rascunho.pagina, texto: t.rascunho.texto, actualizadoEm: t.rascunho.actualizadoEm }
+        : null,
     novoParaProfessor: !!t.novoParaProfessor,
     novoParaAluno: !!t.novoParaAluno,
     criadoEm: t.criadoEm,

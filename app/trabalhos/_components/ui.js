@@ -208,7 +208,7 @@ export function StatusChips({ t, role }) {
         </span>
       )
     }
-  } else if (role === 'professor' && t.comentarios.length) {
+  } else if (role === 'professor' && (t.comentarios.length || t.rascunho)) {
     chips.push(
       <span key="s" className={cx(s.status, s.statusDraft)} title="Tem comentários, mas o aluno ainda não os vê.">
         <PenLine size={14} /> Em correcção

@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useEffect, useRef, useState } from 'react'
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import {
@@ -53,8 +53,17 @@ function Viewer() {
   const [notaFechada, setNotaFechada] = useState(false)
   const marked = useRef(false)
 
+  // Guardar automático do comentário que está a ser escrito (rascunho)
+  const [saveState, setSaveState] = useState('idle') // idle | pending | saving | saved | error
+  const [draftRestored, setDraftRestored] = useState(false)
+  const lastSaved = useRef({ texto: '', pagina: 0 })
+  const pendingDraft = useRef(null)
+  const saveTimer = useRef(null)
+  const inflight = useRef(null)
+
   const role = sessao?.role
   const professor = role === 'professor'
+  const composerPage = Math.min(lockedPage ?? currentPage, numPages || Infinity)
 
   useEffect(() => {
     if (!role) return
@@ -84,16 +93,77 @@ function Viewer() {
     }
   }, [t, professor, id])
 
-  // Avisar antes de sair com um comentário por adicionar
+  const saveDraftNow = useCallback(
+    (payload, { keepalive = false } = {}) => {
+      clearTimeout(saveTimer.current)
+      pendingDraft.current = null
+      setSaveState('saving')
+      const p = fetch(`/api/trabalhos/${id}/rascunho`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+        keepalive
+      })
+        .then(res => {
+          if (!res.ok) throw new Error()
+          lastSaved.current = payload
+          setSaveState(payload.texto.trim() ? 'saved' : 'idle')
+        })
+        .catch(() => setSaveState('error'))
+      inflight.current = p
+      return p
+    },
+    [id]
+  )
+
+  // Recuperar o rascunho guardado da última vez
   useEffect(() => {
-    if (!draft.trim()) return
+    if (!professor || !t || draftRestored) return
+    setDraftRestored(true)
+    if (t.rascunho?.texto) {
+      lastSaved.current = { texto: t.rascunho.texto, pagina: t.rascunho.pagina }
+      setDraft(t.rascunho.texto)
+      setLockedPage(t.rascunho.pagina)
+      setSaveState('restored')
+    }
+  }, [professor, t, draftRestored])
+
+  // Guardar 0,8 s depois de parar de escrever
+  useEffect(() => {
+    if (!professor || !draftRestored) return
+    const payload = { texto: draft, pagina: draft.trim() ? composerPage : 0 }
+    if (payload.texto === lastSaved.current.texto && payload.pagina === lastSaved.current.pagina) return
+    pendingDraft.current = payload
+    setSaveState('pending')
+    clearTimeout(saveTimer.current)
+    saveTimer.current = setTimeout(() => saveDraftNow(payload), 800)
+  }, [draft, composerPage, professor, draftRestored, saveDraftNow])
+
+  // Ao sair (voltar à lista, fechar o separador, mudar de app): guardar já
+  useEffect(() => {
+    const flush = () => {
+      if (pendingDraft.current) saveDraftNow(pendingDraft.current, { keepalive: true })
+    }
+    const onHidden = () => document.visibilityState === 'hidden' && flush()
+    window.addEventListener('pagehide', flush)
+    document.addEventListener('visibilitychange', onHidden)
+    return () => {
+      flush()
+      window.removeEventListener('pagehide', flush)
+      document.removeEventListener('visibilitychange', onHidden)
+    }
+  }, [saveDraftNow])
+
+  // Só avisa ao fechar se o último guardar falhou (ex.: sem internet)
+  useEffect(() => {
+    if (saveState !== 'error') return
     const onBefore = e => {
       e.preventDefault()
       e.returnValue = ''
     }
     window.addEventListener('beforeunload', onBefore)
     return () => window.removeEventListener('beforeunload', onBefore)
-  }, [draft])
+  }, [saveState])
 
   if (loading) return <Loading />
 
@@ -129,7 +199,6 @@ function Viewer() {
 
   if (!t) return <Loading label="A abrir o trabalho…" />
 
-  const composerPage = Math.min(lockedPage ?? currentPage, numPages || Infinity)
   const counts = {}
   for (const c of t.comentarios) counts[c.pagina] = (counts[c.pagina] || 0) + 1
 
@@ -163,25 +232,35 @@ function Viewer() {
 
   async function addComment() {
     const pagina = composerPage
+    const texto = draft
+    // Não deixar um guardar automático atrasado recriar o rascunho.
+    clearTimeout(saveTimer.current)
+    pendingDraft.current = null
+    await inflight.current
     try {
       const d = await api(`/api/trabalhos/${id}/comentarios`, {
         method: 'POST',
-        body: { pagina, texto: draft }
+        body: { pagina, texto, limparRascunho: true }
       })
+      lastSaved.current = { texto: '', pagina: 0 }
       setT(d.trabalho)
       setDraft('')
       setLockedPage(null)
+      setSaveState('idle')
       toast(`Comentário adicionado: ${labelPagina(pagina).toLowerCase()}.`)
+      return true
     } catch (e) {
       toast(e.message, { error: true })
+      saveDraftNow({ texto, pagina })
+      return false
     }
   }
 
-  async function updateComment(c, body) {
+  async function updateComment(c, body, { silent = false } = {}) {
     try {
       const d = await api(`/api/trabalhos/${id}/comentarios/${c.id}`, { method: 'PATCH', body })
       setT(d.trabalho)
-      toast('Comentário actualizado.')
+      if (!silent) toast('Comentário actualizado.')
       return true
     } catch (e) {
       toast(e.message, { error: true })
@@ -215,20 +294,24 @@ function Viewer() {
   }
 
   async function enviarCorreccao() {
-    const n = t.comentarios.length
+    const temRascunho = !!draft.trim()
+    const n = t.comentarios.length + (temRascunho ? 1 : 0)
     const partes = [
       n
         ? `${t.aluno.nome} vai passar a ver ${plural(n, 'comentário', 'comentários')}.`
         : `Ainda não escreveu comentários. ${t.aluno.nome} vai ver o trabalho como corrigido, sem comentários.`,
       'Pode continuar a editar depois — o aluno é avisado das alterações.'
     ]
-    if (draft.trim()) partes.unshift('Atenção: o comentário que está a escrever ainda não foi adicionado.')
+    if (temRascunho) {
+      partes.unshift(`O comentário que está a escrever (${labelPagina(composerPage).toLowerCase()}) também vai ser adicionado.`)
+    }
     const ok = await confirm({
       title: 'Enviar a correcção ao aluno?',
       text: partes.join(' '),
       confirmLabel: 'Enviar correcção'
     })
     if (!ok) return
+    if (temRascunho && !(await addComment())) return
     try {
       const d = await api(`/api/trabalhos/${id}`, { method: 'PATCH', body: { estado: 'corrigido' } })
       setT(d.trabalho)
@@ -259,7 +342,7 @@ function Viewer() {
 
   let nota = null
   if (professor && t.status !== 'corrigido') {
-    nota = 'Os seus comentários só ficam visíveis para o aluno depois de clicar em "Enviar correcção".'
+    nota = 'Tudo o que escreve fica guardado automaticamente. O aluno só vê os comentários depois de clicar em "Enviar correcção".'
   } else if (!professor && t.status === 'corrigido' && t.comentarios.length) {
     nota = 'Clique num comentário para ir à página. As páginas com comentários têm um contador azul.'
   }
@@ -343,6 +426,8 @@ function Viewer() {
           onUnlock={() => setLockedPage(null)}
           draft={draft}
           onDraft={onDraft}
+          saveState={saveState}
+          onRetrySave={() => saveDraftNow({ texto: draft, pagina: draft.trim() ? composerPage : 0 })}
           textareaRef={textareaRef}
           focusGroup={focusGroup}
           open={panelOpen}

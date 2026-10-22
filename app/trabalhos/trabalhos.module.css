@@ -967,6 +967,26 @@ textarea.fieldInput {
   align-items: center;
 }
 
+.draftRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 12px;
+  background: var(--draft-container);
+  color: var(--on-draft-container);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.draftRow:hover {
+  filter: brightness(0.97);
+}
+
 /* ---------- Alunos list ---------- */
 .rows {
   display: grid;

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Download, FileDown, FileText, Hourglass, MessageSquareText, Trash2 } from 'lucide-react'
+import { Download, FileDown, FileText, Hourglass, MessageSquareText, PenLine, Trash2 } from 'lucide-react'
 import s from '../trabalhos.module.css'
 import { downloadUrl } from './api'
 import {
@@ -106,6 +106,19 @@ export default function TrabalhoCard({ t, role, onOpen, onDelete }) {
               ? 'Ainda sem comentários.'
               : 'O professor ainda não corrigiu. Os comentários vão aparecer aqui.'}
           </div>
+        )}
+
+        {professor && t.rascunho && (
+          <button
+            className={s.draftRow}
+            onClick={() => onOpen(t.rascunho.pagina || undefined)}
+            title="Abrir e continuar a escrever"
+          >
+            <PenLine size={14} style={{ flexShrink: 0 }} />
+            <span className={s.previewText}>
+              Por terminar ({labelPaginaCurta(t.rascunho.pagina)}): “{t.rascunho.texto}”
+            </span>
+          </button>
         )}
       </div>
 

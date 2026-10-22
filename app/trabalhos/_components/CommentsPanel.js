@@ -2,7 +2,10 @@
 
 import { useEffect, useRef, useState } from 'react'
 import {
+  AlertCircle,
+  Check,
   ChevronLeft,
+  History,
   ChevronRight,
   Download,
   Hourglass,
@@ -46,17 +49,98 @@ function PageStepper({ value, max, onChange }) {
   )
 }
 
+function SaveStatus({ state, onRetry }) {
+  const box = { flex: 1, display: 'inline-flex', alignItems: 'center', gap: 4, minWidth: 0 }
+  if (state === 'pending' || state === 'saving') return <span style={box}>A guardar…</span>
+  if (state === 'saved') {
+    return (
+      <span style={box} title="Fica guardado mesmo que saia. Clique em Adicionar para o pôr na lista.">
+        <Check size={14} /> Guardado automaticamente
+      </span>
+    )
+  }
+  if (state === 'restored') {
+    return (
+      <span style={{ ...box, color: 'var(--primary)' }}>
+        <History size={14} /> Recuperámos o que estava a escrever
+      </span>
+    )
+  }
+  if (state === 'error') {
+    return (
+      <span style={{ ...box, color: 'var(--error)' }}>
+        <AlertCircle size={14} /> Não guardado.
+        <button className={cx(s.btn, s.btnText, s.btnSmall)} style={{ height: 24, padding: '0 6px' }} onClick={onRetry}>
+          Tentar outra vez
+        </button>
+      </span>
+    )
+  }
+  return (
+    <span style={box}>
+      <span className={s.hideMobile}>Guarda sozinho · Ctrl + Enter para adicionar</span>
+      <span className={s.onlyMobile}>Guarda sozinho enquanto escreve</span>
+    </span>
+  )
+}
+
 function Comment({ c, editable, numPages, onGoto, onUpdate, onDelete }) {
   const [editing, setEditing] = useState(false)
   const [texto, setTexto] = useState(c.texto)
   const [pagina, setPagina] = useState(c.pagina)
-  const [busy, setBusy] = useState(false)
+  const [estado, setEstado] = useState('') // '' | pending | saving | saved | error
+  const original = useRef(null)
+  const latest = useRef({ texto, pagina, c })
+  latest.current = { texto, pagina, c }
 
-  async function save() {
-    setBusy(true)
-    const ok = await onUpdate(c, { texto, pagina })
-    setBusy(false)
-    if (ok) setEditing(false)
+  // A mudança de página só se aplica ao concluir (senão o comentário saltava de grupo a meio da edição).
+  const mudou = () => {
+    const l = latest.current
+    return !!l.texto.trim() && (l.texto !== l.c.texto || l.pagina !== l.c.pagina)
+  }
+
+  // Guardar o texto sozinho 0,8 s depois de parar de escrever
+  useEffect(() => {
+    if (!editing || !texto.trim() || texto === c.texto) return
+    setEstado('pending')
+    const timer = setTimeout(async () => {
+      setEstado('saving')
+      const ok = await onUpdate(c, { texto, pagina: c.pagina }, { silent: true })
+      setEstado(ok ? 'saved' : 'error')
+    }, 800)
+    return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editing, texto, c.texto])
+
+  // Se sair da página a meio de uma edição, guarda o que lá está
+  useEffect(
+    () => () => {
+      if (mudou()) {
+        const l = latest.current
+        onUpdate(l.c, { texto: l.texto, pagina: l.pagina }, { silent: true })
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  )
+
+  async function concluir() {
+    if (mudou()) {
+      setEstado('saving')
+      const ok = await onUpdate(c, { texto, pagina }, { silent: true })
+      if (!ok) return setEstado('error')
+    }
+    setEditing(false)
+  }
+
+  async function cancelar() {
+    const o = original.current
+    if (o && (c.texto !== o.texto || c.pagina !== o.pagina)) {
+      await onUpdate(c, o, { silent: true })
+    }
+    setTexto(o?.texto ?? c.texto)
+    setPagina(o?.pagina ?? c.pagina)
+    setEditing(false)
   }
 
   if (editing) {
@@ -70,18 +154,33 @@ function Comment({ c, editable, numPages, onGoto, onUpdate, onDelete }) {
             className={s.composerText}
             value={texto}
             onChange={e => setTexto(e.target.value)}
-            autoFocus
+            ref={el => {
+              // Ao abrir a edição: foco com o cursor no fim do texto
+              if (el && !el.dataset.focado) {
+                el.dataset.focado = '1'
+                el.focus()
+                el.setSelectionRange(el.value.length, el.value.length)
+              }
+            }}
             onKeyDown={e => {
-              if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) save()
-              if (e.key === 'Escape') setEditing(false)
+              if ((e.key === 'Enter' && (e.metaKey || e.ctrlKey)) || e.key === 'Escape') concluir()
             }}
           />
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 8 }}>
-            <button className={cx(s.btn, s.btnText, s.btnSmall)} onClick={() => setEditing(false)} disabled={busy}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--on-surface-variant)' }}>
+            <span style={{ flex: 1 }}>
+              {estado === 'pending' || estado === 'saving'
+                ? 'A guardar…'
+                : estado === 'saved'
+                  ? 'Guardado automaticamente'
+                  : estado === 'error'
+                    ? 'Não guardado — verifique a internet'
+                    : 'As alterações guardam-se sozinhas'}
+            </span>
+            <button className={cx(s.btn, s.btnText, s.btnSmall)} onClick={cancelar} title="Voltar ao texto original">
               Cancelar
             </button>
-            <button className={cx(s.btn, s.btnFilled, s.btnSmall)} onClick={save} disabled={busy || !texto.trim()}>
-              Guardar
+            <button className={cx(s.btn, s.btnFilled, s.btnSmall)} onClick={concluir} disabled={!texto.trim()}>
+              Concluído
             </button>
           </div>
         </div>
@@ -113,8 +212,10 @@ function Comment({ c, editable, numPages, onGoto, onUpdate, onDelete }) {
             <button
               className={cx(s.iconBtn, s.iconBtnSmall)}
               onClick={() => {
+                original.current = { texto: c.texto, pagina: c.pagina }
                 setTexto(c.texto)
                 setPagina(c.pagina)
+                setEstado('')
                 setEditing(true)
               }}
               title="Editar"
@@ -148,6 +249,8 @@ export default function CommentsPanel({
   onUnlock,
   draft,
   onDraft,
+  saveState,
+  onRetrySave,
   textareaRef,
   focusGroup,
   open,
@@ -239,10 +342,7 @@ export default function CommentsPanel({
               }}
             />
             <div className={s.composerFoot}>
-              <span style={{ flex: 1 }} className={s.hideMobile}>
-                Ctrl + Enter para adicionar
-              </span>
-              <span style={{ flex: 1 }} className={s.onlyMobile} />
+              <SaveStatus state={saveState} onRetry={onRetrySave} />
               <button
                 className={cx(s.btn, s.btnFilled, s.btnSmall)}
                 onClick={send}

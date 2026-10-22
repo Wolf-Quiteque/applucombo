@@ -1,5 +1,6 @@
-// POST /api/trabalhos/:id/comentarios  { pagina, texto }   (professor)
+// POST /api/trabalhos/:id/comentarios  { pagina, texto, limparRascunho? }   (professor)
 // pagina 0 = comentário geral (não ligado a uma página).
+// limparRascunho: o comentário veio do rascunho guardado automaticamente.
 
 import { NextResponse } from 'next/server'
 import { ObjectId } from 'mongodb'
@@ -23,7 +24,8 @@ export async function POST(request, { params }) {
     const t = await findTrabalhoFor(session, id)
     if (!t) return jsonError('Trabalho não encontrado.', 404)
 
-    const parsed = parseComentario(await request.json().catch(() => ({})), t)
+    const body = await request.json().catch(() => ({}))
+    const parsed = parseComentario(body, t)
     if (parsed.error) return jsonError(parsed.error)
 
     const now = new Date()
@@ -33,10 +35,13 @@ export async function POST(request, { params }) {
     // Se já foi corrigido, o aluno é avisado de que há novidades.
     if (t.status === 'corrigido') $set.novoParaAluno = true
 
+    const update = { $push: { comentarios: comentario }, $set }
+    if (body?.limparRascunho) update.$unset = { rascunho: '' }
+
     const { trabalhos } = await getCollections()
     const updated = await trabalhos.findOneAndUpdate(
       { _id: t._id },
-      { $push: { comentarios: comentario }, $set },
+      update,
       { returnDocument: 'after' }
     )
 
