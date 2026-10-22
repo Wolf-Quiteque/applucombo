@@ -5,6 +5,8 @@ import Link from 'next/link'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import {
   ArrowLeft,
+  Check,
+  History,
   X,
   FileDown,
   Info,
@@ -15,7 +17,7 @@ import {
 } from 'lucide-react'
 import s from '../trabalhos.module.css'
 import { api, downloadUrl, fileUrl } from '../_components/api'
-import { fmtDataHora, labelPagina, plural } from '../_components/format'
+import { fmtData, fmtDataHora, labelPagina, plural, resumoCorreccoes } from '../_components/format'
 import { Loading, StatusChips, cx, useConfirm, useSession, useToast } from '../_components/ui'
 import PdfViewer from '../_components/PdfViewer'
 import CommentsPanel from '../_components/CommentsPanel'
@@ -35,6 +37,7 @@ function Viewer() {
   const search = useSearchParams()
   const router = useRouter()
   const initialPage = Math.max(1, parseInt(search.get('pagina') || '1', 10) || 1)
+  const versaoUrl = parseInt(search.get('versao') || '', 10) || null
   const { loading, sessao } = useSession()
   const toast = useToast()
   const [confirmEl, confirm] = useConfirm()
@@ -45,6 +48,8 @@ function Viewer() {
   const [erro, setErro] = useState('')
   const [numPages, setNumPages] = useState(0)
   const [currentPage, setCurrentPage] = useState(initialPage)
+  const [paginaInicial, setPaginaInicial] = useState(initialPage)
+  const [verVersao, setVerVersao] = useState(versaoUrl) // null = versão actual
   const [lockedPage, setLockedPage] = useState(null)
   const [draft, setDraft] = useState('')
   const [panelOpen, setPanelOpen] = useState(false)
@@ -63,7 +68,12 @@ function Viewer() {
 
   const role = sessao?.role
   const professor = role === 'professor'
-  const composerPage = Math.min(lockedPage ?? currentPage, numPages || Infinity)
+  // Versão do PDF que está aberta (pode ser uma anterior, para comparar).
+  const versaoVista = t ? Math.min(verVersao || t.versao, t.versao) : null
+  const aVerActual = !t || versaoVista === t.versao
+  // Os comentários novos são sempre na versão actual.
+  const paginasActual = aVerActual ? numPages : t?.paginas || 0
+  const composerPage = Math.min(lockedPage ?? currentPage, paginasActual || Infinity)
 
   useEffect(() => {
     if (!role) return
@@ -200,11 +210,15 @@ function Viewer() {
   if (!t) return <Loading label="A abrir o trabalho…" />
 
   const counts = {}
-  for (const c of t.comentarios) counts[c.pagina] = (counts[c.pagina] || 0) + 1
+  for (const c of t.comentarios) {
+    if (c.versao === versaoVista) counts[c.pagina] = (counts[c.pagina] || 0) + 1
+  }
+  const { pedidos, confirmados } = resumoCorreccoes(t)
 
   function onLoaded(n) {
     setNumPages(n)
-    if (!t.paginas) {
+    if (aVerActual && !t.paginas) {
+      setT(prev => ({ ...prev, paginas: n }))
       api(`/api/trabalhos/${id}`, { method: 'PATCH', body: { paginas: n } }).catch(() => {})
     }
   }
@@ -222,12 +236,35 @@ function Viewer() {
 
   function showComments(n) {
     setPanelOpen(true)
-    setFocusGroup({ page: n, at: Date.now() })
+    setFocusGroup({ page: n, versao: versaoVista, at: Date.now() })
   }
 
-  function goto(n) {
-    pdfRef.current?.scrollToPage(n)
+  // Abre outra versão do PDF (opcionalmente numa página).
+  function trocarVersao(v, pagina = 1) {
+    const actual = v >= t.versao
+    setVerVersao(actual ? null : v)
+    setPaginaInicial(pagina)
+    setCurrentPage(pagina)
+    setNumPages(0)
+    const qs = new URLSearchParams()
+    if (!actual) qs.set('versao', v)
+    if (pagina > 1) qs.set('pagina', pagina)
+    router.replace(`/trabalhos/${id}${qs.toString() ? `?${qs}` : ''}`, { scroll: false })
+  }
+
+  function goto(n, versao) {
+    if (versao && versao !== versaoVista) trocarVersao(versao, n || 1)
+    else if (n) pdfRef.current?.scrollToPage(n)
     if (isMobile()) setPanelOpen(false)
+  }
+
+  async function confirmarCorreccao(c, confirmado) {
+    try {
+      const d = await api(`/api/trabalhos/${id}/comentarios/${c.id}`, { method: 'PATCH', body: { confirmado } })
+      setT(d.trabalho)
+    } catch (e) {
+      toast(e.message, { error: true })
+    }
   }
 
   async function addComment() {
@@ -295,19 +332,28 @@ function Viewer() {
 
   async function enviarCorreccao() {
     const temRascunho = !!draft.trim()
-    const n = t.comentarios.length + (temRascunho ? 1 : 0)
-    const partes = [
-      n
-        ? `${t.aluno.nome} vai passar a ver ${plural(n, 'comentário', 'comentários')}.`
-        : `Ainda não escreveu comentários. ${t.aluno.nome} vai ver o trabalho como corrigido, sem comentários.`,
-      'Pode continuar a editar depois — o aluno é avisado das alterações.'
-    ]
+    const n = t.comentarios.filter(c => c.versao === t.versao).length + (temRascunho ? 1 : 0)
+    const partes = []
+    if (pedidos > 0) {
+      partes.push(
+        `Confirmou ${confirmados} de ${pedidos} correcções pedidas.` +
+          (confirmados < pedidos ? ' As restantes ficam marcadas "por corrigir" para o aluno.' : '')
+      )
+      partes.push(n ? `Há ${plural(n, 'comentário novo', 'comentários novos')} nesta versão.` : '')
+    } else {
+      partes.push(
+        n
+          ? `${t.aluno.nome} vai passar a ver ${plural(n, 'comentário', 'comentários')}.`
+          : `Ainda não escreveu comentários. ${t.aluno.nome} vai ver o trabalho como corrigido, sem comentários.`
+      )
+    }
+    partes.push('Pode continuar a editar depois — o aluno é avisado das alterações.')
     if (temRascunho) {
       partes.unshift(`O comentário que está a escrever (${labelPagina(composerPage).toLowerCase()}) também vai ser adicionado.`)
     }
     const ok = await confirm({
       title: 'Enviar a correcção ao aluno?',
-      text: partes.join(' '),
+      text: partes.filter(Boolean).join(' '),
       confirmLabel: 'Enviar correcção'
     })
     if (!ok) return
@@ -341,8 +387,12 @@ function Viewer() {
   }
 
   let nota = null
-  if (professor && t.status !== 'corrigido') {
+  if (professor && t.status !== 'corrigido' && pedidos > 0) {
+    nota = `Versão ${t.versao}: no painel, confirme (✓) cada correcção que o aluno fez e comente o que ainda faltar. Tudo fica guardado automaticamente.`
+  } else if (professor && t.status !== 'corrigido') {
     nota = 'Tudo o que escreve fica guardado automaticamente. O aluno só vê os comentários depois de clicar em "Enviar correcção".'
+  } else if (!professor && t.status !== 'corrigido' && t.versao > 1) {
+    nota = `O professor ainda não reviu a versão ${t.versao}. Os comentários da versão anterior continuam aqui.`
   } else if (!professor && t.status === 'corrigido' && t.comentarios.length) {
     nota = 'Clique num comentário para ir à página. As páginas com comentários têm um contador azul.'
   }
@@ -358,14 +408,20 @@ function Viewer() {
             {t.titulo}
           </h1>
           <div className={s.topSub}>
-            {professor ? `${t.aluno.nome} · ` : ''}Enviado {fmtDataHora(t.criadoEm)}
+            {professor ? `${t.aluno.nome} · ` : ''}
+            {t.versao > 1 ? `Versão ${t.versao} enviada ${fmtDataHora(t.versaoEm)}` : `Enviado ${fmtDataHora(t.criadoEm)}`}
           </div>
         </div>
         <div className={cx(s.tTags, s.hideMobile)} style={{ marginTop: 0 }}>
           <StatusChips t={t} role={role} />
         </div>
         <div className={s.viewerActions}>
-          <a className={s.iconBtn} href={downloadUrl(id)} title="Descarregar o PDF" aria-label="Descarregar o PDF">
+          <a
+            className={s.iconBtn}
+            href={downloadUrl(id, aVerActual ? null : versaoVista)}
+            title={`Descarregar o PDF (versão ${versaoVista})`}
+            aria-label="Descarregar o PDF"
+          >
             <FileDown size={20} />
           </a>
           {professor &&
@@ -401,15 +457,44 @@ function Viewer() {
         </div>
       )}
 
+      {t.versoes.length > 1 && (
+        <div className={s.versionBar}>
+          <History size={16} style={{ flexShrink: 0 }} />
+          <span className={s.hideMobile}>Versões:</span>
+          <div className={s.chips} role="radiogroup" aria-label="Escolher a versão do PDF">
+            {t.versoes.map(v => (
+              <button
+                key={v.numero}
+                role="radio"
+                aria-checked={v.numero === versaoVista}
+                className={cx(s.chip, v.numero === versaoVista && s.chipSelected)}
+                onClick={() => v.numero !== versaoVista && trocarVersao(v.numero)}
+                title={`Enviada ${fmtDataHora(v.enviadoEm)} · ${v.nome}`}
+              >
+                {v.numero === versaoVista && <Check size={14} />}
+                Versão {v.numero}
+                {v.numero === t.versao ? ' (actual)' : ''}
+              </button>
+            ))}
+          </div>
+          {!aVerActual && (
+            <span className={s.versionHint}>
+              A ver a versão {versaoVista}, de {fmtData(t.versoes.find(v => v.numero === versaoVista)?.enviadoEm)}.
+              As páginas dos comentários desta versão referem-se a este PDF.
+            </span>
+          )}
+        </div>
+      )}
+
       <div className={s.viewerBody}>
         <PdfViewer
           ref={pdfRef}
-          url={fileUrl(id)}
-          downloadHref={downloadUrl(id)}
-          initialPage={initialPage}
-          targetPage={professor ? composerPage : null}
+          url={fileUrl(id, aVerActual ? null : versaoVista)}
+          downloadHref={downloadUrl(id, aVerActual ? null : versaoVista)}
+          initialPage={paginaInicial}
+          targetPage={professor && aVerActual ? composerPage : null}
           counts={counts}
-          canComment={professor}
+          canComment={professor && aVerActual}
           onPageChange={setCurrentPage}
           onLoaded={onLoaded}
           onCommentPage={commentOnPage}
@@ -418,8 +503,11 @@ function Viewer() {
         <CommentsPanel
           t={t}
           role={role}
-          numPages={numPages}
+          numPages={paginasActual}
           currentPage={currentPage}
+          versaoVista={versaoVista}
+          onVerActual={() => trocarVersao(t.versao)}
+          onConfirm={confirmarCorreccao}
           composerPage={composerPage}
           locked={lockedPage != null}
           onComposerPage={setLockedPage}
@@ -443,7 +531,7 @@ function Viewer() {
         <button className={cx(s.btn, s.btnTonal)} onClick={() => setPanelOpen(true)}>
           <MessageSquareText size={18} /> Comentários ({t.comentarios.length})
         </button>
-        {professor && (
+        {professor && aVerActual && (
           <button className={cx(s.btn, s.btnFilled)} onClick={() => commentOnPage(currentPage)}>
             <MessageSquarePlus size={18} /> Comentar pág. {currentPage}
           </button>

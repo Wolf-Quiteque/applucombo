@@ -25,7 +25,10 @@ import UploadDialog from './_components/UploadDialog'
 const PASSOS = [
   { title: 'Envie o PDF', text: 'Clique em "Enviar trabalho" e escolha o ficheiro.' },
   { title: 'O professor corrige', text: 'Lê o PDF e escreve comentários em cada página.' },
-  { title: 'Veja os comentários', text: 'Aparecem aqui, por página. Pode abrir o PDF ou descarregá-los.' }
+  {
+    title: 'Corrija e envie de novo',
+    text: 'Veja os comentários por página, corrija e envie a versão nova. O professor confirma cada correcção.'
+  }
 ]
 
 export default function AlunoPage() {
@@ -46,6 +49,7 @@ function Dashboard({ sessao, logout }) {
   const [trabalhos, setTrabalhos] = useState(null)
   const [erro, setErro] = useState('')
   const [uploadOpen, setUploadOpen] = useState(false)
+  const [versaoDe, setVersaoDe] = useState(null) // trabalho a receber uma versão corrigida
 
   const load = useCallback(async () => {
     try {
@@ -69,8 +73,11 @@ function Dashboard({ sessao, logout }) {
   const novos = trabalhos?.filter(t => t.novoParaAluno).length || 0
   const passo = !trabalhos?.length ? 0 : trabalhos.some(t => t.status === 'corrigido') ? 2 : 1
 
-  function abrir(t, pagina) {
-    router.push(`/trabalhos/${t.id}${pagina ? `?pagina=${pagina}` : ''}`)
+  function abrir(t, pagina, versao) {
+    const qs = new URLSearchParams()
+    if (pagina) qs.set('pagina', pagina)
+    if (versao) qs.set('versao', versao)
+    router.push(`/trabalhos/${t.id}${qs.toString() ? `?${qs}` : ''}`)
   }
 
   async function apagar(t) {
@@ -92,6 +99,12 @@ function Dashboard({ sessao, logout }) {
   }
 
   function enviado(t) {
+    if (versaoDe) {
+      setVersaoDe(null)
+      setTrabalhos(list => list.map(x => (x.id === t.id ? t : x)))
+      toast(`Versão ${t.versao} enviada! O professor vai confirmar as correcções.`, { duration: 6000 })
+      return
+    }
     setUploadOpen(false)
     setTrabalhos(list => [t, ...(list || [])])
     toast('Trabalho enviado! Os comentários do professor vão aparecer aqui.', { duration: 6000 })
@@ -159,8 +172,9 @@ function Dashboard({ sessao, logout }) {
                 key={t.id}
                 t={t}
                 role="aluno"
-                onOpen={pagina => abrir(t, pagina)}
+                onOpen={(pagina, versao) => abrir(t, pagina, versao)}
                 onDelete={() => apagar(t)}
+                onNovaVersao={() => setVersaoDe(t)}
               />
             ))}
           </div>
@@ -171,7 +185,15 @@ function Dashboard({ sessao, logout }) {
         <Plus size={22} /> Enviar trabalho
       </button>
 
-      <UploadDialog open={uploadOpen} onClose={() => setUploadOpen(false)} onUploaded={enviado} />
+      <UploadDialog
+        open={uploadOpen || !!versaoDe}
+        trabalho={versaoDe}
+        onClose={() => {
+          setUploadOpen(false)
+          setVersaoDe(null)
+        }}
+        onUploaded={enviado}
+      />
       {confirmEl}
     </>
   )

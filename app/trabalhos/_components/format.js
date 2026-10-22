@@ -64,24 +64,37 @@ export function agruparComentarios(comentarios = []) {
     .map(([pagina, itens]) => ({ pagina, itens }))
 }
 
+// Correcções pedidas em versões anteriores e quantas o professor já confirmou.
+export function resumoCorreccoes(t) {
+  const pedidos = t.comentarios.filter(c => c.versao < t.versao)
+  return { pedidos: pedidos.length, confirmados: pedidos.filter(c => c.confirmado).length }
+}
+
 export function comentariosEmTexto(t) {
   const linhas = [
     `Trabalho: ${t.titulo}`,
     `Aluno: ${t.aluno?.nome || ''}${t.aluno?.curso ? ` (${t.aluno.curso})` : ''}`,
-    `Ficheiro: ${t.ficheiro?.nome || ''}`,
-    `Enviado em: ${fmtDataHora(t.criadoEm)}`
+    `Versão actual: ${t.versao} (${t.ficheiro?.nome || ''}), enviada em ${fmtDataHora(t.versaoEm)}`
   ]
   if (t.corrigidoEm) linhas.push(`Corrigido em: ${fmtDataHora(t.corrigidoEm)}`)
   linhas.push('', `Comentários do professor (${t.comentarios.length})`, '='.repeat(40), '')
 
   if (!t.comentarios.length) linhas.push('Sem comentários.')
-  for (const g of agruparComentarios(t.comentarios)) {
-    linhas.push(`${labelPagina(g.pagina)}:`)
-    for (const c of g.itens) {
-      const texto = c.texto.split('\n').join('\n  ')
-      linhas.push(`- ${texto}`)
+  for (let v = 1; v <= t.versao; v++) {
+    const daVersao = t.comentarios.filter(c => c.versao === v)
+    if (!daVersao.length) continue
+    if (t.versao > 1) {
+      const anterior = v < t.versao
+      linhas.push(`## Versão ${v}${anterior ? ' (as páginas referem-se a esta versão)' : ' (actual)'}`, '')
     }
-    linhas.push('')
+    for (const g of agruparComentarios(daVersao)) {
+      linhas.push(`${labelPagina(g.pagina)}:`)
+      for (const c of g.itens) {
+        const estado = c.versao < t.versao ? (c.confirmado ? '[✓ corrigido] ' : '[por corrigir] ') : ''
+        linhas.push(`- ${estado}${c.texto.split('\n').join('\n  ')}`)
+      }
+      linhas.push('')
+    }
   }
   return linhas.join('\r\n')
 }
@@ -89,7 +102,7 @@ export function comentariosEmTexto(t) {
 function slug(text) {
   return (text || 'trabalho')
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .replace(/[^a-zA-Z0-9]+/g, '-')
     .replace(/^-|-$/g, '')
     .toLowerCase()

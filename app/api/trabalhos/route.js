@@ -1,9 +1,10 @@
 // GET  /api/trabalhos
 //   aluno:     os seus trabalhos
 //   professor: todos, com filtros ?q=texto&estado=pendente|corrigido&alunoId=...
-// POST /api/trabalhos  (aluno)
+// POST /api/trabalhos  (aluno) — novo trabalho
 //   JSON      { key, titulo, mensagem, nomeFicheiro }  depois do envio directo para o R2
 //   multipart { file, titulo, mensagem }                alternativa pelo servidor
+//   (versões corrigidas: POST /api/trabalhos/:id/versoes)
 
 import { NextResponse } from 'next/server'
 import { requireSession, jsonError } from '@/app/lib/trabalhos/auth'
@@ -13,14 +14,7 @@ import {
   escapeRegex,
   serializeTrabalho
 } from '@/app/lib/trabalhos/db'
-import {
-  MAX_PDF_BYTES,
-  newPdfKey,
-  putPdf,
-  headObject,
-  startsWithPdfSignature,
-  deleteObject
-} from '@/app/lib/trabalhos/storage'
+import { receberPdf, limpar } from '@/app/lib/trabalhos/upload'
 
 export const runtime = 'nodejs'
 export const dynamic = 'force-dynamic'
@@ -56,10 +50,11 @@ export async function GET(request) {
     if (estado === 'pendente' || estado === 'corrigido') filter.status = estado
 
     const [docs, pendente, corrigido] = await Promise.all([
-      // Por corrigir: os mais antigos primeiro (fila). Restantes: mais recentes primeiro.
+      // Por corrigir: fila pela data da versão actual (mais antiga primeiro).
+      // Restantes: mais recentes primeiro.
       trabalhos
         .find(filter)
-        .sort(estado === 'pendente' ? { criadoEm: 1 } : { criadoEm: -1 })
+        .sort(estado === 'pendente' ? { versaoEm: 1, criadoEm: 1 } : { criadoEm: -1 })
         .limit(300)
         .toArray(),
       trabalhos.countDocuments({ ...base, status: 'pendente' }),
@@ -76,10 +71,6 @@ export async function GET(request) {
   }
 }
 
-function cleanText(value, max) {
-  return (value || '').toString().trim().slice(0, max)
-}
-
 function tituloFromFilename(name) {
   return (name || 'Trabalho').replace(/\.pdf$/i, '').replace(/[_-]+/g, ' ').trim() || 'Trabalho'
 }
@@ -94,63 +85,21 @@ export async function POST(request) {
     const aluno = await alunos.findOne({ _id: alunoId })
     if (!aluno) return jsonError('Conta de aluno não encontrada.', 401)
 
-    let key, nomeFicheiro, tamanho, titulo, mensagem
-    const contentType = request.headers.get('content-type') || ''
+    const pdf = await receberPdf(request, session)
+    if (pdf.error) return jsonError(pdf.error)
 
-    if (contentType.includes('multipart/form-data')) {
-      // Envio pelo servidor (usado quando o envio directo falha).
-      const form = await request.formData()
-      const file = form.get('file')
-      if (!file || typeof file === 'string') return jsonError('Escolha um ficheiro PDF.')
-      if (file.size > MAX_PDF_BYTES) return jsonError('O PDF é maior que 50 MB.')
-
-      const buffer = Buffer.from(await file.arrayBuffer())
-      if (!buffer.subarray(0, 5).toString('latin1').startsWith('%PDF')) {
-        return jsonError('O ficheiro não é um PDF válido.')
-      }
-
-      key = newPdfKey(session.id)
-      await putPdf(key, buffer)
-      nomeFicheiro = file.name
-      tamanho = file.size
-      titulo = form.get('titulo')
-      mensagem = form.get('mensagem')
-    } else {
-      // O browser já enviou o PDF para o R2; confirmamos que existe e é PDF.
-      const body = await request.json().catch(() => ({}))
-      key = (body?.key || '').toString()
-      if (!key.startsWith(`trabalhos/${session.id}/`) || !key.endsWith('.pdf')) {
-        return jsonError('Envio inválido.')
-      }
-
-      const head = await headObject(key)
-      if (!head) return jsonError('O ficheiro não chegou ao servidor. Tente enviar outra vez.')
-      if (head.ContentLength > MAX_PDF_BYTES) {
-        await deleteObject(key)
-        return jsonError('O PDF é maior que 50 MB.')
-      }
-      if (!(await startsWithPdfSignature(key))) {
-        await deleteObject(key)
-        return jsonError('O ficheiro não é um PDF válido.')
-      }
-
-      nomeFicheiro = body?.nomeFicheiro
-      tamanho = head.ContentLength
-      titulo = body?.titulo
-      mensagem = body?.mensagem
-    }
-
-    nomeFicheiro = cleanText(nomeFicheiro, 200) || 'trabalho.pdf'
     const now = new Date()
     const doc = {
       alunoId,
       alunoNome: aluno.nomeCompleto || session.nome,
       alunoTelefone: aluno.telefone || '',
       alunoCurso: aluno.curso || '',
-      titulo: cleanText(titulo, 200) || tituloFromFilename(nomeFicheiro),
-      mensagem: cleanText(mensagem, 2000),
-      ficheiro: { key, nome: nomeFicheiro, tamanho },
+      titulo: limpar(pdf.campos.titulo, 200) || tituloFromFilename(pdf.nomeFicheiro),
+      mensagem: limpar(pdf.campos.mensagem, 2000),
+      ficheiro: { key: pdf.key, nome: pdf.nomeFicheiro, tamanho: pdf.tamanho },
       paginas: null,
+      versao: 1,
+      versaoEm: now,
       status: 'pendente',
       comentarios: [],
       novoParaProfessor: true,

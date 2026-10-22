@@ -34,9 +34,10 @@ function xhr({ method, url, body, headers = {}, onProgress }) {
   })
 }
 
+// Envia um PDF para `endpoint` (novo trabalho ou versão corrigida):
 // 1) tenta enviar directo para o R2 (rápido, sem limite de tamanho)
 // 2) se falhar, envia pelo servidor
-export async function uploadTrabalho(file, { titulo, mensagem }, onProgress) {
+async function uploadPdf(file, endpoint, fields, onProgress) {
   const { key, url } = await api('/api/trabalhos/upload', {
     method: 'POST',
     body: { tamanho: file.size }
@@ -51,9 +52,9 @@ export async function uploadTrabalho(file, { titulo, mensagem }, onProgress) {
   })
 
   if (direct.status >= 200 && direct.status < 300) {
-    const data = await api('/api/trabalhos', {
+    const data = await api(endpoint, {
       method: 'POST',
-      body: { key, titulo, mensagem, nomeFicheiro: file.name }
+      body: { ...fields, key, nomeFicheiro: file.name }
     })
     onProgress?.(1)
     return data.trabalho
@@ -62,9 +63,8 @@ export async function uploadTrabalho(file, { titulo, mensagem }, onProgress) {
   onProgress?.(0)
   const form = new FormData()
   form.append('file', file)
-  form.append('titulo', titulo || '')
-  form.append('mensagem', mensagem || '')
-  const res = await xhr({ method: 'POST', url: '/api/trabalhos', body: form, onProgress })
+  Object.entries(fields).forEach(([k, v]) => form.append(k, v || ''))
+  const res = await xhr({ method: 'POST', url: endpoint, body: form, onProgress })
 
   let data = null
   try {
@@ -74,8 +74,16 @@ export async function uploadTrabalho(file, { titulo, mensagem }, onProgress) {
   if (res.status === 413) {
     throw new Error('O ficheiro é demasiado grande para ser enviado agora. Tente um PDF mais pequeno.')
   }
-  throw new Error(data?.error || 'Não foi possível enviar o trabalho. Verifique a internet e tente outra vez.')
+  throw new Error(data?.error || 'Não foi possível enviar o ficheiro. Verifique a internet e tente outra vez.')
 }
 
-export const fileUrl = id => `/api/trabalhos/${id}/ficheiro`
-export const downloadUrl = id => `/api/trabalhos/${id}/ficheiro?download=1`
+export const uploadTrabalho = (file, { titulo, mensagem }, onProgress) =>
+  uploadPdf(file, '/api/trabalhos', { titulo, mensagem }, onProgress)
+
+export const uploadVersao = (id, file, { mensagem }, onProgress) =>
+  uploadPdf(file, `/api/trabalhos/${id}/versoes`, { mensagem }, onProgress)
+
+const versaoQs = versao => (versao ? `versao=${versao}` : '')
+export const fileUrl = (id, versao) => `/api/trabalhos/${id}/ficheiro${versao ? `?${versaoQs(versao)}` : ''}`
+export const downloadUrl = (id, versao) =>
+  `/api/trabalhos/${id}/ficheiro?download=1${versao ? `&${versaoQs(versao)}` : ''}`

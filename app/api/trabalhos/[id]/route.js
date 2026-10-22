@@ -3,12 +3,17 @@
 //   { accao: 'aberto' }                          marca como visto (aluno ou professor)
 //   { paginas: 12 }                              guarda o nº de páginas
 //   { estado: 'corrigido' | 'pendente' }         só professor
-// DELETE /api/trabalhos/:id
+// DELETE /api/trabalhos/:id   (apaga também os PDFs de todas as versões)
 //   aluno: só enquanto o professor ainda não comentou; professor: sempre
 
 import { NextResponse } from 'next/server'
 import { requireSession, jsonError } from '@/app/lib/trabalhos/auth'
-import { getCollections, findTrabalhoFor, serializeTrabalho } from '@/app/lib/trabalhos/db'
+import {
+  getCollections,
+  findTrabalhoFor,
+  serializeTrabalho,
+  todosOsFicheiros
+} from '@/app/lib/trabalhos/db'
 import { deleteObject } from '@/app/lib/trabalhos/storage'
 
 export const runtime = 'nodejs'
@@ -90,13 +95,13 @@ export async function DELETE(request, { params }) {
     const t = await findTrabalhoFor(session, id)
     if (!t) return jsonError(NOT_FOUND, 404)
 
-    if (session.role === 'aluno' && (t.status !== 'pendente' || t.comentarios?.length)) {
+    if (session.role === 'aluno' && (t.status !== 'pendente' || t.comentarios?.length || (t.versao || 1) > 1)) {
       return jsonError('O professor já começou a corrigir este trabalho. Já não o pode apagar.', 409)
     }
 
     const { trabalhos } = await getCollections()
     await trabalhos.deleteOne({ _id: t._id })
-    if (t.ficheiro?.key) await deleteObject(t.ficheiro.key)
+    for (const f of todosOsFicheiros(t)) await deleteObject(f.key)
 
     return NextResponse.json({ ok: true })
   } catch (err) {

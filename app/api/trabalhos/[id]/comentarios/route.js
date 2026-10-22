@@ -29,7 +29,13 @@ export async function POST(request, { params }) {
     if (parsed.error) return jsonError(parsed.error)
 
     const now = new Date()
-    const comentario = { _id: new ObjectId(), ...parsed.value, criadoEm: now, actualizadoEm: now }
+    const comentario = {
+      _id: new ObjectId(),
+      versao: t.versao || 1, // os comentários novos ficam sempre na versão actual
+      ...parsed.value,
+      criadoEm: now,
+      actualizadoEm: now
+    }
 
     const $set = { actualizadoEm: now }
     // Se já foi corrigido, o aluno é avisado de que há novidades.

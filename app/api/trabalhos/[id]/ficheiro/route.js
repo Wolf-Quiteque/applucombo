@@ -1,10 +1,11 @@
 // GET /api/trabalhos/:id/ficheiro
 //   Sem parâmetros: devolve o PDF (com suporte a Range) para a pré-visualização.
 //   ?download=1:    redirecciona para um link temporário de download.
+//   ?versao=N:      uma versão anterior (por omissão, a actual).
 
 import { NextResponse } from 'next/server'
 import { requireSession, jsonError } from '@/app/lib/trabalhos/auth'
-import { findTrabalhoFor } from '@/app/lib/trabalhos/db'
+import { findTrabalhoFor, ficheiroDaVersao } from '@/app/lib/trabalhos/db'
 import { getObject, presignDownload } from '@/app/lib/trabalhos/storage'
 
 export const runtime = 'nodejs'
@@ -15,18 +16,19 @@ export async function GET(request, { params }) {
   if (error) return error
 
   const { id } = await params
-  const t = await findTrabalhoFor(session, id)
-  if (!t?.ficheiro?.key) return jsonError('Trabalho não encontrado.', 404)
-
   const { searchParams } = new URL(request.url)
+  const t = await findTrabalhoFor(session, id)
+  const ficheiro = t && ficheiroDaVersao(t, Number(searchParams.get('versao')) || null)
+  if (!ficheiro?.key) return jsonError('Ficheiro não encontrado.', 404)
+
   if (searchParams.get('download')) {
-    const url = await presignDownload(t.ficheiro.key, t.ficheiro.nome || 'trabalho.pdf')
+    const url = await presignDownload(ficheiro.key, ficheiro.nome || 'trabalho.pdf')
     return NextResponse.redirect(url, 302)
   }
 
   const range = request.headers.get('range') || undefined
   try {
-    const obj = await getObject(t.ficheiro.key, range)
+    const obj = await getObject(ficheiro.key, range)
     const headers = {
       'Content-Type': 'application/pdf',
       'Accept-Ranges': 'bytes',

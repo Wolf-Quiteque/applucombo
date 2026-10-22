@@ -33,7 +33,10 @@ import TrabalhoCard from '../_components/TrabalhoCard'
 
 const PASSOS = [
   { title: 'Escolha um trabalho', text: 'Os que estão "Por corrigir" aparecem primeiro, do mais antigo para o mais recente.' },
-  { title: 'Abra e comente', text: 'O PDF abre ao lado dos comentários. Cada comentário fica ligado a uma página.' },
+  {
+    title: 'Abra e comente',
+    text: 'Cada comentário fica ligado a uma página. Numa versão nova, confirme cada correcção pedida.'
+  },
   { title: 'Envie a correcção', text: 'O aluno passa a ver os comentários na conta dele.' }
 ]
 
@@ -136,11 +139,14 @@ function Painel({ logout }) {
     return () => document.removeEventListener('visibilitychange', onVisible)
   }, [vista, loadTrabalhos])
 
-  function abrir(t, pagina) {
+  function abrir(t, pagina, versao) {
     try {
       sessionStorage.setItem('trabalhos:voltar', `${pathname}?${params.toString()}`)
     } catch {}
-    router.push(`/trabalhos/${t.id}${pagina ? `?pagina=${pagina}` : ''}`)
+    const qs = new URLSearchParams()
+    if (pagina) qs.set('pagina', pagina)
+    if (versao) qs.set('versao', versao)
+    router.push(`/trabalhos/${t.id}${qs.toString() ? `?${qs}` : ''}`)
   }
 
   async function apagar(t) {
@@ -303,7 +309,7 @@ function Painel({ logout }) {
                     key={t.id}
                     t={t}
                     role="professor"
-                    onOpen={pagina => abrir(t, pagina)}
+                    onOpen={(pagina, versao) => abrir(t, pagina, versao)}
                     onDelete={() => apagar(t)}
                   />
                 ))}

@@ -192,6 +192,17 @@ export function UserMenu({ nome, onLogout }) {
 }
 
 /* ---------- Status ---------- */
+// O professor já começou a rever a versão actual? (comentários novos, rascunho ou confirmações)
+function emRevisao(t) {
+  const desde = new Date(t.versaoEm).getTime()
+  return (
+    !!t.rascunho ||
+    t.comentarios.some(
+      c => c.versao === t.versao || (c.confirmadoEm && new Date(c.confirmadoEm).getTime() >= desde)
+    )
+  )
+}
+
 export function StatusChips({ t, role }) {
   const chips = []
   if (t.status === 'corrigido') {
@@ -208,9 +219,9 @@ export function StatusChips({ t, role }) {
         </span>
       )
     }
-  } else if (role === 'professor' && (t.comentarios.length || t.rascunho)) {
+  } else if (role === 'professor' && emRevisao(t)) {
     chips.push(
-      <span key="s" className={cx(s.status, s.statusDraft)} title="Tem comentários, mas o aluno ainda não os vê.">
+      <span key="s" className={cx(s.status, s.statusDraft)} title="Já começou, mas o aluno ainda não vê.">
         <PenLine size={14} /> Em correcção
       </span>
     )
@@ -224,7 +235,14 @@ export function StatusChips({ t, role }) {
   if (role === 'professor' && t.novoParaProfessor) {
     chips.push(
       <span key="n" className={cx(s.status, s.statusNew)}>
-        Novo
+        {t.versao > 1 ? 'Nova versão' : 'Novo'}
+      </span>
+    )
+  }
+  if (t.versao > 1) {
+    chips.push(
+      <span key="v" className={cx(s.status, s.statusNeutral)} title={`O aluno já enviou ${t.versao} versões`}>
+        Versão {t.versao}
       </span>
     )
   }

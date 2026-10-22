@@ -145,7 +145,10 @@ export default function PdfViewer({
     let task = null
     setLoad({ status: 'loading', progress: 0 })
     setDoc(null)
-    initialDone.current = false
+    setCurrent(1)
+    // Só saltar para a página inicial quando ESTE documento estiver pronto
+    // (senão o salto acontecia ainda no PDF anterior).
+    initialDone.current = true
 
     loadPdfjs()
       .then(lib => {
@@ -172,6 +175,7 @@ export default function PdfViewer({
         setRatio(vp.height / vp.width)
         setDoc(pdf)
         setNumPages(pdf.numPages)
+        initialDone.current = false
         setLoad({ status: 'ready' })
         callbacks.current.onLoaded?.(pdf.numPages)
       })

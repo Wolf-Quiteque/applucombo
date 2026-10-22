@@ -1,7 +1,17 @@
 'use client'
 
 import { useState } from 'react'
-import { Download, FileDown, FileText, Hourglass, MessageSquareText, PenLine, Trash2 } from 'lucide-react'
+import {
+  Check,
+  Download,
+  FileDown,
+  FileText,
+  FileUp,
+  Hourglass,
+  MessageSquareText,
+  PenLine,
+  Trash2
+} from 'lucide-react'
 import s from '../trabalhos.module.css'
 import { downloadUrl } from './api'
 import {
@@ -9,23 +19,28 @@ import {
   fmtTamanho,
   labelPaginaCurta,
   plural,
+  resumoCorreccoes,
   tempoRelativo
 } from './format'
 import { StatusChips, cx } from './ui'
 
 const PREVIEW = 3
 
-export default function TrabalhoCard({ t, role, onOpen, onDelete }) {
+// onOpen(pagina?, versao?) abre o PDF; onNovaVersao (aluno) abre o envio da versão corrigida.
+export default function TrabalhoCard({ t, role, onOpen, onDelete, onNovaVersao }) {
   const professor = role === 'professor'
   const [expandido, setExpandido] = useState(false)
   const comentarios = t.comentarios
   const visiveis = expandido ? comentarios : comentarios.slice(0, PREVIEW)
   const escondidos = comentarios.length - PREVIEW
   const destaque = professor ? t.novoParaProfessor : t.novoParaAluno
-  const podeApagar = professor || t.status === 'pendente'
+  const podeApagar = professor || (t.status === 'pendente' && t.versao === 1)
+  const { pedidos, confirmados } = resumoCorreccoes(t)
 
   const meta = [
-    `Enviado ${tempoRelativo(t.criadoEm)}`,
+    t.versao > 1
+      ? `Versão ${t.versao} enviada ${tempoRelativo(t.versaoEm)}`
+      : `Enviado ${tempoRelativo(t.criadoEm)}`,
     t.paginas ? plural(t.paginas, 'página', 'páginas') : null,
     fmtTamanho(t.ficheiro.tamanho)
   ]
@@ -73,26 +88,44 @@ export default function TrabalhoCard({ t, role, onOpen, onDelete }) {
             <div className={s.previewHead}>
               <MessageSquareText size={14} />
               {plural(comentarios.length, 'comentário', 'comentários')}
-              {professor && t.status !== 'corrigido' && ' · o aluno ainda não os vê'}
+              {pedidos > 0 && ` · ${confirmados} de ${pedidos} correcções confirmadas`}
+              {professor && t.status !== 'corrigido' && t.versao === 1 && ' · o aluno ainda não os vê'}
             </div>
-            {visiveis.map(c => (
-              <button
-                key={c.id}
-                className={s.previewRow}
-                onClick={() => onOpen(c.pagina)}
-                title={c.pagina ? `Abrir o PDF na página ${c.pagina}` : 'Abrir o PDF'}
-              >
-                <span className={cx(s.pageTag, c.pagina === 0 && s.pageTagGeneral)}>
-                  {labelPaginaCurta(c.pagina)}
-                </span>
-                <span
-                  className={s.previewText}
-                  style={expandido ? { whiteSpace: 'pre-wrap', overflow: 'visible' } : undefined}
+            {visiveis.map(c => {
+              const anterior = c.versao < t.versao
+              return (
+                <button
+                  key={c.id}
+                  className={s.previewRow}
+                  onClick={() => onOpen(c.pagina || undefined, anterior ? c.versao : undefined)}
+                  title={
+                    anterior
+                      ? `Pedido na versão ${c.versao}${c.confirmado ? ' — correcção confirmada' : ' — por confirmar'}`
+                      : c.pagina
+                        ? `Abrir o PDF na página ${c.pagina}`
+                        : 'Abrir o PDF'
+                  }
                 >
-                  {c.texto}
-                </span>
-              </button>
-            ))}
+                  <span
+                    className={cx(
+                      s.pageTag,
+                      c.pagina === 0 && s.pageTagGeneral,
+                      anterior && (c.confirmado ? s.pageTagDone : s.pageTagOpen)
+                    )}
+                  >
+                    {anterior && c.confirmado && <Check size={12} style={{ marginRight: 2 }} />}
+                    {t.versao > 1 && `v${c.versao} · `}
+                    {labelPaginaCurta(c.pagina)}
+                  </span>
+                  <span
+                    className={s.previewText}
+                    style={expandido ? { whiteSpace: 'pre-wrap', overflow: 'visible' } : undefined}
+                  >
+                    {c.texto}
+                  </span>
+                </button>
+              )
+            })}
             {escondidos > 0 && (
               <button className={s.previewMore} onClick={() => setExpandido(v => !v)}>
                 {expandido ? 'Mostrar menos' : `Ver todos os comentários (+${escondidos})`}
@@ -120,6 +153,17 @@ export default function TrabalhoCard({ t, role, onOpen, onDelete }) {
             </span>
           </button>
         )}
+
+        {!professor && t.status === 'corrigido' && onNovaVersao && (
+          <div className={s.nextStep}>
+            <span style={{ flex: '1 1 200px' }}>
+              Já fez as correcções? Envie o PDF novo — o professor confirma cada uma.
+            </span>
+            <button className={cx(s.btn, s.btnTonal, s.btnSmall)} onClick={onNovaVersao}>
+              <FileUp size={16} /> Enviar versão corrigida
+            </button>
+          </div>
+        )}
       </div>
 
       <div className={s.tActions}>
@@ -127,7 +171,9 @@ export default function TrabalhoCard({ t, role, onOpen, onDelete }) {
           {professor
             ? t.status === 'corrigido'
               ? 'Abrir'
-              : 'Abrir e corrigir'
+              : t.versao > 1
+                ? 'Abrir e confirmar'
+                : 'Abrir e corrigir'
             : t.status === 'corrigido'
               ? 'Ver correcção'
               : 'Abrir PDF'}
@@ -142,7 +188,12 @@ export default function TrabalhoCard({ t, role, onOpen, onDelete }) {
           </button>
         )}
         <span className={s.tActionIcons}>
-          <a className={s.iconBtn} href={downloadUrl(t.id)} title="Descarregar o PDF" aria-label="Descarregar o PDF">
+          <a
+            className={s.iconBtn}
+            href={downloadUrl(t.id)}
+            title={t.versao > 1 ? `Descarregar o PDF (versão ${t.versao})` : 'Descarregar o PDF'}
+            aria-label="Descarregar o PDF"
+          >
             <FileDown size={20} />
           </a>
           {podeApagar && onDelete && (

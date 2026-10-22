@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { AlertCircle, FileText, Lightbulb, UploadCloud, X } from 'lucide-react'
 import s from '../trabalhos.module.css'
-import { uploadTrabalho } from './api'
+import { uploadTrabalho, uploadVersao } from './api'
 import { fmtTamanho } from './format'
 import { Dialog, TextField, cx } from './ui'
 
@@ -13,7 +13,9 @@ function tituloDoFicheiro(nome) {
   return nome.replace(/\.pdf$/i, '').replace(/[_-]+/g, ' ').trim()
 }
 
-export default function UploadDialog({ open, onClose, onUploaded }) {
+// `trabalho` definido = enviar a versão corrigida desse trabalho.
+export default function UploadDialog({ open, onClose, onUploaded, trabalho }) {
+  const novaVersao = trabalho ? trabalho.versao + 1 : null
   const [file, setFile] = useState(null)
   const [titulo, setTitulo] = useState('')
   const [mensagem, setMensagem] = useState('')
@@ -46,7 +48,7 @@ export default function UploadDialog({ open, onClose, onUploaded }) {
     }
     setErro('')
     setFile(f)
-    setTitulo(prev => prev || tituloDoFicheiro(f.name))
+    if (!trabalho) setTitulo(prev => prev || tituloDoFicheiro(f.name))
   }
 
   async function enviar() {
@@ -55,7 +57,9 @@ export default function UploadDialog({ open, onClose, onUploaded }) {
     setBusy(true)
     setProgress(0)
     try {
-      const t = await uploadTrabalho(file, { titulo, mensagem }, setProgress)
+      const t = trabalho
+        ? await uploadVersao(trabalho.id, file, { mensagem }, setProgress)
+        : await uploadTrabalho(file, { titulo, mensagem }, setProgress)
       onUploaded(t)
     } catch (err) {
       setErro(err.message)
@@ -68,7 +72,7 @@ export default function UploadDialog({ open, onClose, onUploaded }) {
       open={open}
       onClose={onClose}
       busy={busy}
-      title="Enviar trabalho"
+      title={trabalho ? 'Enviar versão corrigida' : 'Enviar trabalho'}
       actions={
         <>
           <button className={cx(s.btn, s.btnText)} onClick={onClose} disabled={busy}>
@@ -81,7 +85,7 @@ export default function UploadDialog({ open, onClose, onUploaded }) {
               </>
             ) : (
               <>
-                <UploadCloud size={18} /> Enviar ao professor
+                <UploadCloud size={18} /> {trabalho ? `Enviar versão ${novaVersao}` : 'Enviar ao professor'}
               </>
             )}
           </button>
@@ -89,6 +93,15 @@ export default function UploadDialog({ open, onClose, onUploaded }) {
       }
     >
       <div className={s.dialogBody}>
+        {trabalho && (
+          <div className={s.tip}>
+            <Lightbulb size={16} />
+            <span>
+              <b>{trabalho.titulo}</b> — escolha o PDF já com as correcções feitas. Os comentários do professor
+              ficam guardados como estão, e ele vai confirmar cada correcção na versão {novaVersao}.
+            </span>
+          </div>
+        )}
         {!file ? (
           <div
             className={cx(s.drop, drag && s.dropActive)}
@@ -110,7 +123,7 @@ export default function UploadDialog({ open, onClose, onUploaded }) {
             <div className={s.dropIcon}>
               <UploadCloud size={28} />
             </div>
-            <div className={s.dropTitle}>Escolha o PDF do trabalho</div>
+            <div className={s.dropTitle}>{trabalho ? 'Escolha o PDF corrigido' : 'Escolha o PDF do trabalho'}</div>
             <div className={s.muted}>Clique aqui ou arraste o ficheiro para esta caixa</div>
             <div className={s.muted} style={{ fontSize: 12 }}>
               Apenas PDF · até 50 MB
@@ -151,16 +164,18 @@ export default function UploadDialog({ open, onClose, onUploaded }) {
           }}
         />
 
+        {!trabalho && (
+          <TextField
+            label="Título do trabalho"
+            value={titulo}
+            onChange={e => setTitulo(e.target.value)}
+            maxLength={200}
+            disabled={busy}
+            hint="Ex.: Capítulo 2 — Revisão da literatura"
+          />
+        )}
         <TextField
-          label="Título do trabalho"
-          value={titulo}
-          onChange={e => setTitulo(e.target.value)}
-          maxLength={200}
-          disabled={busy}
-          hint="Ex.: Capítulo 2 — Revisão da literatura"
-        />
-        <TextField
-          label="Mensagem para o professor (opcional)"
+          label={trabalho ? 'O que mudou? (opcional)' : 'Mensagem para o professor (opcional)'}
           multiline
           rows={3}
           value={mensagem}
@@ -188,7 +203,7 @@ export default function UploadDialog({ open, onClose, onUploaded }) {
           </div>
         )}
 
-        {!busy && !erro && (
+        {!busy && !erro && !trabalho && (
           <div className={s.tip}>
             <Lightbulb size={16} />
             <span>Depois de enviar, o professor lê o PDF e deixa comentários por página. Vai vê-los nesta página.</span>
