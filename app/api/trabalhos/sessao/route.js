@@ -26,22 +26,27 @@ export async function POST(request) {
   try {
     const body = await request.json().catch(() => ({}))
     const tipo = body?.tipo === 'professor' ? 'professor' : 'aluno'
-    const telefone = onlyDigits(body?.telefone)
+    const utilizador = (body?.telefone || '').toString().trim()
+    const telefone = onlyDigits(utilizador)
     const senha = (body?.senha || '').toString()
 
-    if (!telefone || !senha) return jsonError('Preencha o telefone e a palavra-passe.')
+    if (!utilizador || !senha) return jsonError('Preencha todos os campos.')
 
     let session
 
     if (tipo === 'professor') {
-      const tel = onlyDigits(process.env.TEACHER_PHONE)
+      // TEACHER_PHONE pode ser um telefone ou um email.
+      const normalizar = v => (v.includes('@') ? v.trim().toLowerCase() : onlyDigits(v))
+      const esperado = normalizar(process.env.TEACHER_PHONE || '')
       const pass = process.env.TEACHER_PASSWORD || ''
-      if (!tel || !pass) return jsonError('Login do professor não configurado no servidor.', 500)
-      if (!safeEqual(telefone, tel) || !safeEqual(senha, pass)) {
-        return jsonError('Telefone ou palavra-passe incorrectos.', 401)
+      if (!esperado || !pass) return jsonError('Login do professor não configurado no servidor.', 500)
+      const dado = normalizar(utilizador)
+      if (!dado || !safeEqual(dado, esperado) || !safeEqual(senha, pass)) {
+        return jsonError('Email/telefone ou palavra-passe incorrectos.', 401)
       }
       session = { role: 'professor', nome: 'Professor' }
     } else {
+      if (!telefone) return jsonError('Escreva o seu número de telefone.')
       // Mesma conta usada na Mentoria (colecção `alunos`). Aceita o número com ou sem 244.
       const { alunos } = await getCollections()
       const candidatos = [telefone]

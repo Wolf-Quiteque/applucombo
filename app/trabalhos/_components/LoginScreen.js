@@ -44,13 +44,14 @@ export default function LoginScreen({ tipo, onDone }) {
 
         <form className={s.loginForm} onSubmit={submit}>
           <TextField
-            label="Número de telefone"
-            type="tel"
-            inputMode="tel"
+            label={professor ? 'Email ou telefone' : 'Número de telefone'}
+            type={professor ? 'text' : 'tel'}
+            inputMode={professor ? 'email' : 'tel'}
+            autoCapitalize="none"
             autoComplete="username"
             value={telefone}
             onChange={e => setTelefone(e.target.value)}
-            placeholder="Ex.: 923 000 000"
+            placeholder={professor ? 'Ex.: nome@email.com' : 'Ex.: 923 000 000'}
             autoFocus
             required
           />
