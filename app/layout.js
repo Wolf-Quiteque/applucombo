@@ -1,6 +1,7 @@
 
 import Footer from './components/Footer'
 import Navbar from './components/Navbar'
+import SiteChrome from './components/SiteChrome'
 import { LanguageProvider } from './context/LanguageContext'
 import './globals.css'
 import { Inter } from 'next/font/google'
@@ -45,9 +46,9 @@ export default function RootLayout({ children }) {
       <body className={inter.className}>
         <Analytics/>
         <LanguageProvider>
-          <Navbar />
+          <SiteChrome><Navbar /></SiteChrome>
           {children}
-          <Footer />
+          <SiteChrome><Footer /></SiteChrome>
         </LanguageProvider>
       </body>
     </html>
