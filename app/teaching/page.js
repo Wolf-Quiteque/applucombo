@@ -356,18 +356,29 @@ export default function Teaching() {
 )}
           
           {selectedCourse === 'microeconomia' && (
-            <div className="card mb-4">
-              <div className="card-body">
-                <h3 className="card-title">
-                  {language === 'pt' ? 'Materiais do curso' : 'Course materials'}
-                </h3>
-                <a
-                  href="/assets/material/microeconomia/FUNDAMENTOS DE MICROECONOMIA.doc"
-                  className="list-group-item list-group-item-action"
-                  download="FUNDAMENTOS DE MICROECONOMIA.doc"
-                >
-                  <i className="bi bi-download me-2"></i>FUNDAMENTOS DE MICROECONOMIA.doc
-                </a>
+            <div className="row g-3">
+              <div className="col-md-6">
+                <div className="card h-100 border-primary">
+                  <div className="card-body">
+                    <h3 className="card-title text-primary">
+                      <i className="bi bi-journal-bookmark-fill me-2"></i>
+                      {language === 'pt' ? 'Fundamentos de Microeconomia' : 'Fundamentals of Microeconomics'}
+                    </h3>
+                    <p className="card-text text-muted">
+                      {language === 'pt' ? 'Material do curso em formato Word.' : 'Course material in Word format.'}
+                    </p>
+                    <div className="d-flex justify-content-center">
+                      <a
+                        href="/assets/material/microeconomia/FUNDAMENTOS DE MICROECONOMIA.doc"
+                        className="btn btn-primary"
+                        download="FUNDAMENTOS DE MICROECONOMIA.doc"
+                      >
+                        <i className="bi bi-download me-1"></i>
+                        {language === 'pt' ? 'Baixar' : 'Download'}
+                      </a>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           )}
