@@ -451,16 +451,18 @@ export default function Teaching() {
             </div>
           )}
           
-          <div className="text-center mb-4">
-            <h2 className="fw-bold">
-              {language === 'pt' ? '📚 Materiais do Curso' : '📚 Course Materials'}
-            </h2>
-            <p className="lead text-muted">
-              {language === 'pt' 
-                ? 'Explore os recursos abaixo para sua aprendizagem' 
-                : 'Explore the resources below for your learning'}
-            </p>
-          </div>
+          {selectedCourse !== 'microeconomia' && (
+            <div className="text-center mb-4">
+              <h2 className="fw-bold">
+                {language === 'pt' ? '📚 Materiais do Curso' : '📚 Course Materials'}
+              </h2>
+              <p className="lead text-muted">
+                {language === 'pt'
+                  ? 'Explore os recursos abaixo para sua aprendizagem'
+                  : 'Explore the resources below for your learning'}
+              </p>
+            </div>
+          )}
           
           {selectedCourse === 'financas' ? (
             <div className="row g-3">
@@ -1580,7 +1582,7 @@ export default function Teaching() {
                 </div>
               </div>
             </div>
-          ) : (
+          ) : selectedCourse === 'microeconomia' ? null : (
             <div className="row g-3">
                <div className="col-12 mb-4"> {/* Added mb-4 for spacing */}
                 <div className="card border-danger"> {/* Green outline */}
