@@ -23,6 +23,14 @@ export default function Teaching() {
           year: '2025',
           courses: [
   {
+    id: 'microeconomia',
+    name_pt: 'Microeconomia',
+    name_en: 'Microeconomics',
+    description_pt: 'Materiais do curso de Microeconomia.',
+    description_en: 'Microeconomics course materials.',
+    passcode: '656565'
+  },
+  {
     id: 'economia',
     name_pt: 'CRESCIMENTO E DESENVOLVIMENTO ECONOMICO',
     name_en: 'ECONOMIC GROWTH AND DEVELOPMENT',
@@ -347,6 +355,23 @@ export default function Teaching() {
   </div>
 )}
           
+          {selectedCourse === 'microeconomia' && (
+            <div className="card mb-4">
+              <div className="card-body">
+                <h3 className="card-title">
+                  {language === 'pt' ? 'Materiais do curso' : 'Course materials'}
+                </h3>
+                <a
+                  href="/assets/material/microeconomia/FUNDAMENTOS DE MICROECONOMIA.doc"
+                  className="list-group-item list-group-item-action"
+                  download="FUNDAMENTOS DE MICROECONOMIA.doc"
+                >
+                  <i className="bi bi-download me-2"></i>FUNDAMENTOS DE MICROECONOMIA.doc
+                </a>
+              </div>
+            </div>
+          )}
+
           {selectedCourse === 'cbc' && (
             <div className="row g-3 mb-4">
               <div className="col-12">
