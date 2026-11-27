@@ -19,8 +19,8 @@ export default function Teaching() {
       name_pt: 'ACADEMIA DE CIÊNCIAS SOCIAIS E TECNOLOGIA - ACITE',
       name_en: 'ACADEMY OF SOCIAL SCIENCES AND TECHNOLOGY - ACITE',
       years: [
-        { 
-          year: '2025',
+        {
+          year: '2026',
           courses: [
   {
     id: 'microeconomia',
@@ -29,7 +29,12 @@ export default function Teaching() {
     description_pt: 'Materiais do curso de Microeconomia.',
     description_en: 'Microeconomics course materials.',
     passcode: '656565'
-  },
+  }
+]
+        },
+        { 
+          year: '2025',
+          courses: [
   {
     id: 'economia',
     name_pt: 'CRESCIMENTO E DESENVOLVIMENTO ECONOMICO',
